@@ -13,7 +13,7 @@ router.get('/', (req, res, next) => {
         } else{
             return res.render('accounts', { accounts : accounts, message: message });
         }
-    })
+    });
 });
 
 // create new account

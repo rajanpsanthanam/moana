@@ -3,6 +3,7 @@ extends layout
 block content
   .container
     if (!user)
+      img.img-circle(src='/images/moana-logo.png', height='150', width='150')
       p.lead Hey there, I am moana. Your on-boarding virtual assistant.
       br
       p Login to access your account.
@@ -12,6 +13,7 @@ block content
       p New user? register to continue.
       a(href="/register") Register
     else
+      img.img-circle(src='/images/moana-logo.png', height='75', width='75')
       p.lead Hey #{user.username}, Good to see you back.
       br
       if (user.is_admin)
@@ -24,11 +26,23 @@ block content
         br
         br
       br
-      p Your Accounts
-      if(accounts)
-        for account in accounts
-          a(href='/accounts/?name=#{account.name}') #{account.name}
+      p Your Primary Accounts
+      if(primary_accounts.length > 0)
+        for primary_account in primary_accounts
+          a(href='/accounts/#{primary_account.name}') #{primary_account.name}
+          br
+          br
       else
         p you are yet to start managing accounts
+      br
+      br
+      p Your Secondary Accounts
+      if(secondary_accounts.length > 0)
+        for secondary_account in secondary_accounts
+          a(href='/accounts/#{secondary_account.name}') #{secondary_account.name}
+          br
+          br
+      else
+        p you don't have any secondary accounts
       br
       a(href="/logout") Logout

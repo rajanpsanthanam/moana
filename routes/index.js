@@ -1,12 +1,36 @@
 const express = require('express');
 const passport = require('passport');
 const User = require('../models/user');
+const Account = require('../models/account');
 const router = express.Router();
 
 
 // dashboard
 router.get('/', (req, res) => {
-    res.render('index', { user : req.user });
+  if(req.user){
+    Account.find({"primary_manager": req.user.username, "is_deleted": false}, '', function(err, accounts){
+          if(err){
+              res.render('index', { error : err.message });
+          }
+          else{
+            var primary_accounts = accounts;
+            Account.find({"secondary_manager": req.user.username, "is_deleted": false}, '', function(err, accounts){
+              if(err){
+                  res.render('index', { error : err.message });
+              }
+              else{
+                  var secondary_accounts = accounts;
+                  res.render('index', {
+                    user : req.user, primary_accounts : primary_accounts, secondary_accounts: secondary_accounts
+                  });
+                }
+              });
+            }
+          });
+        }
+  else{
+    res.render('index', { user : req.user});
+  }
 });
 
 
