@@ -18,6 +18,7 @@ block content
           th Account Manager
           th Secondary Manager
           th Edit
+          th Delete
       for account in accounts
         tr
           td
@@ -43,3 +44,6 @@ block content
           td
             a(href='/accounts/edit/#{account.name}')
               i.fa.fa-pencil(aria-hidden='true')
+          td
+            a(href='/accounts/remove/#{account.name}')
+              i.fa.fa-trash(aria-hidden='true')

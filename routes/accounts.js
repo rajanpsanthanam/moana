@@ -6,11 +6,12 @@ const User = require('../models/user');
 
 // get all accounts
 router.get('/', (req, res, next) => {
-  Account.find({}, '', function(err, accounts){
+  var message = req.query.message;
+  Account.find({"is_deleted": false}, '', function(err, accounts){
         if(err){
             return res.render('accounts', { error : err.message });
         } else{
-            return res.render('accounts', { accounts : accounts });
+            return res.render('accounts', { accounts : accounts, message: message });
         }
     })
 });
@@ -25,19 +26,29 @@ router.post('/', (req, res, next) => {
     is_on_web: "is_on_web" in req.body,
     is_on_loyalty: "is_on_loyalty" in req.body,
     primary_manager: req.body.primary_manager,
-    secondary_manager: req.body.secondary_manager,
-    no_of_stores: req.body.no_of_stores,
-    agreed_date: new Date(req.body.agreed_date),
-    onboarding_start_date: new Date(req.body.onboarding_start_date),
-    expected_go_live_date: new Date(req.body.expected_go_live_date),
-    actual_live_date: new Date(req.body.actual_live_date)
+    secondary_manager: req.body.secondary_manager
+  }
+  if (req.body.no_of_stores){
+    data[no_of_stores] = req.body.no_of_stores
+  }
+  if (req.body.agreed_date){
+    data[agreed_date] = new Date(req.body.agreed_date)
+  }
+  if (req.body.onboarding_start_date){
+    data[onboarding_start_date] = new Date(req.body.onboarding_start_date)
+  }
+  if (req.body.expected_go_live_date){
+    data[expected_go_live_date] = new Date(req.body.expected_go_live_date)
+  }
+  if (req.body.actual_live_date){
+    data[actual_live_date] = new Date(req.body.actual_live_date)
   }
   var account = new Account(data);
   account.save(function (err) {
     if (err) {
-      res.redirect('/accounts', {error: err.message});
+      res.redirect('/accounts/?message=create failed');
     } else {
-      res.redirect('/accounts');
+      res.redirect('/accounts/?message=successfully created');
     }
   });
 });
@@ -47,10 +58,34 @@ router.post('/', (req, res, next) => {
 router.post('/:name', (req, res, next) => {
   Account.findOne({"name": req.params.name}, '', function(err, account){
       if(err){
-          return res.render('edit-account', { error : err.message });
+        res.redirect('/accounts/?message=update failed')
       }
       else{
-          res.redirect('/accounts')
+        account.name = req.body.name;
+        account.stage = req.body.stage;
+        account.is_on_android = "is_on_android" in req.body;
+        account.is_on_ios = "is_on_ios" in req.body;
+        account.is_on_web = "is_on_web" in req.body;
+        account.is_on_loyalty = "is_on_loyalty" in req.body;
+        account.primary_manager = req.body.primary_manager;
+        account.secondary_manager = req.body.secondary_manager;
+        if (req.body.no_of_stores){
+          account.no_of_stores = req.body.no_of_stores;
+        }
+        if (req.body.agreed_date){
+          account.agreed_date = new Date(req.body.agreed_date);
+        }
+        if (req.body.onboarding_start_date){
+          account.onboarding_start_date = new Date(req.body.onboarding_start_date);
+        }
+        if (req.body.expected_go_live_date){
+          account.expected_go_live_date = new Date(req.body.expected_go_live_date);
+        }
+        if (req.body.actual_live_date){
+          account.actual_live_date = new Date(req.body.actual_live_date);
+        }
+        account.save();
+        res.redirect('/accounts/?message=successfully updated')
       }
     });
   });
@@ -85,6 +120,21 @@ router.get('/edit/:name', (req, res, next) => {
                 }
             });
         }
+    });
+});
+
+
+// soft delete account
+router.get('/remove/:name', (req, res, next) => {
+  Account.findOne({"name": req.params.name}, '', function(err, account){
+      if(err){
+        res.redirect('/accounts/?message=delete failed')
+      }
+      else{
+        account.is_deleted = true
+        account.save();
+        res.redirect('/accounts/?message=successfully deleted')
+      }
     });
 });
 

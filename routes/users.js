@@ -15,9 +15,8 @@ router.get('/', (req, res, next) => {
     })
 });
 
-router.get('/revoke/', (req, res, next) => {
-  var username = req.query.username;
-  User.findOneAndUpdate({username: username}, {is_admin: false}, function(err, user){
+router.get('/revoke/:username', (req, res, next) => {
+  User.findOneAndUpdate({username: req.params.username}, {is_admin: false}, function(err, user){
     if(err){
       res.redirect('/users/?message=revoke failed')
     }
@@ -27,9 +26,8 @@ router.get('/revoke/', (req, res, next) => {
   })
 });
 
-router.get('/grant/', (req, res, next) => {
-  var username = req.query.username;
-  User.findOneAndUpdate({username: username}, {is_admin: true}, function(err, user){
+router.get('/grant/:username', (req, res, next) => {
+  User.findOneAndUpdate({username: req.params.username}, {is_admin: true}, function(err, user){
     if(err){
       res.redirect('/users/?message=grant failed')
     }
@@ -39,13 +37,14 @@ router.get('/grant/', (req, res, next) => {
   })
 });
 
-router.get('/remove/', (req, res, next) => {
-  var username = req.query.username;
-  User.findOneAndRemove({username: username}, function(err, user){
+router.get('/remove/:username', (req, res, next) => {
+  User.findOne({username: req.params.username}, function(err, user){
     if(err){
       res.redirect('/users/?message=delete failed')
     }
     else {
+      user.is_deleted = true;
+      user.save();
       res.redirect('/users/?message=delete successfull')
     }
   })

@@ -16,12 +16,13 @@ const Account = new Schema({
     stage: String,
     primary_manager:String,
     secondary_manager:String,
-    is_on_android:Boolean,
-    is_on_ios:Boolean,
-    is_on_web:Boolean,
-    is_on_loyalty:Boolean,
-    no_of_stores:Number,
-    comments: [Comments]
+    is_on_android:{ type: Boolean, default: false },
+    is_on_ios:{ type: Boolean, default: false },
+    is_on_web:{ type: Boolean, default: false },
+    is_on_loyalty:{ type: Boolean, default: false },
+    no_of_stores:{ type: Number, default: 0 },
+    comments: [Comments],
+    is_deleted: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('account', Account);
