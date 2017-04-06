@@ -2,11 +2,14 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 
-/* GET users listing. */
-//db.users.updateOne({"username": ""}, {$set: {"is_admin": true}})
+
+/*
+Note: to create initial admin
+db.users.updateOne({"username": ""}, {$set: {"is_admin": true}})
+*/
 router.get('/', (req, res, next) => {
   var message = req.query.message;
-  User.find({}, 'username is_admin', function(err, users){
+  User.find({"is_deleted": false}, 'username is_admin', function(err, users){
         if(err){
             return res.render('users', { error : err.message });
         } else{
@@ -15,6 +18,8 @@ router.get('/', (req, res, next) => {
     })
 });
 
+
+// revoke admin access
 router.get('/revoke/:username', (req, res, next) => {
   User.findOneAndUpdate({username: req.params.username}, {is_admin: false}, function(err, user){
     if(err){
@@ -26,6 +31,8 @@ router.get('/revoke/:username', (req, res, next) => {
   })
 });
 
+
+// grant admin access
 router.get('/grant/:username', (req, res, next) => {
   User.findOneAndUpdate({username: req.params.username}, {is_admin: true}, function(err, user){
     if(err){
@@ -37,6 +44,7 @@ router.get('/grant/:username', (req, res, next) => {
   })
 });
 
+// soft delete user
 router.get('/remove/:username', (req, res, next) => {
   User.findOne({username: req.params.username}, function(err, user){
     if(err){

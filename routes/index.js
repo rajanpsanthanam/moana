@@ -4,14 +4,19 @@ const User = require('../models/user');
 const router = express.Router();
 
 
+// dashboard
 router.get('/', (req, res) => {
     res.render('index', { user : req.user });
 });
 
+
+// register page
 router.get('/register', (req, res) => {
     res.render('register', { });
 });
 
+
+// register route
 router.post('/register', (req, res, next) => {
     User.register(new User({ username : req.body.username }), req.body.password, (err, user) => {
         if (err) {
@@ -30,10 +35,13 @@ router.post('/register', (req, res, next) => {
 });
 
 
+// login page
 router.get('/login', (req, res) => {
     res.render('login', { user : req.user, error : req.flash('error')});
 });
 
+
+// login route
 router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), (req, res, next) => {
     req.session.save((err) => {
         if (err) {
@@ -43,6 +51,8 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/login'
     });
 });
 
+
+// logout route
 router.get('/logout', (req, res, next) => {
     req.logout();
     req.session.save((err) => {
@@ -51,10 +61,6 @@ router.get('/logout', (req, res, next) => {
         }
         res.redirect('/');
     });
-});
-
-router.get('/ping', (req, res) => {
-    res.status(200).send("pong!");
 });
 
 module.exports = router;

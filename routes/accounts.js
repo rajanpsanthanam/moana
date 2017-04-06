@@ -19,29 +19,29 @@ router.get('/', (req, res, next) => {
 // create new account
 router.post('/', (req, res, next) => {
   data = {
-    name: req.body.name,
-    stage: req.body.stage,
-    is_on_android: "is_on_android" in req.body,
-    is_on_ios: "is_on_ios" in req.body,
-    is_on_web: "is_on_web" in req.body,
-    is_on_loyalty: "is_on_loyalty" in req.body,
-    primary_manager: req.body.primary_manager,
-    secondary_manager: req.body.secondary_manager
+    'name': req.body.name,
+    'stage': req.body.stage,
+    'is_on_android': 'is_on_android' in req.body,
+    'is_on_ios': 'is_on_ios' in req.body,
+    'is_on_web': 'is_on_web' in req.body,
+    'is_on_loyalty': 'is_on_loyalty' in req.body,
+    'primary_manager': req.body.primary_manager,
+    'secondary_manager': req.body.secondary_manager
   }
   if (req.body.no_of_stores){
-    data[no_of_stores] = req.body.no_of_stores
+    data['no_of_stores'] = req.body.no_of_stores
   }
   if (req.body.agreed_date){
-    data[agreed_date] = new Date(req.body.agreed_date)
+    data['agreed_date'] = new Date(req.body.agreed_date)
   }
   if (req.body.onboarding_start_date){
-    data[onboarding_start_date] = new Date(req.body.onboarding_start_date)
+    data['onboarding_start_date'] = new Date(req.body.onboarding_start_date)
   }
   if (req.body.expected_go_live_date){
-    data[expected_go_live_date] = new Date(req.body.expected_go_live_date)
+    data['expected_go_live_date'] = new Date(req.body.expected_go_live_date)
   }
   if (req.body.actual_live_date){
-    data[actual_live_date] = new Date(req.body.actual_live_date)
+    data['actual_live_date'] = new Date(req.body.actual_live_date)
   }
   var account = new Account(data);
   account.save(function (err) {
@@ -63,10 +63,10 @@ router.post('/:name', (req, res, next) => {
       else{
         account.name = req.body.name;
         account.stage = req.body.stage;
-        account.is_on_android = "is_on_android" in req.body;
-        account.is_on_ios = "is_on_ios" in req.body;
-        account.is_on_web = "is_on_web" in req.body;
-        account.is_on_loyalty = "is_on_loyalty" in req.body;
+        account.is_on_android = 'is_on_android' in req.body;
+        account.is_on_ios = 'is_on_ios' in req.body;
+        account.is_on_web = 'is_on_web' in req.body;
+        account.is_on_loyalty = 'is_on_loyalty' in req.body;
         account.primary_manager = req.body.primary_manager;
         account.secondary_manager = req.body.secondary_manager;
         if (req.body.no_of_stores){
