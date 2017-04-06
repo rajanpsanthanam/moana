@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .container
+    p.lead Manage Accounts
+    a(href='/accounts/add') Add Account
+    br
+    br
+    a(href='/') Back
+    table.table.table-hover.table-stripped
+      thead
+        tr
+          th Account
+          th Stage
+          th Account Manager
+      for account in accounts
+        tr
+          td
+            a(href='/accounts/?name=#{account.name}') #{account.name}
+          td
+            p #{account.stage}
+          td
+            p #{account.primary_manager}

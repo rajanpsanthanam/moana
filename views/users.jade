@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  .container
+    p.lead Manage Users
+    a(href='/')
+      i.fa.fa-chevron-left.fa-2x(aria-hidden='true')
+    table.table.table-hover.table-stripped
+      thead
+        tr
+          th User
+          th Is Admin
+          th Delete
+      for user in users
+        tr
+          td
+            a(href='') #{user.username}
+            &nbsp;
+            if(user.is_admin)
+              i.fa.fa-superpowers(aria-hidden='true')
+          td
+            if(user.is_admin)
+              a(href='/users/revoke/?username=#{user.username}') revoke admin access
+            else
+              a(href='/users/grant/?username=#{user.username}') make admin
+          td
+            a(href='/users/remove/?username=#{user.username}')
+              i.fa.fa-trash(aria-hidden='true')

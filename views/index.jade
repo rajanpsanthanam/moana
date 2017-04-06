@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  .container
+    if (!user)
+      p.lead Hey there, I am moana. Your on-boarding virtual assistant.
+      br
+      p Login to access your account.
+      a(href="/login") Login
+      br
+      br
+      p New user? register to continue.
+      a(href="/register") Register
+    else
+      p.lead Hey #{user.username}, Good to see you back.
+      br
+      if (user.is_admin)
+        p Manage Section
+        br
+        a(href="/users") Manage Users
+        br
+        br
+        a(href="/accounts") Manage Accounts
+        br
+        br
+      br
+      p Your Accounts
+      if(accounts)
+        for account in accounts
+          a(href='/accounts/?name=#{account.name}') #{account.name}
+      else
+        p you are yet to start managing accounts
+      br
+      a(href="/logout") Logout

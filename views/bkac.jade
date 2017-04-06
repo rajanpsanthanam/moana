@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  .container
+    h1 New Account
+    h1 #{name}
+    br
+    form(role='form', action="/accounts",method="post", style='max-width: 300px;')
+      .form-group
+        label(for='name',class='control-label') Name:
+        input.form-control(type='text', name="name", placeholder='Enter account name')
+      .form-group
+        label(for='primary_manager',class='control-label') Primary Manager:
+        input.form-control(type='text', name="primary_manager", placeholder='')
+      .form-group
+        label(for='secondary_manager',class='control-label') Secondary Manager:
+        input.form-control(type='text', name="secondary_manager", placeholder='')
+      .form-group
+        label(for='stage',class='control-label') Stage:
+        input.form-control(type='text', name="stage", placeholder='configuration doc sent')
+      .form-group
+        label(for='agreed_date',class='control-label') Agreed Date:
+        input.form-control(type='date', name="agreed_date")
+      .form-group
+        label(for='onboarding_start_date',class='control-label') Onboarding Start Date:
+        input.form-control(type='date', name="onboarding_start_date")
+      .form-group
+        label(for='expected_go_live_date',class='control-label') Expected Go Live Date:
+        input.form-control(type='date', name="expected_go_live_date")
+      .form-group
+        label(for='actual_live_date',class='control-label') Actual Live Date:
+        input.form-control(type='date', name="actual_live_date")
+      .form-group
+        label(for="no_of_stores",class='control-label') No: of Stores:
+        input.form-control(type='number', name="no_of_stores")
+      .form-group
+        label(for='is_on_android',class='control-label') Android:
+        input.form-control(type='checkbox', name='is_on_android')
+      .form-group
+        label(for='is_on_android',class='control-label') IOS:
+        input.form-control(type='checkbox', name='is_on_ios')
+      .form-group
+        label(for='is_on_android',class='control-label') Web:
+        input.form-control(type='checkbox', name='is_on_web')
+      .form-group
+        label(for='is_on_android',class='control-label') Loyalty:
+        input.form-control(type='checkbox', name='is_on_loyalty')
+      button.btn.btn-default(type='submit') Submit
+      &nbsp;
+      a(href='/')
+        button.btn.btn-primary(type="button") Cancel
