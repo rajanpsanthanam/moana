@@ -1,0 +1,73 @@
+extends layout
+
+block content
+  .container
+    h1 Update
+    form(role='form', action='/accounts/#{account.name}', method='post', style='max-width: 300px;')
+      .form-group
+        label(for='name') Name
+        input#name.form-control(type='text', name='name', placeholder='name', value=account.name)
+      .form-group
+        label(for='stage') Stage
+        select.form-control(name='stage')
+          option(selected=account.stage == 'configuration doc sent') configuration doc sent
+          option(selected=account.stage == 'configuring') configuring
+          option(selected=account.stage == 'awaiting development') awaiting development
+          option(selected=account.stage == 'development') development
+          option(selected=account.stage == 'testing') testing
+          option(selected=account.stage == 'merchant review') merchant review
+          option(selected=account.stage == 'gone live') gone live
+          option(selected=account.stage == 'post go live support') post go live support
+      .form-group
+        label(for='primary_manager') Account Manager
+        select.form-control(name='primary_manager')
+          for user in users
+            option(selected=account.primary_manager == user.username) #{user.username}
+      .form-group
+        label(for='secondary_manager') Backup Manager
+        select.form-control(name='secondary_manager')
+          for user in users
+            option(selected=account.secondary_manager == user.username) #{user.username}
+      .form-group
+        label(for='is_on_android') Android Platform
+        input#is_on_android.form-control(name='is_on_android', type='checkbox', checked=account.is_on_android)
+      .form-group
+        label(for='is_on_ios') IOS Platform
+        input#is_on_ios.form-control(name='is_on_ios', type='checkbox', checked=account.is_on_ios)
+      .form-group
+        label(for='is_on_web') Web Platform
+        input#is_on_web.form-control(name='is_on_web', type='checkbox', checked=account.is_on_web)
+      .form-group
+        label(for='is_on_loyalty') Loyalty Platform
+        input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox', checked=account.is_on_loyalty)
+      .form-group
+        label(for='no_of_stores') No: of Stores
+        input#no_of_stores.form-control(name='no_of_stores', type='number', value=account.no_of_stores)
+      .form-group
+        label(for='agreed_date') Agreed Date
+        if (account.agreed_date)
+          input#agreed_date.form-control(name='agreed_date', type='date', value=account.agreed_date.toISOString().substring(0, 10))
+        else
+          input#agreed_date.form-control(name='agreed_date', type='date')
+      .form-group
+        label(for='onboarding_start_date') Onboarding Start Date
+        if(account.onboarding_start_date)
+          input#onboarding_start_date.form-control(name='onboarding_start_date', type='date', value=account.onboarding_start_date.toISOString().substring(0, 10))
+        else
+          input#onboarding_start_date.form-control(name='onboarding_start_date', type='date')
+      .form-group
+        label(for='expected_go_live_date') Expected Go Live Date
+        if(account.expected_go_live_date)
+          input#expected_go_live_date.form-control(name='expected_go_live_date', type='date', value=account.expected_go_live_date.toISOString().substring(0, 10))
+        else
+          input#expected_go_live_date.form-control(name='expected_go_live_date', type='date')
+      .form-group
+        label(for='actual_live_date') Actual Live Date
+        if (account.actual_live_date)
+          input#actual_live_date.form-control(name='actual_live_date', type='date', value=account.actual_live_date.toISOString().substring(0, 10))
+        else
+          input#actual_live_date.form-control(name='actual_live_date', type='date')
+      button.btn.btn-default(type='submit') Submit
+      &nbsp;
+      a(href='/')
+        button.btn.btn-primary(type="button") Cancel

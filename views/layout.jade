@@ -3,21 +3,21 @@ html
   head
     title= title
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css', media='screen')
-    link(rel='stylesheet', href='/stylesheets/jquery-ui.min.css')
     link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css', media='screen')
     link(rel='stylesheet', href='/stylesheets/custom.css')
   body
     if (error && error.length > 0)
       br
-      h4.error-msg= error
+      .alert.alert-danger.text-center(role='alert')
+        |  #{error}
       br
     if (message && message.length > 0)
       br
-      .text-center.alert.alert-info #{message}
+      .alert.alert-info.text-center(role='alert')
+        |  #{message}
       br
     block content
   script(href='/javascripts/jquery-3.2.0.min.js')
-  script(href='/javascripts/jquery-ui.min.js')
   script(href='/javascripts/bootstrap.min.js')
   script(href='/javascripts/custom.js')

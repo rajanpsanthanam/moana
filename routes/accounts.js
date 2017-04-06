@@ -4,29 +4,18 @@ const Account = require('../models/account');
 const User = require('../models/user');
 
 
+// get all accounts
 router.get('/', (req, res, next) => {
-  var acc_name = req.query.name;
-  if(acc_name){
-    Account.findOne({"name": acc_name}, 'name stage primary_manager', function(err, account){
-          if(err){
-              return res.render('accounts', { error : err.message });
-          } else{
-              return res.render('account-view', { account : account });
-          }
-      })
-  }
-  else{
-    Account.find({}, 'name stage primary_manager', function(err, accounts){
-          if(err){
-              return res.render('accounts', { error : err.message });
-          } else{
-              return res.render('accounts', { accounts : accounts });
-          }
-      })
-  }
+  Account.find({}, '', function(err, accounts){
+        if(err){
+            return res.render('accounts', { error : err.message });
+        } else{
+            return res.render('accounts', { accounts : accounts });
+        }
+    })
 });
 
-
+// create new account
 router.post('/', (req, res, next) => {
   data = {
     name: req.body.name,
@@ -37,6 +26,7 @@ router.post('/', (req, res, next) => {
     is_on_loyalty: "is_on_loyalty" in req.body,
     primary_manager: req.body.primary_manager,
     secondary_manager: req.body.secondary_manager,
+    no_of_stores: req.body.no_of_stores,
     agreed_date: new Date(req.body.agreed_date),
     onboarding_start_date: new Date(req.body.onboarding_start_date),
     expected_go_live_date: new Date(req.body.expected_go_live_date),
@@ -52,15 +42,64 @@ router.post('/', (req, res, next) => {
   });
 });
 
+
+// update account data
+router.post('/:name', (req, res, next) => {
+  Account.findOne({"name": req.params.name}, '', function(err, account){
+      if(err){
+          return res.render('edit-account', { error : err.message });
+      }
+      else{
+          res.redirect('/accounts')
+      }
+    });
+  });
+
+
+// route to add new account form
 router.get('/add', (req, res, next) => {
   User.find({}, 'username', function(err, users){
         if(err){
-            return res.render('account', { error : err.message });
+            return res.render('new-account', { error : err.message });
         } else{
-            return res.render('account', { users : users});
+            return res.render('new-account', { users : users});
         }
     })
 });
+
+
+// route to edit account form
+router.get('/edit/:name', (req, res, next) => {
+  Account.findOne({"name": req.params.name}, '', function(err, account){
+        if(err){
+            return res.render('edit-account', { error : err.message });
+        }
+        else{
+            var account = account;
+            User.find({}, 'username', function(err, users){
+                if(err){
+                    return res.render('edit-account', { error : err.message });
+                }
+                else{
+                  return res.render('edit-account', { account : account, users: users});
+                }
+            });
+        }
+    });
+});
+
+
+// get a single account
+router.get('/:name', (req, res, next) => {
+  Account.findOne({"name": req.params.name}, 'name stage primary_manager', function(err, account){
+        if(err){
+            return res.render('accounts', { error : err.message });
+        } else{
+            return res.render('account', { account : account });
+        }
+    })
+})
+
 
 
 module.exports = router;
