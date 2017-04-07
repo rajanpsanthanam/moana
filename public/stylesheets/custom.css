@@ -1,8 +1,27 @@
+
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+.cover-container{
+  text-align: center;
+}
+
+.cover-container form{
+  display:inline-block;
+  margin:auto;
+}
+
 a {
   color: #00B7FF;
+}
+
+td i {
+   padding-left: 1em;
+}
+
+td a i{
+   padding-left: 0em;
 }

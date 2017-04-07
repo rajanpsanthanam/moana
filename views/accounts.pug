@@ -2,20 +2,23 @@ extends layout
 
 block content
   .container
-    p.lead Manage Accounts
-    i.fa.fa-plus-square(aria-hidden='true')
-    a(href='/accounts/add') New Account
-    br
-    br
-    a(href='/')
-      i.fa.fa-chevron-left.fa-2x(aria-hidden='true')
+    .row
+      .col-sm-1
+        a(href='/')
+          i.fa.fa-chevron-left.fa-2x
+      .col-sm-3
+        p.lead Manage Accounts
+      .col-sm-7
+        a.btn.btn-primary(href='/accounts/add', role='button') Add Account
+      .col-sm-1
+        a(href="/logout")
+          i.fa.fa-sign-out.fa-2x
     table.table.table-hover.table-stripped
       thead
         tr
           th Account
           th Stage
           th Account Manager
-          th Secondary Manager
           th Edit
           th Delete
       for account in accounts
@@ -23,7 +26,7 @@ block content
           td
             a(href='/accounts/'+account.name) #{account.name}
             if (account.is_on_web)
-              i.fa.fa-globe(aria-hidden='true', style='color:orange')
+              i.first-icon.fa.fa-globe(aria-hidden='true', style='color:orange')
             if (account.is_on_android)
               i.fa.fa-android(aria-hidden='true', style='color:green')
             if (account.is_on_ios)
@@ -34,8 +37,6 @@ block content
             p #{account.stage}
           td
             p #{account.primary_manager}
-          td
-            p #{account.secondary_manager}
           td
             a(href='/accounts/edit/'+account.name)
               i.fa.fa-pencil(aria-hidden='true')

@@ -1,50 +1,74 @@
 extends layout
 
 block content
-  .container
-    if (!user)
-      a(href="/")
-        img.img-square(src='/images/moana-cat.png', height='150', width='200')
-      br
-      br
-      p.lead Hey there, I am moana. Your on-boarding virtual assistant.
-      br
-      p Login to access your account.
-      a(href="/login") Login
-      br
-      br
-      p New user? register to continue.
-      a(href="/register") Register
-    else
-      p.lead Hey #{user.username}, Good to see you back.
-      br
-      if (user.is_admin)
-        p Manage Section
-        br
-        a(href="/users") Manage Users
-        br
-        br
-        a(href="/accounts") Manage Accounts
-        br
-        br
-      br
-      p Your Primary Accounts
-      if(primary_accounts.length > 0)
-        for primary_account in primary_accounts
-          a(href='/accounts/#{primary_account.name}') #{primary_account.name}
+    .container
+      if (!user)
+        .cover-container
+          a(href="/")
+            img.img-square(src='/images/simba.png', height='200', width='150')
           br
           br
+          p.lead Hey there, I am Simba. Your on-boarding virtual assistant.
+          br
+          h1 Get In..
+          br
+          form(role='form', action="/login",method="post", style='max-width: 300px;')
+            .form-group
+                input.form-control(type='text', name="username", placeholder='Enter Username')
+            .form-group
+              input.form-control(type='password', name="password", placeholder='Password')
+            .row
+              .col-xs-6.col-sm-6.col-md-6
+                input.btn.btn.btn-success.btn-block(type='submit', value='Sign In')
+              .col-xs-6.col-sm-6.col-md-6
+                a.btn.btn.btn-primary.btn-block(href='/') Cancel
+          br
+          br
+          p New around here?
+          a(href="/register") Register
       else
-        p you are yet to start managing accounts
-      br
-      br
-      p Your Secondary Accounts
-      if(secondary_accounts.length > 0)
-        for secondary_account in secondary_accounts
-          a(href='/accounts/#{secondary_account.name}') #{secondary_account.name}
-          br
-          br
-      else
-        p you don't have any secondary accounts
-      br
-      a(href="/logout") Logout
+        .row
+          .col-sm-10
+            p.lead Hey #{user.username}, Good to see you back.
+          .col-sm-2
+            a(href="/logout")
+              i.fa.fa-sign-out.fa-2x
+        br
+        if (user.is_admin)
+          .row
+            .col-sm-6
+              .row
+                .col-sm-10.col-sm-offset-2.text-center
+                  h3 Accounts
+                  p
+                    | Add new account, or manage existing account and lot more..
+                  a(href="/accounts")
+                    i.fa.fa-cog.fa-5x
+            .col-sm-6.text-center
+              .row
+                .col-sm-10.col-sm-offset-1.text-center
+                  h3 Users
+                  p Manage users, grant admin access, revoke, remove user & more..
+                  a(href="/users")
+                    i.fa.fa-user.fa-5x
+
+        .row
+          .col-sm-6
+            h3 Your Primary Accounts
+            if(primary_accounts.length > 0)
+              for primary_account in primary_accounts
+                .row
+                  .col-sm-1
+                  a(href='/accounts/'+primary_account.name) #{primary_account.name}
+            else
+              p you are yet to start managing accounts
+        .row
+          .col-sm-6
+            h3 Your Secondary Accounts
+            if(secondary_accounts.length > 0)
+              for secondary_account in secondary_accounts
+                .row
+                  .col-sm-1
+                  a(href='/accounts/'+secondary_account.name) #{secondary_account.name}
+            else
+              p you don't have any secondary accounts

@@ -2,7 +2,12 @@ extends layout
 
 block content
   .container
-    p.lead Manage Users
+    .row
+      .col-sm-10
+        p.lead Manage Users
+      .col-sm-2
+        a(href="/logout")
+          i.fa.fa-sign-out.fa-2x
     a(href='/')
       i.fa.fa-chevron-left.fa-2x(aria-hidden='true')
     table.table.table-hover.table-stripped
@@ -14,16 +19,16 @@ block content
       for user in users
         tr
           td
-            a(href='') #{user.username}
             if(user.is_admin)
-              i.fa.fa-superpowers(aria-hidden='true')
+              p #{user.username}
+                i.fa.fa-superpowers(aria-hidden='true')
+            else
+              p #{user.username}
           td
             if(user.is_admin)
-              i.fa.fa-unlock(aria-hidden='true')
               a(href='/users/revoke/'+user.username) revoke admin access
 
             else
-              i.fa.fa-lock(aria-hidden='true')
               a(href='/users/grant/'+user.username) make admin
 
           td
