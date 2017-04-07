@@ -3,21 +3,10 @@ extends layout
 block content
   .container
     h1 Update
-    form(role='form', action='/accounts/#{account.name}', method='post', style='max-width: 300px;')
+    form(role='form', action='/accounts/'+account.name, method='post', style='max-width: 300px;')
       .form-group
         label(for='name') Name
         input#name.form-control(type='text', name='name', placeholder='name', value=account.name)
-      .form-group
-        label(for='stage') Stage
-        select.form-control(name='stage')
-          option(selected=account.stage == 'configuration doc sent') configuration doc sent
-          option(selected=account.stage == 'configuring') configuring
-          option(selected=account.stage == 'awaiting development') awaiting development
-          option(selected=account.stage == 'development') development
-          option(selected=account.stage == 'testing') testing
-          option(selected=account.stage == 'merchant review') merchant review
-          option(selected=account.stage == 'gone live') gone live
-          option(selected=account.stage == 'post go live support') post go live support
       .form-group
         label(for='primary_manager') Account Manager
         select.form-control(name='primary_manager')

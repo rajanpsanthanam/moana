@@ -8,17 +8,6 @@ block content
         label(for='name') Name
         input#name.form-control(type='text', name='name', placeholder='name')
       .form-group
-        label(for='stage') Stage
-        select.form-control(name='stage')
-          option configuration doc sent
-          option configuring
-          option awaiting development
-          option development
-          option testing
-          option merchant review
-          option gone-live
-          option post go-live support
-      .form-group
         label(for='primary_manager') Account Manager
         select.form-control(name='primary_manager')
           for user in users

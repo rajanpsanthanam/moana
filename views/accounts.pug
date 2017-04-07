@@ -6,40 +6,71 @@ block content
       .col-sm-1
         a(href='/')
           i.fa.fa-chevron-left.fa-2x
-      .col-sm-3
+      .col-sm-4
         p.lead Manage Accounts
-      .col-sm-7
+      .col-sm-4
+        .input-group
+          input.form-control(type='text', placeholder='Search for...')
+          span.input-group-btn
+            button.btn.btn-default(type='button') Go!
+      .col-sm-2
         a.btn.btn-primary(href='/accounts/add', role='button') Add Account
       .col-sm-1
         a(href="/logout")
           i.fa.fa-sign-out.fa-2x
-    table.table.table-hover.table-stripped
-      thead
-        tr
-          th Account
-          th Stage
-          th Account Manager
-          th Edit
-          th Delete
-      for account in accounts
-        tr
-          td
-            a(href='/accounts/'+account.name) #{account.name}
-            if (account.is_on_web)
-              i.first-icon.fa.fa-globe(aria-hidden='true', style='color:orange')
-            if (account.is_on_android)
-              i.fa.fa-android(aria-hidden='true', style='color:green')
-            if (account.is_on_ios)
-              i.fa.fa-apple(aria-hidden='true', style='color:grey')
-            if (account.is_on_loyalty)
-              i.fa.fa-diamond(aria-hidden='true', style='color:red')
-          td
-            p #{account.stage}
-          td
-            p #{account.primary_manager}
-          td
-            a(href='/accounts/edit/'+account.name)
-              i.fa.fa-pencil(aria-hidden='true')
-          td
-            a(href='/accounts/remove/'+account.name)
-              i.fa.fa-trash(aria-hidden='true')
+    .modal-body.row
+      .col-md-2
+        h4 Filters
+        form(role='form', action="/accounts-filter/", method="post", style='max-width: 300px;')
+          .form-group
+            label(for='primary_manager') Account Manager
+            select.form-control(name='primary_manager')
+              for user in users
+                option #{user.username}
+          .form-group
+            label(for='secondary_manager') Backup Manager
+            select.form-control(name='secondary_manager')
+              for user in users
+                option #{user.username}
+          .form-group
+            label(for='is_on_android') Android Platform
+            input#is_on_android.form-control(name='is_on_android', type='checkbox')
+          .form-group
+            label(for='is_on_ios') IOS Platform
+            input#is_on_ios.form-control(name='is_on_ios', type='checkbox')
+          .form-group
+            label(for='is_on_web') Web Platform
+            input#is_on_web.form-control(name='is_on_web', type='checkbox')
+          .form-group
+            label(for='is_on_loyalty') Loyalty Platform
+            input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox')
+          button.btn.btn-default(type='submit') Submit
+
+      .col-md-10
+        table.table.table-hover.table-stripped
+          thead
+            tr
+              th Account
+              th Account Manager
+              th Edit
+              th Delete
+          for account in accounts
+            tr
+              td
+                a(href='/accounts/'+account.name) #{account.name}
+                if (account.is_on_web)
+                  i.first-icon.fa.fa-globe(aria-hidden='true', style='color:orange')
+                if (account.is_on_android)
+                  i.fa.fa-android(aria-hidden='true', style='color:green')
+                if (account.is_on_ios)
+                  i.fa.fa-apple(aria-hidden='true', style='color:grey')
+                if (account.is_on_loyalty)
+                  i.fa.fa-diamond(aria-hidden='true', style='color:red')
+              td
+                p #{account.primary_manager}
+              td
+                a(href='/accounts/edit/'+account.name)
+                  i.fa.fa-pencil(aria-hidden='true')
+              td
+                a(href='/accounts/remove/'+account.name)
+                  i.fa.fa-trash(aria-hidden='true')

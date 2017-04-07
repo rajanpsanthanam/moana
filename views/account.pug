@@ -10,6 +10,6 @@ block content
         h4.list-group-item-heading managed by #{account.primary_manager}
         p.list-group-item-text secondary support by #{account.secondary_manager}
     br
-    button.btn.btn-primary(onclick="stageReport('" + account.name + "')") Days per Stage
+    button.btn.btn-primary#stageButton(onclick="stageReport('" + account.name + "')") Days per Stage
     br
     canvas#myChart(style='width: 300px; height: 100px')

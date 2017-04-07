@@ -42,3 +42,8 @@ function stageReport(account){
     });
   });
 };
+
+
+$( document ).ready(function() {
+    $('#stageButton').click();
+});

@@ -11,7 +11,15 @@ router.get('/', (req, res, next) => {
         if(err){
             return res.render('accounts', { error : err.message });
         } else{
-            return res.render('accounts', { accounts : accounts, message: message });
+            var accounts = accounts;
+            User.find({"is_deleted": false}, 'username', function(err, users){
+                if(err){
+                    return res.render('accounts', { error : err.message });
+                }
+                else{
+                  return res.render('accounts', { accounts : accounts, users: users, message: message });
+                }
+            });
         }
     });
 });

@@ -7,13 +7,20 @@ const Comments = new Schema({
       by: String
   });
 
+
+const Stage = new Schema({
+  stage: String,
+  date: { type: Date, default: Date.now },
+  by: String
+})
+
 const Account = new Schema({
     name: String,
     agreed_date: Date,
     onboarding_start_date: Date,
     expected_go_live_date: Date,
     actual_live_date: Date,
-    stage: String,
+    stage: [Stage],
     primary_manager:String,
     secondary_manager:String,
     is_on_android:{ type: Boolean, default: false },
