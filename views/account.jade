@@ -2,4 +2,15 @@ extends layout
 
 block content
   .container
-    p.lead Account page
+    .page-header
+      h1
+        | #{account.name}
+    .list-group
+      a.list-group-item.active(href='#')
+        h4.list-group-item-heading managed by #{account.primary_manager}
+        p.list-group-item-text secondary support by #{account.secondary_manager}
+    br
+    button.btn.btn-primary#btnPieChart Create Bar Chart
+    br
+    div(id='”wrapper”')
+      canvas#myChart(style='width: 300px; height: 100px')

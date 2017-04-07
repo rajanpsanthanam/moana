@@ -3,7 +3,8 @@ extends layout
 block content
   .container
     if (!user)
-      img.img-circle(src='/images/moana-logo.png', height='150', width='150')
+      a(href="/")
+        img.img-square(src='/images/moana-cat.png', height='150', width='200')
       p.lead Hey there, I am moana. Your on-boarding virtual assistant.
       br
       p Login to access your account.
@@ -13,7 +14,6 @@ block content
       p New user? register to continue.
       a(href="/register") Register
     else
-      img.img-circle(src='/images/moana-logo.png', height='75', width='75')
       p.lead Hey #{user.username}, Good to see you back.
       br
       if (user.is_admin)

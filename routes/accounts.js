@@ -93,7 +93,7 @@ router.post('/:name', (req, res, next) => {
 
 // route to add new account form
 router.get('/add', (req, res, next) => {
-  User.find({}, 'username', function(err, users){
+  User.find({"is_deleted": false}, 'username', function(err, users){
         if(err){
             return res.render('new-account', { error : err.message });
         } else{
@@ -111,7 +111,7 @@ router.get('/edit/:name', (req, res, next) => {
         }
         else{
             var account = account;
-            User.find({}, 'username', function(err, users){
+            User.find({"is_deleted": false}, 'username', function(err, users){
                 if(err){
                     return res.render('edit-account', { error : err.message });
                 }
@@ -141,7 +141,7 @@ router.get('/remove/:name', (req, res, next) => {
 
 // get a single account
 router.get('/:name', (req, res, next) => {
-  Account.findOne({"name": req.params.name}, 'name stage primary_manager', function(err, account){
+  Account.findOne({"name": req.params.name}, '', function(err, account){
         if(err){
             return res.render('accounts', { error : err.message });
         } else{
