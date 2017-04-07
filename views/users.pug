@@ -15,20 +15,17 @@ block content
         tr
           td
             a(href='') #{user.username}
-            &nbsp;
             if(user.is_admin)
               i.fa.fa-superpowers(aria-hidden='true')
           td
             if(user.is_admin)
               i.fa.fa-unlock(aria-hidden='true')
-              &nbsp;
-              a(href='/users/revoke/#{user.username}') revoke admin access
+              a(href='/users/revoke/'+user.username) revoke admin access
 
             else
               i.fa.fa-lock(aria-hidden='true')
-              &nbsp;
-              a(href='/users/grant/#{user.username}') make admin
+              a(href='/users/grant/'+user.username) make admin
 
           td
-            a(href='/users/remove/#{user.username}')
+            a(href='/users/remove/'+user.username)
               i.fa.fa-trash(aria-hidden='true')

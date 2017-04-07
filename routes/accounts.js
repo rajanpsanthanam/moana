@@ -151,5 +151,11 @@ router.get('/:name', (req, res, next) => {
 })
 
 
+// return stage analytics data
+router.get('/analytics/:name/stage', (req, res, next) => {
+  res.send(JSON.stringify([12, 19, 3, 5, 2, 3]));
+})
+
+
 
 module.exports = router;

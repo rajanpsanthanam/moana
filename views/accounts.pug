@@ -4,7 +4,6 @@ block content
   .container
     p.lead Manage Accounts
     i.fa.fa-plus-square(aria-hidden='true')
-    &nbsp;
     a(href='/accounts/add') New Account
     br
     br
@@ -22,18 +21,14 @@ block content
       for account in accounts
         tr
           td
-            a(href='/accounts/#{account.name}') #{account.name}
+            a(href='/accounts/'+account.name) #{account.name}
             if (account.is_on_web)
-              &nbsp;
               i.fa.fa-globe(aria-hidden='true', style='color:orange')
             if (account.is_on_android)
-              &nbsp;
               i.fa.fa-android(aria-hidden='true', style='color:green')
             if (account.is_on_ios)
-              &nbsp;
               i.fa.fa-apple(aria-hidden='true', style='color:grey')
             if (account.is_on_loyalty)
-              &nbsp;
               i.fa.fa-diamond(aria-hidden='true', style='color:red')
           td
             p #{account.stage}
@@ -42,8 +37,8 @@ block content
           td
             p #{account.secondary_manager}
           td
-            a(href='/accounts/edit/#{account.name}')
+            a(href='/accounts/edit/'+account.name)
               i.fa.fa-pencil(aria-hidden='true')
           td
-            a(href='/accounts/remove/#{account.name}')
+            a(href='/accounts/remove/'+account.name)
               i.fa.fa-trash(aria-hidden='true')

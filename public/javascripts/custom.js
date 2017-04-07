@@ -1,15 +1,15 @@
-$(document).ready(function(){
 
-  $("#btnPieChart").on('click',function(e){
-    console.log('i am being called')
+function stageReport(account){
+  $.get( "/accounts/analytics/"+ account +"/stage", function( analytics ) {
+    analytics = JSON.parse(analytics);
     var ctx = document.getElementById("myChart");
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: ["configuration doc sent", "configuring", "awaiting development", "development", "testing", "merchant review"],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                label: '# of days spent per stage',
+                data: analytics,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -17,6 +17,7 @@ $(document).ready(function(){
                     'rgba(75, 192, 192, 0.2)',
                     'rgba(153, 102, 255, 0.2)',
                     'rgba(255, 159, 64, 0.2)'
+
                 ],
                 borderColor: [
                     'rgba(255,99,132,1)',
@@ -40,4 +41,4 @@ $(document).ready(function(){
         }
     });
   });
-});
+};
