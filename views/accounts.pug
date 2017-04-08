@@ -15,7 +15,7 @@ block content
             span.input-group-btn
               button.btn.btn-default(type='submit') Go!
       .col-sm-2
-        a.btn.btn-primary(href='/accounts/add', role='button') Add Account
+        a.btn.btn-warning(href='/accounts/add', role='button') Add Account
       .col-sm-1
         a(href="/logout")
           i.fa.fa-sign-out.fa-2x
@@ -55,6 +55,7 @@ block content
             tr
               th Account
               th Account Manager
+              th Backup Manager
               th Edit
               th Delete
           for account in accounts
@@ -71,6 +72,8 @@ block content
                   i.fa.fa-diamond(aria-hidden='true', style='color:red')
               td
                 p #{account.primary_manager}
+              td
+                p #{account.secondary_manager}
               td
                 a(href='/accounts/edit/'+account.name)
                   i.fa.fa-pencil(aria-hidden='true')

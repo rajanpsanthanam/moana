@@ -2,7 +2,7 @@ extends layout
 
 block content
   .container
-    h1 Update
+    h1 Update Account
     form(role='form', action='/accounts/'+account.name, method='post', style='max-width: 800px;')
       .row
         .col-sm-6
@@ -19,18 +19,21 @@ block content
             select.form-control(name='secondary_manager')
               for user in users
                 option(selected=account.secondary_manager == user.username) #{user.username}
-          .form-group
-            label(for='is_on_android') Android Platform
-            input#is_on_android.form-control(name='is_on_android', type='checkbox', checked=account.is_on_android)
-          .form-group
-            label(for='is_on_ios') IOS Platform
-            input#is_on_ios.form-control(name='is_on_ios', type='checkbox', checked=account.is_on_ios)
-          .form-group
-            label(for='is_on_web') Web Platform
-            input#is_on_web.form-control(name='is_on_web', type='checkbox', checked=account.is_on_web)
-          .form-group
-            label(for='is_on_loyalty') Loyalty Platform
-            input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox', checked=account.is_on_loyalty)
+          .row
+            .col-sm-6
+              .form-group
+                label(for='is_on_android') Android Platform
+                input#is_on_android.form-control(name='is_on_android', type='checkbox', checked=account.is_on_android)
+              .form-group
+                label(for='is_on_ios') IOS Platform
+                input#is_on_ios.form-control(name='is_on_ios', type='checkbox', checked=account.is_on_ios)
+            .col-sm-6
+              .form-group
+                label(for='is_on_web') Web Platform
+                input#is_on_web.form-control(name='is_on_web', type='checkbox', checked=account.is_on_web)
+              .form-group
+                label(for='is_on_loyalty') Loyalty Platform
+                input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox', checked=account.is_on_loyalty)
         .row
           .col-sm-6
             .form-group
@@ -62,6 +65,6 @@ block content
                 input#actual_live_date.form-control(name='actual_live_date', type='date')
         .row
           .col-xs-2.col-sm-2.col-md-2
-            input.btn.btn.btn-success.btn-block(type='submit', value='Sign In')
+            input.btn.btn.btn-success.btn-block(type='submit', value='Update')
           .col-xs-2.col-sm-2.col-md-2
             a.btn.btn.btn-primary.btn-block(href='/accounts') Cancel

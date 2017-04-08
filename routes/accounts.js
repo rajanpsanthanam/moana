@@ -37,15 +37,16 @@ function filter_data(params){
 
 // get all accounts
 router.get('/', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   var message = req.query.message;
   var filters = filter_data(req.query);
-  console.log(filters);
   Account.find(filters, '', function(err, accounts){
         if(err){
             return res.render('accounts', { error : err.message });
         } else{
             var accounts = accounts;
-            console.log(accounts);
             User.find({"is_deleted": false}, 'username', function(err, users){
                 if(err){
                     return res.render('accounts', { error : err.message });
@@ -60,6 +61,9 @@ router.get('/', (req, res, next) => {
 
 // create new account
 router.post('/', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   data = {
     'name': req.body.name,
     'stage': req.body.stage,
@@ -98,6 +102,9 @@ router.post('/', (req, res, next) => {
 
 // update account data
 router.post('/:name', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   Account.findOne({"name": req.params.name}, '', function(err, account){
       if(err){
         res.redirect('/accounts/?message=update failed')
@@ -135,6 +142,9 @@ router.post('/:name', (req, res, next) => {
 
 // route to add new account form
 router.get('/add', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   User.find({"is_deleted": false}, 'username', function(err, users){
         if(err){
             return res.render('new-account', { error : err.message });
@@ -147,6 +157,9 @@ router.get('/add', (req, res, next) => {
 
 // route to edit account form
 router.get('/edit/:name', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   Account.findOne({"name": req.params.name}, '', function(err, account){
         if(err){
             return res.render('edit-account', { error : err.message });
@@ -168,6 +181,9 @@ router.get('/edit/:name', (req, res, next) => {
 
 // soft delete account
 router.get('/remove/:name', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   Account.findOne({"name": req.params.name}, '', function(err, account){
       if(err){
         res.redirect('/accounts/?message=delete failed')
@@ -183,6 +199,9 @@ router.get('/remove/:name', (req, res, next) => {
 
 // get a single account
 router.get('/:name', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   Account.findOne({"name": req.params.name}, '', function(err, account){
         if(err){
             return res.render('accounts', { error : err.message });
@@ -195,9 +214,26 @@ router.get('/:name', (req, res, next) => {
 
 // return stage analytics data
 router.get('/analytics/:name/stage', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
   res.send(JSON.stringify([12, 19, 3, 5, 2, 3]));
 })
 
+router.post('/add-comment/:name', (req, res, next) => {
+  if (!req.user){
+    res.redirect('/');
+  }
+  var comment = req.body.comment
+  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user.username} } }, function(err, account){
+      if(err){
+        res.redirect('/accounts/'+req.params.name+'/')
+      }
+      else{
+        res.redirect('/accounts/'+req.params.name+'/')
+      }
+    });
+});
 
 
 module.exports = router;

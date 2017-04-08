@@ -2,14 +2,50 @@ extends layout
 
 block content
   .container
+    .row
+      .col-sm-9
+        a(href='/accounts')
+          i.fa.fa-chevron-left.fa-2x
+      .col-sm-2
+        form(role='form', action="#", method="get")
+          button.btn.btn-warning(type='submit') Change Stage
+      .col-sm-1
+        a(href="/logout")
+          i.fa.fa-sign-out.fa-2x
     .page-header
       h1
         | #{account.name}
-    .list-group
-      a.list-group-item.active(href='#')
-        h4.list-group-item-heading managed by #{account.primary_manager}
-        p.list-group-item-text secondary support by #{account.secondary_manager}
-    br
-    button.btn.btn-primary#stageButton(onclick="stageReport('" + account.name + "')") Days per Stage
-    br
-    canvas#myChart(style='width: 300px; height: 100px')
+      h4 managed by #{account.primary_manager}, secondary support by #{account.secondary_manager}
+    .row
+      .col-sm-10
+        .row
+          .col-sm-3
+            button.btn.btn-primary#stageButton(onclick="stageReport('" + account.name + "')") Days per Stage
+          .col-sm-3
+            button.btn.btn-primary#stageButton(onclick="stageReport('" + account.name + "')") Days per Stage
+          .col-sm-3
+            button.btn.btn-primary#stageButton(onclick="stageReport('" + account.name + "')") Days per Stage
+          .col-sm-3
+            button.btn.btn-primary#stageButton(onclick="stageReport('" + account.name + "')") Days per Stage
+        br
+        .row
+            canvas#myChart(style='width: 300px; height: 100px')
+      .col-sm-2
+        .list-group
+          .row
+            form(role='form', action='/accounts/add-comment/'+account.name, method="post")
+              .row
+                textarea.form-control(rows='3', name='comment')
+              br
+              .row.text-center
+                button.btn.btn-warning(type='submit') add comment
+          hr
+          .row
+            p.lead Comments
+            if(account.comments)
+              for comment in account.comments.reverse().slice(0, 3)
+                p.list-group-item-text #{comment.body}
+                p by #{comment.by} on #{comment.date}
+                br
+            else
+              p No comments yet
