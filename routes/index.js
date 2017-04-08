@@ -61,7 +61,7 @@ router.post('/register', (req, res, next) => {
 
 // login page
 router.get('/login', (req, res) => {
-    res.render('login', { user : req.user, error : req.flash('error')});
+    res.render('index', { user : req.user, error : req.flash('error')});
 });
 
 

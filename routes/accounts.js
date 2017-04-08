@@ -6,16 +6,18 @@ const User = require('../models/user');
 
 function filter_data(params){
   var filters = {"is_deleted": false};
-  if(params.search){
-    filters['name'] = { $regex: params.search+'.*', $options: 'i' };
+  if('name' in params){
+    filters['name'] = { $regex: params.name+'.*', $options: 'i' };
   }
-  primary_manager = params.primary_manager;
-  secondary_manager = params.secondary_manager;
-  if (primary_manager != 'all'){
-    filters['primary_manager'] = primary_manager;
+  if ('primary_manager' in params){
+    if (params.primary_manager != 'all'){
+      filters['primary_manager'] = params.primary_manager;
+    }
   }
-  if (secondary_manager != 'all'){
-    filters['secondary_manager'] = secondary_manager;
+  if ('secondary_manager' in params){
+    if (params.secondary_manager != 'all'){
+      filters['secondary_manager'] = params.secondary_manager;
+    }
   }
   if ('is_on_android' in params){
     filters['is_on_android'] = true;
@@ -37,11 +39,13 @@ function filter_data(params){
 router.get('/', (req, res, next) => {
   var message = req.query.message;
   var filters = filter_data(req.query);
+  console.log(filters);
   Account.find(filters, '', function(err, accounts){
         if(err){
             return res.render('accounts', { error : err.message });
         } else{
             var accounts = accounts;
+            console.log(accounts);
             User.find({"is_deleted": false}, 'username', function(err, users){
                 if(err){
                     return res.render('accounts', { error : err.message });

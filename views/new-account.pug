@@ -3,47 +3,52 @@ extends layout
 block content
   .container
     h1 New Account
-    form(role='form', action="/accounts", method="post", style='max-width: 300px;')
-      .form-group
-        label(for='name') Name
-        input#name.form-control(type='text', name='name', placeholder='name')
-      .form-group
-        label(for='primary_manager') Account Manager
-        select.form-control(name='primary_manager')
-          for user in users
-            option #{user.username}
-      .form-group
-        label(for='secondary_manager') Backup Manager
-        select.form-control(name='secondary_manager')
-          for user in users
-            option #{user.username}
-      .form-group
-        label(for='is_on_android') Android Platform
-        input#is_on_android.form-control(name='is_on_android', type='checkbox')
-      .form-group
-        label(for='is_on_ios') IOS Platform
-        input#is_on_ios.form-control(name='is_on_ios', type='checkbox')
-      .form-group
-        label(for='is_on_web') Web Platform
-        input#is_on_web.form-control(name='is_on_web', type='checkbox')
-      .form-group
-        label(for='is_on_loyalty') Loyalty Platform
-        input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox')
-      .form-group
-        label(for='no_of_stores') No: of Stores
-        input#no_of_stores.form-control(name='no_of_stores', type='number')
-      .form-group
-        label(for='agreed_date') Agreed Date
-        input#agreed_date.form-control(name='agreed_date', type='date')
-      .form-group
-        label(for='onboarding_start_date') Onboarding Start Date
-        input#onboarding_start_date.form-control(name='onboarding_start_date', type='date')
-      .form-group
-        label(for='expected_go_live_date') Expected Go Live Date
-        input#expected_go_live_date.form-control(name='expected_go_live_date', type='date')
-      .form-group
-        label(for='actual_live_date') Actual Live Date
-        input#actual_live_date.form-control(name='actual_live_date', type='date')
-      button.btn.btn-default(type='submit') Submit
-      a(href='/')
-        button.btn.btn-primary(type="button") Cancel
+    form(role='form', action="/accounts", method="post", style='max-width: 800px;')
+      .row
+        .col-sm-6
+          .form-group
+            label(for='name') Name
+            input#name.form-control(type='text', name='name', placeholder='name')
+          .form-group
+            label(for='primary_manager') Account Manager
+            select.form-control(name='primary_manager')
+              for user in users
+                option #{user.username}
+          .form-group
+            label(for='secondary_manager') Backup Manager
+            select.form-control(name='secondary_manager')
+              for user in users
+                option #{user.username}
+          .form-group
+            label(for='is_on_android') Android Platform
+            input#is_on_android.form-control(name='is_on_android', type='checkbox')
+          .form-group
+            label(for='is_on_ios') IOS Platform
+            input#is_on_ios.form-control(name='is_on_ios', type='checkbox')
+          .form-group
+            label(for='is_on_web') Web Platform
+            input#is_on_web.form-control(name='is_on_web', type='checkbox')
+          .form-group
+            label(for='is_on_loyalty') Loyalty Platform
+            input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox')
+        .col-sm-6
+          .form-group
+            label(for='no_of_stores') No: of Stores
+            input#no_of_stores.form-control(name='no_of_stores', type='number')
+          .form-group
+            label(for='agreed_date') Agreed Date
+            input#agreed_date.form-control(name='agreed_date', type='date')
+          .form-group
+            label(for='onboarding_start_date') Onboarding Start Date
+            input#onboarding_start_date.form-control(name='onboarding_start_date', type='date')
+          .form-group
+            label(for='expected_go_live_date') Expected Go Live Date
+            input#expected_go_live_date.form-control(name='expected_go_live_date', type='date')
+          .form-group
+            label(for='actual_live_date') Actual Live Date
+            input#actual_live_date.form-control(name='actual_live_date', type='date')
+      .row
+        .col-xs-2.col-sm-2.col-md-2
+          input.btn.btn.btn-success.btn-block(type='submit', value='Sign In')
+        .col-xs-2.col-sm-2.col-md-2
+          a.btn.btn.btn-primary.btn-block(href='/accounts') Cancel

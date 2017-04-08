@@ -5,7 +5,7 @@ const User = require('../models/user');
 
 /*
 Note: to create initial admin
-db.users.updateOne({"username": ""}, {$set: {"is_admin": true}})
+db.users.updateOne({"username": "admin"}, {$set: {"is_admin": true}})
 */
 router.get('/', (req, res, next) => {
   var message = req.query.message;

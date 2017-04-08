@@ -59,9 +59,9 @@ block content
                 h3 Primary Accounts
                 if(primary_accounts.length > 0)
                   for primary_account in primary_accounts
-                    .row
-                      .col-sm-1
-                      a(href='/accounts/'+primary_account.name) #{primary_account.name}
+                    a(href='/accounts/'+primary_account.name) #{primary_account.name}
+                    br
+                    br
                 else
                   p you are yet to start managing accounts
           .col-sm-6.text-center
@@ -70,8 +70,8 @@ block content
                 h3 Secondary Accounts
                 if(secondary_accounts.length > 0)
                   for secondary_account in secondary_accounts
-                    .row
-                      .col-sm-1
-                      a(href='/accounts/'+secondary_account.name) #{secondary_account.name}
+                    a(href='/accounts/'+secondary_account.name) #{secondary_account.name}
+                    br
+                    br
                 else
                   p you don't have any secondary accounts
