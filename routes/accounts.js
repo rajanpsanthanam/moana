@@ -4,10 +4,40 @@ const Account = require('../models/account');
 const User = require('../models/user');
 
 
+function filter_data(params){
+  var filters = {"is_deleted": false};
+  if(params.search){
+    filters['name'] = { $regex: params.search+'.*', $options: 'i' };
+  }
+  primary_manager = params.primary_manager;
+  secondary_manager = params.secondary_manager;
+  if (primary_manager != 'all'){
+    filters['primary_manager'] = primary_manager;
+  }
+  if (secondary_manager != 'all'){
+    filters['secondary_manager'] = secondary_manager;
+  }
+  if ('is_on_android' in params){
+    filters['is_on_android'] = true;
+  }
+  if ('is_on_ios' in params){
+    filters['is_on_ios'] = true;
+  }
+  if ('is_on_web' in params){
+    filters['is_on_web'] = true;
+  }
+  if ('is_on_loyalty' in params){
+    filters['is_on_loyalty'] = true;
+  }
+  return filters;
+}
+
+
 // get all accounts
 router.get('/', (req, res, next) => {
   var message = req.query.message;
-  Account.find({"is_deleted": false}, '', function(err, accounts){
+  var filters = filter_data(req.query);
+  Account.find(filters, '', function(err, accounts){
         if(err){
             return res.render('accounts', { error : err.message });
         } else{
@@ -17,7 +47,7 @@ router.get('/', (req, res, next) => {
                     return res.render('accounts', { error : err.message });
                 }
                 else{
-                  return res.render('accounts', { accounts : accounts, users: users, message: message });
+                  return res.render('accounts', { accounts : accounts, users: users, filters: filters, message: message });
                 }
             });
         }

@@ -9,10 +9,11 @@ block content
       .col-sm-4
         p.lead Manage Accounts
       .col-sm-4
-        .input-group
-          input.form-control(type='text', placeholder='Search for...')
-          span.input-group-btn
-            button.btn.btn-default(type='button') Go!
+        form(role='form', action="/accounts/", method="get")
+          .input-group
+            input.form-control(type='text', placeholder='Search for...', name='search')
+            span.input-group-btn
+              button.btn.btn-default(type='submit') Go!
       .col-sm-2
         a.btn.btn-primary(href='/accounts/add', role='button') Add Account
       .col-sm-1
@@ -21,29 +22,31 @@ block content
     .modal-body.row
       .col-md-2
         h4 Filters
-        form(role='form', action="/accounts-filter/", method="post", style='max-width: 300px;')
+        form(role='form', action="/accounts/", method="get", style='max-width: 300px;')
           .form-group
             label(for='primary_manager') Account Manager
             select.form-control(name='primary_manager')
+              option all
               for user in users
-                option #{user.username}
+                option(selected=user.username == filters.primary_manager) #{user.username}
           .form-group
             label(for='secondary_manager') Backup Manager
-            select.form-control(name='secondary_manager')
+            select.form-control(name='secondary_manager', value=filters.secondary_manager)
+              option all
               for user in users
-                option #{user.username}
+                option(selected=user.username == filters.secondary_manager) #{user.username}
           .form-group
             label(for='is_on_android') Android Platform
-            input#is_on_android.form-control(name='is_on_android', type='checkbox')
+            input#is_on_android.form-control(name='is_on_android', type='checkbox', checked=filters.is_on_android)
           .form-group
             label(for='is_on_ios') IOS Platform
-            input#is_on_ios.form-control(name='is_on_ios', type='checkbox')
+            input#is_on_ios.form-control(name='is_on_ios', type='checkbox', checked=filters.is_on_ios)
           .form-group
             label(for='is_on_web') Web Platform
-            input#is_on_web.form-control(name='is_on_web', type='checkbox')
+            input#is_on_web.form-control(name='is_on_web', type='checkbox', checked=filters.is_on_web)
           .form-group
             label(for='is_on_loyalty') Loyalty Platform
-            input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox')
+            input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox', checked=filters.is_on_loyalty)
           button.btn.btn-default(type='submit') Submit
 
       .col-md-10
