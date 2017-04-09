@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Account = require('../models/account');
 const User = require('../models/user');
+const Feature = require('../models/feature');
 
 
 function filter_data(params){
@@ -23,11 +24,56 @@ function filter_data(params){
 }
 
 
-// get all accounts
-router.get('/', (req, res, next) => {
+// auth middleware
+router.use(function (req, res, next) {
   if (!req.user){
+      res.redirect('/');
+  }
+  next();
+});
+
+
+// get a single account
+router.get('/view/:name', (req, res, next) => {
+  Account.findOne({"name": req.params.name}, '', function(err, account){
+        if(err){
+            return res.render('accounts', { error : err.message });
+        } else{
+            return res.render('account', { account : account });
+        }
+    });
+});
+
+
+// return stage analytics data
+router.get('/analytics/:name/stage', (req, res, next) => {
+  res.send(JSON.stringify([12, 19, 3, 5, 2, 3]));
+})
+
+router.post('/add-comment/:name', (req, res, next) => {
+  var comment = req.body.comment
+  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user.username} } }, function(err, account){
+      if(err){
+        res.redirect('/accounts/'+req.params.name+'/')
+      }
+      else{
+        res.redirect('/accounts/'+req.params.name+'/')
+      }
+    });
+});
+
+
+// admin auth middleware
+router.use(function (req, res, next) {
+  if(!req.user.is_admin){
     res.redirect('/');
   }
+  next();
+});
+
+
+// get all accounts
+router.get('/', (req, res, next) => {
   var message = req.query.message;
   var filters = filter_data(req.query);
   Account.find(filters, '', function(err, accounts){
@@ -49,36 +95,49 @@ router.get('/', (req, res, next) => {
 
 // create new account
 router.post('/', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
-  data = {
-    'name': req.body.name,
-    'stage': req.body.stage,
-    'primary_manager': req.body.primary_manager,
-    'secondary_manager': req.body.secondary_manager
-  }
-  if (req.body.no_of_stores){
-    data['no_of_stores'] = req.body.no_of_stores
-  }
-  if (req.body.agreed_date){
-    data['agreed_date'] = new Date(req.body.agreed_date)
-  }
-  if (req.body.onboarding_start_date){
-    data['onboarding_start_date'] = new Date(req.body.onboarding_start_date)
-  }
-  if (req.body.expected_go_live_date){
-    data['expected_go_live_date'] = new Date(req.body.expected_go_live_date)
-  }
-  if (req.body.actual_live_date){
-    data['actual_live_date'] = new Date(req.body.actual_live_date)
-  }
-  var account = new Account(data);
-  account.save(function (err) {
-    if (err) {
-      res.redirect('/accounts/?message=create failed');
-    } else {
-      res.redirect('/accounts/?message=successfully created');
+  Feature.find({"is_deleted": false}, '', function(err, features){
+    if(err){
+        res.redirect('/accounts/?message=create failed');
+    }
+    else{
+      var opted_features = []
+      for(i=0; i<features.length; i++) {
+        if(features[i].name in req.body){
+          opted_features.push(features[i]._id)
+        }
+      }
+      data = {
+        'name': req.body.name,
+        'stage': req.body.stage,
+        'primary_manager': req.body.primary_manager,
+        'secondary_manager': req.body.secondary_manager
+      }
+      if (req.body.no_of_stores){
+        data['no_of_stores'] = req.body.no_of_stores
+      }
+      if (req.body.agreed_date){
+        data['agreed_date'] = new Date(req.body.agreed_date)
+      }
+      if (req.body.onboarding_start_date){
+        data['onboarding_start_date'] = new Date(req.body.onboarding_start_date)
+      }
+      if (req.body.expected_go_live_date){
+        data['expected_go_live_date'] = new Date(req.body.expected_go_live_date)
+      }
+      if (req.body.actual_live_date){
+        data['actual_live_date'] = new Date(req.body.actual_live_date)
+      }
+      if(opted_features){
+        data['features'] = opted_features
+      }
+      var account = new Account(data);
+      account.save(function (err) {
+        if (err) {
+          res.redirect('/accounts/?message=create failed');
+        } else {
+          res.redirect('/accounts/?message=successfully created');
+        }
+      });
     }
   });
 });
@@ -86,35 +145,48 @@ router.post('/', (req, res, next) => {
 
 // update account data
 router.post('/:name', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
-  Account.findOne({"name": req.params.name}, '', function(err, account){
-      if(err){
-        res.redirect('/accounts/?message=update failed')
+  Feature.find({"is_deleted": false}, '', function(err, features){
+    if(err){
+        res.redirect('/accounts/?message=update failed');
+    }
+    else{
+      var opted_features = []
+      for(i=0; i<features.length; i++) {
+        if(features[i].name in req.body){
+          opted_features.push(features[i]._id)
+        }
       }
-      else{
-        account.name = req.body.name;
-        account.stage = req.body.stage;
-        account.primary_manager = req.body.primary_manager;
-        account.secondary_manager = req.body.secondary_manager;
-        if (req.body.no_of_stores){
-          account.no_of_stores = req.body.no_of_stores;
+      Account.findOne({"name": req.params.name}, '', function(err, account){
+        if(err){
+          res.redirect('/accounts/?message=update failed')
         }
-        if (req.body.agreed_date){
-          account.agreed_date = new Date(req.body.agreed_date);
-        }
-        if (req.body.onboarding_start_date){
-          account.onboarding_start_date = new Date(req.body.onboarding_start_date);
-        }
-        if (req.body.expected_go_live_date){
-          account.expected_go_live_date = new Date(req.body.expected_go_live_date);
-        }
-        if (req.body.actual_live_date){
-          account.actual_live_date = new Date(req.body.actual_live_date);
-        }
-        account.save();
-        res.redirect('/accounts/?message=successfully updated')
+        else{
+          account.name = req.body.name;
+          account.stage = req.body.stage;
+          account.primary_manager = req.body.primary_manager;
+          account.secondary_manager = req.body.secondary_manager;
+          if (req.body.no_of_stores){
+            account.no_of_stores = req.body.no_of_stores;
+          }
+          if (req.body.agreed_date){
+            account.agreed_date = new Date(req.body.agreed_date);
+          }
+          if (req.body.onboarding_start_date){
+            account.onboarding_start_date = new Date(req.body.onboarding_start_date);
+          }
+          if (req.body.expected_go_live_date){
+            account.expected_go_live_date = new Date(req.body.expected_go_live_date);
+          }
+          if (req.body.actual_live_date){
+            account.actual_live_date = new Date(req.body.actual_live_date);
+          }
+          if(opted_features){
+            account.features = opted_features
+          }
+          account.save();
+          res.redirect('/accounts/?message=successfully updated')
+          }
+        });
       }
     });
   });
@@ -122,24 +194,25 @@ router.post('/:name', (req, res, next) => {
 
 // route to add new account form
 router.get('/add', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
   User.find({"is_deleted": false}, 'username', function(err, users){
         if(err){
             return res.render('new-account', { error : err.message });
         } else{
-            return res.render('new-account', { users : users});
+            var users = users;
+            Feature.find({"is_deleted": false}, '_id, name', function(err, features){
+                  if(err){
+                      return res.render('new-account', { error : err.message });
+                  } else{
+                      return res.render('new-account', { users : users, features: features});
+                  }
+              });
         }
-    })
+    });
 });
 
 
 // route to edit account form
 router.get('/edit/:name', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
   Account.findOne({"name": req.params.name}, '', function(err, account){
         if(err){
             return res.render('edit-account', { error : err.message });
@@ -151,7 +224,14 @@ router.get('/edit/:name', (req, res, next) => {
                     return res.render('edit-account', { error : err.message });
                 }
                 else{
-                  return res.render('edit-account', { account : account, users: users});
+                  var users = users;
+                  Feature.find({"is_deleted": false}, '_id, name', function(err, features){
+                        if(err){
+                            return res.render('edit-account', { error : err.message });
+                        } else{
+                            return res.render('edit-account', { account: account, users : users, features: features});
+                        }
+                    });
                 }
             });
         }
@@ -161,9 +241,6 @@ router.get('/edit/:name', (req, res, next) => {
 
 // soft delete account
 router.get('/remove/:name', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
   Account.findOne({"name": req.params.name}, '', function(err, account){
       if(err){
         res.redirect('/accounts/?message=delete failed')
@@ -175,45 +252,5 @@ router.get('/remove/:name', (req, res, next) => {
       }
     });
 });
-
-
-// get a single account
-router.get('/:name', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
-  Account.findOne({"name": req.params.name}, '', function(err, account){
-        if(err){
-            return res.render('accounts', { error : err.message });
-        } else{
-            return res.render('account', { account : account });
-        }
-    })
-})
-
-
-// return stage analytics data
-router.get('/analytics/:name/stage', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
-  res.send(JSON.stringify([12, 19, 3, 5, 2, 3]));
-})
-
-router.post('/add-comment/:name', (req, res, next) => {
-  if (!req.user){
-    res.redirect('/');
-  }
-  var comment = req.body.comment
-  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user.username} } }, function(err, account){
-      if(err){
-        res.redirect('/accounts/'+req.params.name+'/')
-      }
-      else{
-        res.redirect('/accounts/'+req.params.name+'/')
-      }
-    });
-});
-
 
 module.exports = router;

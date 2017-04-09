@@ -72,7 +72,7 @@ block content
                 h3 Primary Accounts
                 if(primary_accounts.length > 0)
                   for primary_account in primary_accounts
-                    a(href='/accounts/'+primary_account.name) #{primary_account.name}
+                    a(href='/accounts/view/'+primary_account.name) #{primary_account.name}
                     br
                     br
                 else
@@ -83,7 +83,7 @@ block content
                 h3 Secondary Accounts
                 if(secondary_accounts.length > 0)
                   for secondary_account in secondary_accounts
-                    a(href='/accounts/'+secondary_account.name) #{secondary_account.name}
+                    a(href='/accounts/view/'+secondary_account.name) #{secondary_account.name}
                     br
                     br
                 else

@@ -5,7 +5,7 @@ block content
     h1 Create Account
     form(role='form', action="/accounts", method="post", style='max-width: 800px;')
       .row
-        .col-sm-6
+        .col-sm-4
           .form-group
             label(for='name') Name
             input#name.form-control(type='text', name='name', placeholder='name')
@@ -22,7 +22,7 @@ block content
           .form-group
             label(for='no_of_stores') No: of Stores
             input#no_of_stores.form-control(name='no_of_stores', type='number')
-        .col-sm-6
+        .col-sm-4
           .form-group
             label(for='agreed_date') Agreed Date
             input#agreed_date.form-control(name='agreed_date', type='date')
@@ -35,6 +35,16 @@ block content
           .form-group
             label(for='actual_live_date') Actual Live Date
             input#actual_live_date.form-control(name='actual_live_date', type='date')
+        .col-sm-4
+          h4 Choose features
+          if(features)
+            for feature in features
+              .checkbox
+                label
+                  input(name=feature.name, type='checkbox', value=feature._id)
+                  |     #{feature.name}
+          else
+            p Couldn't find any features in the system
       .row
         .col-xs-2.col-sm-2.col-md-2
           input.btn.btn.btn-success.btn-block(type='submit', value='Create')

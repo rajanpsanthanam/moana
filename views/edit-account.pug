@@ -5,7 +5,7 @@ block content
     h1 Update Account
     form(role='form', action='/accounts/'+account.name, method='post', style='max-width: 800px;')
       .row
-        .col-sm-6
+        .col-sm-4
           .form-group
             label(for='name') Name
             input#name.form-control(type='text', name='name', placeholder='name', value=account.name)
@@ -22,34 +22,44 @@ block content
           .form-group
             label(for='no_of_stores') No: of Stores
             input#no_of_stores.form-control(name='no_of_stores', type='number', value=account.no_of_stores)
-        .row
-          .col-sm-6
-            .form-group
-              label(for='agreed_date') Agreed Date
-              if (account.agreed_date)
-                input#agreed_date.form-control(name='agreed_date', type='date', value=account.agreed_date.toISOString().substring(0, 10))
-              else
-                input#agreed_date.form-control(name='agreed_date', type='date')
-            .form-group
-              label(for='onboarding_start_date') Onboarding Start Date
-              if(account.onboarding_start_date)
-                input#onboarding_start_date.form-control(name='onboarding_start_date', type='date', value=account.onboarding_start_date.toISOString().substring(0, 10))
-              else
-                input#onboarding_start_date.form-control(name='onboarding_start_date', type='date')
-            .form-group
-              label(for='expected_go_live_date') Expected Go Live Date
-              if(account.expected_go_live_date)
-                input#expected_go_live_date.form-control(name='expected_go_live_date', type='date', value=account.expected_go_live_date.toISOString().substring(0, 10))
-              else
-                input#expected_go_live_date.form-control(name='expected_go_live_date', type='date')
-            .form-group
-              label(for='actual_live_date') Actual Live Date
-              if (account.actual_live_date)
-                input#actual_live_date.form-control(name='actual_live_date', type='date', value=account.actual_live_date.toISOString().substring(0, 10))
-              else
-                input#actual_live_date.form-control(name='actual_live_date', type='date')
-        .row
-          .col-xs-2.col-sm-2.col-md-2
-            input.btn.btn.btn-success.btn-block(type='submit', value='Update')
-          .col-xs-2.col-sm-2.col-md-2
-            a.btn.btn.btn-primary.btn-block(href='/accounts') Cancel
+
+        .col-sm-4
+          .form-group
+            label(for='agreed_date') Agreed Date
+            if (account.agreed_date)
+              input#agreed_date.form-control(name='agreed_date', type='date', value=account.agreed_date.toISOString().substring(0, 10))
+            else
+              input#agreed_date.form-control(name='agreed_date', type='date')
+          .form-group
+            label(for='onboarding_start_date') Onboarding Start Date
+            if(account.onboarding_start_date)
+              input#onboarding_start_date.form-control(name='onboarding_start_date', type='date', value=account.onboarding_start_date.toISOString().substring(0, 10))
+            else
+              input#onboarding_start_date.form-control(name='onboarding_start_date', type='date')
+          .form-group
+            label(for='expected_go_live_date') Expected Go Live Date
+            if(account.expected_go_live_date)
+              input#expected_go_live_date.form-control(name='expected_go_live_date', type='date', value=account.expected_go_live_date.toISOString().substring(0, 10))
+            else
+              input#expected_go_live_date.form-control(name='expected_go_live_date', type='date')
+          .form-group
+            label(for='actual_live_date') Actual Live Date
+            if (account.actual_live_date)
+              input#actual_live_date.form-control(name='actual_live_date', type='date', value=account.actual_live_date.toISOString().substring(0, 10))
+            else
+              input#actual_live_date.form-control(name='actual_live_date', type='date')
+        .col-sm-4
+          h4 Choose features
+          if(features)
+            for feature in features
+              .checkbox
+                label
+                  input(name=feature.name, type='checkbox', value=feature._id, checked=account.features.indexOf(feature._id) > -1)
+                  |     #{feature.name}
+          else
+            p Couldn't find any features in the system
+      .row
+        .col-xs-2.col-sm-2.col-md-2
+          input.btn.btn.btn-success.btn-block(type='submit', value='Update')
+        .col-xs-2.col-sm-2.col-md-2
+          a.btn.btn.btn-primary.btn-block(href='/accounts') Cancel
