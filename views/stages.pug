@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col-sm-1
+        a(href='/')
+          i.fa.fa-chevron-left.fa-2x
+      .col-sm-8
+        p.lead Manage Stages
+      .col-sm-2
+        a.btn.btn-warning(href='/stages/add', role='button') Add Stage
+      .col-sm-1
+        a(href="/logout")
+          i.fa.fa-sign-out.fa-2x
+    if(stages)
+      table.table.table-hover.table-stripped
+        thead
+          tr
+            th Stage
+            th Color
+            th Edit
+            th Delete
+        for stage in stages
+          tr
+            td
+              p #{stage.name}
+            td
+              p #{stage.color}
+            td
+              a(href='/stages/edit/'+stage.name+'/')
+                i.fa.fa-pencil(aria-hidden='true')
+            td
+              a(href='/stages/remove/'+stage.name+'/')
+                i.fa.fa-trash(aria-hidden='true')
+    else
+      p.text-center No stages created yet. create one

@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col-sm-1
+        a(href='/')
+          i.fa.fa-chevron-left.fa-2x
+      .col-sm-8
+        p.lead Manage Features
+      .col-sm-2
+        a.btn.btn-warning(href='/features/add', role='button') Add Feature
+      .col-sm-1
+        a(href="/logout")
+          i.fa.fa-sign-out.fa-2x
+    if(features)
+      table.table.table-hover.table-stripped
+        thead
+          tr
+            th Feature
+            th Color
+            th Edit
+            th Delete
+        for feature in features
+          tr
+            td
+              p #{feature.name}
+            td
+              p #{feature.color}
+            td
+              a(href='/features/edit/'+feature.name)
+                i.fa.fa-pencil(aria-hidden='true')
+
+            td
+              a(href='/features/remove/'+feature.name)
+                i.fa.fa-trash(aria-hidden='true')
+    else
+      p.text-center No features created yet. create one

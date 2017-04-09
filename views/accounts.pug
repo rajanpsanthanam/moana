@@ -35,18 +35,6 @@ block content
               option all
               for user in users
                 option(selected=user.username == filters.secondary_manager) #{user.username}
-          .form-group
-            label(for='is_on_android') Android Platform
-            input#is_on_android.form-control(name='is_on_android', type='checkbox', checked=filters.is_on_android)
-          .form-group
-            label(for='is_on_ios') IOS Platform
-            input#is_on_ios.form-control(name='is_on_ios', type='checkbox', checked=filters.is_on_ios)
-          .form-group
-            label(for='is_on_web') Web Platform
-            input#is_on_web.form-control(name='is_on_web', type='checkbox', checked=filters.is_on_web)
-          .form-group
-            label(for='is_on_loyalty') Loyalty Platform
-            input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox', checked=filters.is_on_loyalty)
           button.btn.btn-default(type='submit') Submit
 
       .col-md-10
@@ -62,14 +50,6 @@ block content
             tr
               td
                 a(href='/accounts/'+account.name) #{account.name}
-                if (account.is_on_web)
-                  i.first-icon.fa.fa-globe(aria-hidden='true', style='color:orange')
-                if (account.is_on_android)
-                  i.fa.fa-android(aria-hidden='true', style='color:green')
-                if (account.is_on_ios)
-                  i.fa.fa-apple(aria-hidden='true', style='color:grey')
-                if (account.is_on_loyalty)
-                  i.fa.fa-diamond(aria-hidden='true', style='color:red')
               td
                 p #{account.primary_manager}
               td

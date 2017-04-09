@@ -3,9 +3,12 @@ extends layout
 block content
   .container
     .row
-      .col-sm-9
+      .col-sm-7
         a(href='/accounts')
           i.fa.fa-chevron-left.fa-2x
+      .col-sm-2
+        form(role='form', action="#", method="get")
+          button.btn.btn-warning(type='submit') Add Feature
       .col-sm-2
         form(role='form', action="#", method="get")
           button.btn.btn-warning(type='submit') Change Stage

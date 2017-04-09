@@ -19,25 +19,10 @@ block content
             select.form-control(name='secondary_manager')
               for user in users
                 option #{user.username}
-          .row
-            .col-sm-6
-              .form-group
-                label(for='is_on_android') Android Platform
-                input#is_on_android.form-control(name='is_on_android', type='checkbox')
-              .form-group
-                label(for='is_on_ios') IOS Platform
-                input#is_on_ios.form-control(name='is_on_ios', type='checkbox')
-            .col-sm-6
-              .form-group
-                label(for='is_on_web') Web Platform
-                input#is_on_web.form-control(name='is_on_web', type='checkbox')
-              .form-group
-                label(for='is_on_loyalty') Loyalty Platform
-                input#is_on_loyalty.form-control(name='is_on_loyalty', type='checkbox')
-        .col-sm-6
           .form-group
             label(for='no_of_stores') No: of Stores
             input#no_of_stores.form-control(name='no_of_stores', type='number')
+        .col-sm-6
           .form-group
             label(for='agreed_date') Agreed Date
             input#agreed_date.form-control(name='agreed_date', type='date')

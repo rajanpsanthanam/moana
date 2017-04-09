@@ -2,14 +2,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Comments = new Schema({
-      body: String,
-      date: { type: Date, default: Date.now },
-      by: String
-  });
+  body: String,
+  date: { type: Date, default: Date.now },
+  by: String
+});
 
-
-const Stage = new Schema({
+const Stages = new Schema({
   stage: String,
+  date: { type: Date, default: Date.now },
+  by: String
+});
+
+const Features = new Schema({
+  feature: String,
   date: { type: Date, default: Date.now },
   by: String
 })
@@ -20,15 +25,12 @@ const Account = new Schema({
     onboarding_start_date: Date,
     expected_go_live_date: Date,
     actual_live_date: Date,
-    stage: [Stage],
+    stage: [Stages],
     primary_manager:String,
     secondary_manager:String,
-    is_on_android:{ type: Boolean, default: false },
-    is_on_ios:{ type: Boolean, default: false },
-    is_on_web:{ type: Boolean, default: false },
-    is_on_loyalty:{ type: Boolean, default: false },
     no_of_stores:{ type: Number, default: 0 },
     comments: [Comments],
+    features: [Features],
     is_deleted: { type: Boolean, default: false }
 });
 

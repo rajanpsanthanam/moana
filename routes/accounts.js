@@ -8,29 +8,17 @@ function filter_data(params){
   var filters = {"is_deleted": false};
   if('name' in params){
     filters['name'] = { $regex: params.name+'.*', $options: 'i' };
-  }
+  };
   if ('primary_manager' in params){
     if (params.primary_manager != 'all'){
       filters['primary_manager'] = params.primary_manager;
-    }
-  }
+    };
+  };
   if ('secondary_manager' in params){
     if (params.secondary_manager != 'all'){
       filters['secondary_manager'] = params.secondary_manager;
-    }
-  }
-  if ('is_on_android' in params){
-    filters['is_on_android'] = true;
-  }
-  if ('is_on_ios' in params){
-    filters['is_on_ios'] = true;
-  }
-  if ('is_on_web' in params){
-    filters['is_on_web'] = true;
-  }
-  if ('is_on_loyalty' in params){
-    filters['is_on_loyalty'] = true;
-  }
+    };
+  };
   return filters;
 }
 
@@ -67,10 +55,6 @@ router.post('/', (req, res, next) => {
   data = {
     'name': req.body.name,
     'stage': req.body.stage,
-    'is_on_android': 'is_on_android' in req.body,
-    'is_on_ios': 'is_on_ios' in req.body,
-    'is_on_web': 'is_on_web' in req.body,
-    'is_on_loyalty': 'is_on_loyalty' in req.body,
     'primary_manager': req.body.primary_manager,
     'secondary_manager': req.body.secondary_manager
   }
@@ -112,10 +96,6 @@ router.post('/:name', (req, res, next) => {
       else{
         account.name = req.body.name;
         account.stage = req.body.stage;
-        account.is_on_android = 'is_on_android' in req.body;
-        account.is_on_ios = 'is_on_ios' in req.body;
-        account.is_on_web = 'is_on_web' in req.body;
-        account.is_on_loyalty = 'is_on_loyalty' in req.body;
         account.primary_manager = req.body.primary_manager;
         account.secondary_manager = req.body.secondary_manager;
         if (req.body.no_of_stores){

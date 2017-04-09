@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  .container
+    .cover-container
+      h1 Update Feature
+      br
+      form(role='form', action='/features/'+feature.name, method='post', style='max-width: 300px;')
+        .form-group
+          input.form-control(type='text', name="name", placeholder='Enter name', value=feature.name)
+        .form-group
+          input.form-control(type='text', name="color", placeholder='Enter color', value=feature.color)
+        .row
+          .col-xs-6.col-sm-6.col-md-6
+            input.btn.btn.btn-warning.btn-block(type='submit', value='Update')
+          .col-xs-6.col-sm-6.col-md-6
+            a.btn.btn.btn-primary.btn-block(href='/') Cancel

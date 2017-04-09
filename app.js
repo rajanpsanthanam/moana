@@ -13,6 +13,8 @@ var LocalStrategy = require('passport-local').Strategy;
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var accounts = require('./routes/accounts');
+var stages = require('./routes/stages');
+var features = require('./routes/features');
 
 var app = express();
 
@@ -53,6 +55,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/accounts', accounts);
+app.use('/stages', stages);
+app.use('/features', features);
 
 // passport config
 var User = require('./models/user');
