@@ -2,6 +2,25 @@ const express = require('express');
 const router = express.Router();
 const Stage = require('../models/stage');
 
+
+// auth middleware
+router.use(function (req, res, next) {
+  if (!req.user){
+      res.redirect('/');
+  }
+  next();
+});
+
+
+// admin auth middleware
+router.use(function (req, res, next) {
+  if(!req.user.is_admin){
+    res.redirect('/');
+  }
+  next();
+});
+
+
 // get all stages
 router.get('/', (req, res, next) => {
   if (!req.user){
@@ -34,7 +53,8 @@ router.post('/', (req, res, next) => {
   }
   data = {
     'name': req.body.name,
-    'color': req.body.color,
+    'order': req.body.order,
+    'color': req.body.color
   };
   var stage = new Stage(data);
   stage.save(function (err) {
@@ -76,6 +96,7 @@ router.post('/:name', (req, res, next) => {
       else{
         stage.name = req.body.name;
         stage.color = req.body.color;
+        stage.order = req.body.order;
         stage.save();
         res.redirect('/stages/?message=successfully updated')
       }

@@ -3,6 +3,24 @@ const router = express.Router();
 const Feature = require('../models/feature');
 
 
+// auth middleware
+router.use(function (req, res, next) {
+  if (!req.user){
+      res.redirect('/');
+  }
+  next();
+});
+
+
+// admin auth middleware
+router.use(function (req, res, next) {
+  if(!req.user.is_admin){
+    res.redirect('/');
+  }
+  next();
+});
+
+
 // get all featues
 router.get('/', (req, res, next) => {
   if (!req.user){

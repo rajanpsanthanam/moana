@@ -3,6 +3,7 @@ const router = express.Router();
 const Account = require('../models/account');
 const User = require('../models/user');
 const Feature = require('../models/feature');
+const Stage = require('../models/stage');
 
 
 function filter_data(params){
@@ -59,6 +60,17 @@ router.post('/add-comment/:name', (req, res, next) => {
       else{
         res.redirect('/accounts/'+req.params.name+'/')
       }
+    });
+});
+
+
+router.get('/change-stage', (req, res, next) => {
+  Stage.find({"is_deleted": false}, '', function(err, stages){
+        if(err){
+            return res.render('change-stage', { error : err.message });
+        } else{
+            return res.render('change-stage', {stages : stages});
+        }
     });
 });
 
