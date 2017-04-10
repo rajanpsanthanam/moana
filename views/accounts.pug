@@ -28,13 +28,13 @@ block content
             select.form-control(name='primary_manager')
               option all
               for user in users
-                option(selected=user.username == filters.primary_manager) #{user.username}
+                option(value=user._id, selected=user.username == filters.primary_manager) #{user.username}
           .form-group
             label(for='secondary_manager') Backup Manager
             select.form-control(name='secondary_manager', value=filters.secondary_manager)
               option all
               for user in users
-                option(selected=user.username == filters.secondary_manager) #{user.username}
+                option(value=user._id, selected=user.username == filters.secondary_manager) #{user.username}
           button.btn.btn-default(type='submit') Submit
 
       .col-md-10

@@ -6,25 +6,6 @@ const Feature = require('../models/feature');
 const Stage = require('../models/stage');
 
 
-function filter_data(params){
-  var filters = {"is_deleted": false};
-  if('name' in params){
-    filters['name'] = { $regex: params.name+'.*', $options: 'i' };
-  };
-  if ('primary_manager' in params){
-    if (params.primary_manager != 'all'){
-      filters['primary_manager'] = params.primary_manager;
-    };
-  };
-  if ('secondary_manager' in params){
-    if (params.secondary_manager != 'all'){
-      filters['secondary_manager'] = params.secondary_manager;
-    };
-  };
-  return filters;
-}
-
-
 // auth middleware
 router.use(function (req, res, next) {
   if (!req.user){
@@ -50,7 +31,36 @@ router.get('/view/:name', (req, res, next) => {
 
 // return stage analytics data
 router.get('/analytics/:name/stage', (req, res, next) => {
-  res.send(JSON.stringify([12, 19, 3, 5, 2, 3]));
+  Account
+  .findOne({"name": req.params.name})
+  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .exec(function(err, account) {
+    if(err){
+        return res.render('accounts', { error : err.message });
+    }
+    else{
+      var labels = [];
+      var data_points = [];
+      var background_color = [];
+      var border_color = [];
+      var millisecondsPerDay = 1000 * 60 * 60 * 24;
+      for(i=0; i<account.stages.length; i++){
+        labels.push(account.stages[i].stage.name);
+        var millisBetween = account.stages[i].start_date.getTime() - account.stages[i].end_date.getTime();
+        var data_point = millisBetween / millisecondsPerDay;
+        data_points.push(Math.ceil(data_point));
+        background_color.push(account.stages[i].stage.color)
+        border_color.push(account.stages[i].stage.color)
+      }
+      res_data = {
+        'labels': labels,
+        'data': data_points,
+        'background_color': background_color,
+        'border_color': border_color
+      }
+      res.send(JSON.stringify(res_data));
+    }
+  });
 })
 
 
@@ -140,6 +150,25 @@ router.use(function (req, res, next) {
 });
 
 
+function filter_data(params){
+  var filters = {"is_deleted": false};
+  if('name' in params){
+    filters['name'] = { $regex: params.name+'.*', $options: 'i' };
+  };
+  if ('primary_manager' in params){
+    if (params.primary_manager != 'all'){
+      filters['primary_manager'] = params.primary_manager;
+    };
+  };
+  if ('secondary_manager' in params){
+    if (params.secondary_manager != 'all'){
+      filters['secondary_manager'] = params.secondary_manager;
+    };
+  };
+  return filters;
+}
+
+
 // get all accounts
 router.get('/', (req, res, next) => {
   var message = req.query.message;
@@ -149,21 +178,23 @@ router.get('/', (req, res, next) => {
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec(function(err, accounts){
     if(err){
-        return res.render('accounts', { error : err.message });
+      return res.render('accounts', { error : err.message });
     }
     else{
-        var accounts = accounts;
-        User.find({"is_deleted": false}, 'username', function(err, users){
-            if(err){
-                return res.render('accounts', { error : err.message });
-            }
-            else{
-              return res.render('accounts', { accounts : accounts, users: users, filters: filters, message: message });
-            }
-        });
-      }
-    });
+      var accounts = accounts;
+      User
+      .find({"is_deleted": false}, 'username')
+      .exec(function(err, users){
+          if(err){
+              return res.render('accounts', { error : err.message });
+          }
+          else{
+            return res.render('accounts', { accounts : accounts, users: users, filters: filters, message: message });
+          }
+      });
+    }
   });
+});
 
 // create new account
 router.post('/', (req, res, next) => {
