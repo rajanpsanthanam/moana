@@ -55,22 +55,11 @@ router.post('/add-comment/:name', (req, res, next) => {
   var comment = req.body.comment
   Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user.username} } }, function(err, account){
       if(err){
-        res.redirect('/accounts/'+req.params.name+'/')
+        res.redirect('/accounts/view/'+req.params.name+'/')
       }
       else{
-        res.redirect('/accounts/'+req.params.name+'/')
+        res.redirect('/accounts/view/'+req.params.name+'/')
       }
-    });
-});
-
-
-router.get('/change-stage', (req, res, next) => {
-  Stage.find({"is_deleted": false}, '', function(err, stages){
-        if(err){
-            return res.render('change-stage', { error : err.message });
-        } else{
-            return res.render('change-stage', {stages : stages});
-        }
     });
 });
 
