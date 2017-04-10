@@ -51,9 +51,9 @@ block content
               td
                 a(href='/accounts/view/'+account.name) #{account.name}
               td
-                p #{account.primary_manager}
+                p #{account.primary_manager.username}
               td
-                p #{account.secondary_manager}
+                p #{account.secondary_manager.username}
               td
                 a(href='/accounts/edit/'+account.name)
                   i.fa.fa-pencil(aria-hidden='true')

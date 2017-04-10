@@ -36,24 +36,27 @@ router.use(function (req, res, next) {
 
 // get a single account
 router.get('/view/:name', (req, res, next) => {
-  Account.findOne({"name": req.params.name}, '', function(err, account){
-        if(err){
-            return res.render('accounts', { error : err.message });
-        } else{
-            return res.render('account', { account : account });
-        }
-    });
+  Account
+  .findOne({"name": req.params.name})
+  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .exec(function(err, account) {
+    if(err){
+        return res.render('accounts', { error : err.message });
+    } else{
+        return res.render('account', { account : account });
+    }
+  });
 });
-
 
 // return stage analytics data
 router.get('/analytics/:name/stage', (req, res, next) => {
   res.send(JSON.stringify([12, 19, 3, 5, 2, 3]));
 })
 
-router.post('/add-comment/:name', (req, res, next) => {
+
+router.post('/manage/:name/add-comment', (req, res, next) => {
   var comment = req.body.comment
-  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user.username} } }, function(err, account){
+  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } }, function(err, account){
       if(err){
         res.redirect('/accounts/view/'+req.params.name+'/')
       }
@@ -61,6 +64,70 @@ router.post('/add-comment/:name', (req, res, next) => {
         res.redirect('/accounts/view/'+req.params.name+'/')
       }
     });
+});
+
+
+router.get('/manage/:name/stages', (req, res, next) => {
+  Account
+  .findOne({"name": req.params.name})
+  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .exec( function(err, account) {
+    if(err){
+      return res.render('manage-stage', { error : err.message });
+    } else{
+      return res.render('manage-stage', { account : account });
+    }
+  });
+});
+
+router.get('/manage/:name/add-stage', (req, res, next) => {
+  Account
+  .findOne({ "name": req.params.name })
+  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .exec(function(err, account) {
+    if (err)
+      return res.render('add-stage', { error : err.message });
+    var account = account;
+    Stage.find({"is_deleted": false}, '', function(err, stages){
+          if(err){
+              return res.render('add-stage', { error : err.message });
+          } else{
+              return res.render('add-stage', { account: account, stages : stages});
+          }
+      });
+  });
+});
+
+
+router.post('/manage/:name/add-stage', (req, res, next) => {
+  var stage = req.body.stage
+  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"stages": {"stage": stage, "last_updated_by": req.user._id} } }, function(err, account){
+      if(err){
+        return res.render('manage-stage', { error : err.message });
+      }
+      else{
+        res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+      }
+    });
+});
+
+
+router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
+  var stage = req.params.stage;
+  Account
+  .findOne({ "name": req.params.name })
+  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .exec(function(err, account) {
+    if (err)
+      return res.render('manage-stage', { error : err.message });
+    for(i=0; i<account.stages.length; i++){
+      if(account.stages[i].stage.name == stage){
+        account.stages[i].end_date = new Date();
+        account.save();
+      }
+    }
+    res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+  });
 });
 
 
@@ -77,26 +144,32 @@ router.use(function (req, res, next) {
 router.get('/', (req, res, next) => {
   var message = req.query.message;
   var filters = filter_data(req.query);
-  Account.find(filters, '', function(err, accounts){
-        if(err){
-            return res.render('accounts', { error : err.message });
-        } else{
-            var accounts = accounts;
-            User.find({"is_deleted": false}, 'username', function(err, users){
-                if(err){
-                    return res.render('accounts', { error : err.message });
-                }
-                else{
-                  return res.render('accounts', { accounts : accounts, users: users, filters: filters, message: message });
-                }
-            });
-        }
+  Account
+  .find(filters)
+  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .exec(function(err, accounts){
+    if(err){
+        return res.render('accounts', { error : err.message });
+    }
+    else{
+        var accounts = accounts;
+        User.find({"is_deleted": false}, 'username', function(err, users){
+            if(err){
+                return res.render('accounts', { error : err.message });
+            }
+            else{
+              return res.render('accounts', { accounts : accounts, users: users, filters: filters, message: message });
+            }
+        });
+      }
     });
-});
+  });
 
 // create new account
 router.post('/', (req, res, next) => {
-  Feature.find({"is_deleted": false}, '', function(err, features){
+  Feature
+  .find({"is_deleted": false})
+  .exec(function(err, features){
     if(err){
         res.redirect('/accounts/?message=create failed');
     }
@@ -129,7 +202,7 @@ router.post('/', (req, res, next) => {
         data['actual_live_date'] = new Date(req.body.actual_live_date)
       }
       if(opted_features){
-        data['features'] = opted_features
+        data['features'] = opted_features;
       }
       var account = new Account(data);
       account.save(function (err) {
@@ -182,7 +255,9 @@ router.post('/:name', (req, res, next) => {
             account.actual_live_date = new Date(req.body.actual_live_date);
           }
           if(opted_features){
-            account.features = opted_features
+            for(i=0; i<opted_features.length; i++) {
+              account.features.push(opted_features[i])
+            }
           }
           account.save();
           res.redirect('/accounts/?message=successfully updated')
@@ -214,29 +289,32 @@ router.get('/add', (req, res, next) => {
 
 // route to edit account form
 router.get('/edit/:name', (req, res, next) => {
-  Account.findOne({"name": req.params.name}, '', function(err, account){
-        if(err){
-            return res.render('edit-account', { error : err.message });
-        }
-        else{
-            var account = account;
-            User.find({"is_deleted": false}, 'username', function(err, users){
-                if(err){
-                    return res.render('edit-account', { error : err.message });
-                }
-                else{
-                  var users = users;
-                  Feature.find({"is_deleted": false}, '_id, name', function(err, features){
-                        if(err){
-                            return res.render('edit-account', { error : err.message });
-                        } else{
-                            return res.render('edit-account', { account: account, users : users, features: features});
-                        }
-                    });
-                }
-            });
-        }
-    });
+  Account
+  .findOne({"name": req.params.name})
+  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .exec( function(err, account){
+      if(err){
+          return res.render('edit-account', { error : err.message });
+      }
+      else{
+          var account = account;
+          User.find({"is_deleted": false}, 'username', function(err, users){
+              if(err){
+                  return res.render('edit-account', { error : err.message });
+              }
+              else{
+                var users = users;
+                Feature.find({"is_deleted": false}, '_id, name', function(err, features){
+                      if(err){
+                          return res.render('edit-account', { error : err.message });
+                      } else{
+                          return res.render('edit-account', { account: account, users : users, features: features});
+                      }
+                  });
+              }
+          });
+      }
+  });
 });
 
 

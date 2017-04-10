@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  .container
+    .cover-container
+      h1 Add Stage
+      br
+      form(role='form', action='/accounts/manage/'+account.name+'/add-stage/', method='post', style='max-width: 800px;')
+        .form-group
+          select.form-control(name='stage')
+            for stage in stages
+              option(value=stage._id) #{stage.name}
+        .row
+          .col-xs-6.col-sm-6.col-md-6
+            input.btn.btn.btn-warning.btn-block(type='submit', value='Add')
+          .col-xs-6.col-sm-6.col-md-6
+            a.btn.btn.btn-primary.btn-block(href='/accounts/manage/'+account.name+'/stages') Cancel

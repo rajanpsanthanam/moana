@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col-sm-1
+        a(href='/accounts/view/'+account.name)
+          i.fa.fa-chevron-left.fa-2x
+      .col-sm-8
+        p.lead Stage data for #{account.name}
+      .col-sm-2
+        a.btn.btn-warning(href='/accounts/manage/'+account.name+'/add-stage', role='button') Add Stage
+      .col-sm-1
+        a(href="/logout")
+          i.fa.fa-sign-out.fa-2x
+    if(account.stages)
+      table.table.table-hover.table-stripped
+        thead
+          tr
+            th Stage
+            th Started On
+            th Completed On
+        for stage in account.stages
+          tr
+            td
+              p #{stage.stage.name}
+            td
+              p #{stage.start_date}
+            td
+              if(stage.end_date)
+                p #{stage.end_date}
+              else
+                form(role='form', action='/accounts/manage/'+account.name+'/complete-stage/'+stage.stage.name, method="get")
+                  button.btn.btn-warning(type='submit') Complete

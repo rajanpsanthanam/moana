@@ -8,13 +8,13 @@ const router = express.Router();
 // dashboard
 router.get('/', (req, res) => {
   if(req.user){
-    Account.find({"primary_manager": req.user.username, "is_deleted": false}, '', function(err, accounts){
+    Account.find({"primary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
           if(err){
               res.render('index', { error : err.message });
           }
           else{
             var primary_accounts = accounts;
-            Account.find({"secondary_manager": req.user.username, "is_deleted": false}, '', function(err, accounts){
+            Account.find({"secondary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
               if(err){
                   res.render('index', { error : err.message });
               }

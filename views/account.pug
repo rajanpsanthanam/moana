@@ -7,7 +7,7 @@ block content
         a(href='/accounts')
           i.fa.fa-chevron-left.fa-2x
       .col-sm-2
-        form(role='form', action='#', method="get")
+        form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
           button.btn.btn-warning(type='submit') Manage Stage
       .col-sm-1
         a(href="/logout")
@@ -15,7 +15,7 @@ block content
     .page-header
       h1
         | #{account.name}
-      h4 managed by #{account.primary_manager}, secondary support by #{account.secondary_manager}
+      h4 managed by #{account.primary_manager.username}, secondary support by #{account.secondary_manager.username}
     .row
       .col-sm-10
         .row
@@ -33,7 +33,7 @@ block content
       .col-sm-2
         .list-group
           .row
-            form(role='form', action='/accounts/add-comment/'+account.name, method="post")
+            form(role='form', action='/accounts/manage/'+account.name+'/add-comment', method="post")
               .row
                 textarea.form-control(rows='3', name='comment')
               br
@@ -45,7 +45,7 @@ block content
             if(account.comments)
               for comment in account.comments.reverse().slice(0, 3)
                 p.list-group-item-text #{comment.body}
-                p by #{comment.by} on #{comment.date}
+                p by #{comment.by.username} on #{comment.date}
                 br
             else
               p No comments yet
