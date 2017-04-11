@@ -50,8 +50,13 @@ router.get('/analytics/:name/stage', (req, res, next) => {
       var millisecondsPerDay = 1000 * 60 * 60 * 24;
       for(i=0; i<account.stages.length; i++){
         labels.push(account.stages[i].stage.name);
-        var millisBetween = account.stages[i].start_date.getTime() - account.stages[i].end_date.getTime();
-        var data_point = millisBetween / millisecondsPerDay;
+        if(account.stages[i].start_date && account.stages[i].end_date){
+          var millisBetween = account.stages[i].start_date.getTime() - account.stages[i].end_date.getTime();
+          var data_point = millisBetween / millisecondsPerDay;
+        }
+        else{
+          var data_point = 0;
+        }
         data_points.push(Math.ceil(data_point));
         background_color.push(account.stages[i].stage.color)
         border_color.push(account.stages[i].stage.color)
@@ -71,7 +76,9 @@ router.get('/analytics/:name/stage', (req, res, next) => {
 // add comment to account
 router.post('/manage/:name/add-comment', (req, res, next) => {
   var comment = req.body.comment
-  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } }, function(err, account){
+  Account
+  .findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } })
+  .exec(function(err, account){
       if(err){
         winston.log('info', err.message);
         return res.status(301).redirect('/accounts?message=something went wrong');
@@ -122,13 +129,36 @@ router.get('/manage/:name/add-stage', (req, res, next) => {
 
 router.post('/manage/:name/add-stage', (req, res, next) => {
   var stage = req.body.stage
-  Account.findOneAndUpdate({"name": req.params.name}, { $push: {"stages": {"stage": stage, "last_updated_by": req.user._id} } }, function(err, account){
+  Account
+  .findOneAndUpdate({"name": req.params.name}, { $push: {"stages": {"stage": stage, "last_updated_by": req.user._id} } })
+  .exec(function(err, account){
       if(err){
         winston.log('info', err.message);
         return res.status(301).redirect('/accounts?message=something went wrong');
       }
       else{
-        res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+        Stage
+        .findOne({"_id": stage}, '')
+        .exec(function(err, stage_data){
+          if(err){
+            winston.log('info', err.message);
+            return res.status(301).redirect('/accounts?message=something went wrong');
+          } else{
+              // event name: message
+              var comment = 'New Stage: stage "'+stage_data.name+'" added into account';
+              Account
+              .findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } })
+              .exec(function(err, account){
+                if(err){
+                  winston.log('info', err.message);
+                  return res.status(301).redirect('/accounts?message=something went wrong');
+                }
+                else{
+                  res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+                }
+            });
+          }
+        });
       }
     });
 });
@@ -151,7 +181,29 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
           account.save();
         }
       }
-      res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+      Stage
+      .findOne({"name": stage}, '')
+      .exec(function(err, stage_data){
+        if(err){
+          winston.log('info', err.message);
+          return res.status(301).redirect('/accounts?message=something went wrong');
+        } else{
+            // event name: message
+            var comment = 'Stage Completed: stage "'+stage_data.name+'" got completed';
+            Account
+            .findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } })
+            .exec(function(err, account){
+              if(err){
+                winston.log('info', err.message);
+                return res.status(301).redirect('/accounts?message=something went wrong');
+              }
+              else{
+                return res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+              }
+          });
+        }
+      });
+      return res.redirect('/accounts/manage/'+req.params.name+'/stages/')
     }
   });
 });
@@ -268,7 +320,9 @@ router.post('/', (req, res, next) => {
 
 // update account data
 router.post('/:name', (req, res, next) => {
-  Feature.find({"is_deleted": false}, '', function(err, features){
+  Feature
+  .find({"is_deleted": false}, '')
+  .exec(function(err, features){
     if(err){
         res.redirect('/accounts/?message=update failed');
     }
@@ -317,7 +371,9 @@ router.post('/:name', (req, res, next) => {
 
 // route to add new account form
 router.get('/add', (req, res, next) => {
-  User.find({"is_deleted": false}, 'username', function(err, users){
+  User
+  .find({"is_deleted": false}, 'username')
+  .exec(function(err, users){
         if(err){
             return res.status(301).redirect('/accounts?message=something went wrong');
         } else{
@@ -379,7 +435,9 @@ router.get('/edit/:name', (req, res, next) => {
 
 // soft delete account
 router.get('/remove/:name', (req, res, next) => {
-  Account.findOne({"name": req.params.name}, '', function(err, account){
+  Account
+  .findOne({"name": req.params.name}, '')
+  .exec(function(err, account){
       if(err){
         res.redirect('/accounts/?message=delete failed')
       }

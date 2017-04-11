@@ -12,18 +12,18 @@ router.get('/', (req, res) => {
     Account.find({"primary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
           if(err){
               winston.log('info', err.message);
-              res.render('index', { error : err.message });
+              return res.render('index', { error : err.message });
           }
           else{
             var primary_accounts = accounts;
             Account.find({"secondary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
               if(err){
                   winston.log('info', err.message);
-                  res.render('index', { error : err.message });
+                  return res.render('index', { error : err.message });
               }
               else{
                   var secondary_accounts = accounts;
-                  res.render('index', {
+                  return res.render('index', {
                     user : req.user, primary_accounts : primary_accounts, secondary_accounts: secondary_accounts
                   });
                 }
@@ -32,14 +32,14 @@ router.get('/', (req, res) => {
           });
         }
   else{
-    res.render('index', { user : req.user});
+    return res.render('index', { user : req.user});
   }
 });
 
 
 // register page
 router.get('/register', (req, res) => {
-    res.render('register', { });
+    return res.render('register', { });
 });
 
 
@@ -56,7 +56,7 @@ router.post('/register', (req, res, next) => {
                 if (err) {
                     return next(err);
                 }
-                res.redirect('/');
+                return res.redirect('/');
             });
         });
     });

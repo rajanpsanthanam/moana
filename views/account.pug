@@ -68,12 +68,24 @@ block content
               button.btn.btn-warning(type='submit') add comment
         hr
         .row
-          p.lead Comments
-          if(account.comments)
+          p.lead Timeline
+          if(account.comments.length > 0)
             for comment in account.comments.reverse().slice(0, 3)
-              p.list-group-item-text #{comment.body}
+              if(comment.body.includes('New Stage:'))
+                p.list-group-item-text
+                span.label.label-info Stage Added
+                |  #{comment.body.replace('New Stage:', '')}
+              else if(comment.body.includes('Stage Completed:'))
+                p.list-group-item-text
+                span.label.label-success Stage Completed
+                |  #{comment.body.replace('Stage Completed:', '')}
+              else
+                p.list-group-item-text #{comment.body}
               br
-              p by #{comment.by.username} on #{comment.date}
+              p
+              i  #{comment.by.username}
+              |  @
+              i  #{comment.date}
               hr
           else
-            p No comments yet
+            p No updates on the account yet
