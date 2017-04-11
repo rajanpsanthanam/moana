@@ -29,6 +29,7 @@ router.get('/view/:name', (req, res, next) => {
   });
 });
 
+
 // return stage analytics data
 router.get('/analytics/:name/stage', (req, res, next) => {
   Account
@@ -286,9 +287,7 @@ router.post('/:name', (req, res, next) => {
             account.actual_live_date = new Date(req.body.actual_live_date);
           }
           if(opted_features){
-            for(i=0; i<opted_features.length; i++) {
-              account.features.push(opted_features[i])
-            }
+            account.features = opted_features;
           }
           account.save();
           res.redirect('/accounts/?message=successfully updated')
@@ -330,20 +329,32 @@ router.get('/edit/:name', (req, res, next) => {
       else{
           var account = account;
           User.find({"is_deleted": false}, 'username', function(err, users){
-              if(err){
+            if(err){
+                return res.render('edit-account', { error : err.message });
+            }
+            else{
+              var users = users;
+              var opted_features = [];
+              for(i=0; i<account.features.length; i++){
+                opted_features.push(account.features[i]._id.toString());
+              }
+              Feature.find({"is_deleted": false}, '_id, name', function(err, features){
+                if(err){
                   return res.render('edit-account', { error : err.message });
-              }
-              else{
-                var users = users;
-                Feature.find({"is_deleted": false}, '_id, name', function(err, features){
-                      if(err){
-                          return res.render('edit-account', { error : err.message });
-                      } else{
-                          return res.render('edit-account', { account: account, users : users, features: features});
-                      }
-                  });
-              }
-          });
+                }
+                else{
+                  for(i=0; i<features.length; i++){
+                    features[i]._id = features[i]._id.toString();
+                  }
+                  return res.render(
+                    'edit-account', {
+                      account: account, users : users, features: features, opted_features: opted_features
+                    }
+                  );
+                }
+            });
+          }
+        });
       }
   });
 });

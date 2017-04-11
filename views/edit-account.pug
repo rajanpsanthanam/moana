@@ -54,7 +54,7 @@ block content
             for feature in features
               .checkbox
                 label
-                  input(name=feature.name, type='checkbox', value=feature._id, checked=account.features.indexOf(feature._id) > -1)
+                  input(name=feature.name, type='checkbox', value=feature._id, checked=(opted_features.includes(feature._id.toString())))
                   |     #{feature.name}
           else
             p Couldn't find any features in the system

@@ -15,12 +15,20 @@ block content
     .page-header
       h1
         | #{account.name}
-      h4 managed by #{account.primary_manager.username}, secondary support by #{account.secondary_manager.username}
+        small  managed by #{account.primary_manager.username}
+      .row.text-center
+        for feature in account.features
+          .col-xs-1.col-sm-1.col-md-1
+            button.btn.btn.btn-danger.btn-block.btn-xs #{feature.name}
     .row
       .col-sm-10
         .row
           .col-sm-3
-            button.btn.btn-primary#stageButton(onclick="stageReport('" + account.name + "')") Days per Stage
+            button.btn.btn-primary#stageButton(onclick="stageBarReport('" + account.name + "')") Bar Chart
+          .col-sm-3
+            button.btn.btn-primary(onclick="stagePieReport('" + account.name + "')") Pie Chart
+          .col-sm-3
+            button.btn.btn-primary(onclick="stageLineReport('" + account.name + "')") Line Chart
         br
         .row
             canvas#myChart(style='width: 300px; height: 100px')
