@@ -3,6 +3,7 @@ const passport = require('passport');
 const User = require('../models/user');
 const Account = require('../models/account');
 const router = express.Router();
+const winston = require('winston');
 
 
 // dashboard
@@ -10,12 +11,14 @@ router.get('/', (req, res) => {
   if(req.user){
     Account.find({"primary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
           if(err){
+              winston.log('info', err.message);
               res.render('index', { error : err.message });
           }
           else{
             var primary_accounts = accounts;
             Account.find({"secondary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
               if(err){
+                  winston.log('info', err.message);
                   res.render('index', { error : err.message });
               }
               else{
@@ -44,6 +47,7 @@ router.get('/register', (req, res) => {
 router.post('/register', (req, res, next) => {
     User.register(new User({ username : req.body.username }), req.body.password, (err, user) => {
         if (err) {
+          winston.log('info', err.message);
           return res.render('register', { error : err.message });
         }
 

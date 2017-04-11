@@ -13,12 +13,12 @@ block content
             label(for='primary_manager') Account Manager
             select.form-control(name='primary_manager')
               for user in users
-                option(value=user._id, selected=account.primary_manager == user._id) #{user.username}
+                option(value=user._id, selected=account.primary_manager._id.toString() == user._id.toString()) #{user.username}
           .form-group
             label(for='secondary_manager') Backup Manager
             select.form-control(name='secondary_manager')
               for user in users
-                option(value=user._id, selected=account.secondary_manager == user._id) #{user.username}
+                option(value=user._id, selected=account.secondary_manager._id.toString() == user._id.toString()) #{user.username}
           .form-group
             label(for='no_of_stores') No: of Stores
             input#no_of_stores.form-control(name='no_of_stores', type='number', value=account.no_of_stores)

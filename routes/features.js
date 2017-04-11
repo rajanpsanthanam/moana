@@ -6,7 +6,7 @@ const Feature = require('../models/feature');
 // auth middleware
 router.use(function (req, res, next) {
   if (!req.user){
-      res.redirect('/');
+      res.status(301).redirect('/');
   }
   next();
 });
@@ -15,7 +15,7 @@ router.use(function (req, res, next) {
 // admin auth middleware
 router.use(function (req, res, next) {
   if(!req.user.is_admin){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   next();
 });
@@ -24,12 +24,13 @@ router.use(function (req, res, next) {
 // get all featues
 router.get('/', (req, res, next) => {
   if (!req.user){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   var message = req.query.message;
   Feature.find({"is_deleted": false}, '', function(err, features){
         if(err){
-            return res.render('features', { error : err.message });
+            winston.log('info', err.message);
+            res.render('index', { error : err.message });
         } else{
             return res.render('features', { features : features, message: message});
         }
@@ -41,7 +42,7 @@ router.get('/', (req, res, next) => {
 // route to add new feature form
 router.get('/add', (req, res, next) => {
   if (!req.user){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   res.render('new-feature');
 });
@@ -50,7 +51,7 @@ router.get('/add', (req, res, next) => {
 // create feature
 router.post('/', (req, res, next) => {
   if (!req.user){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   data = {
     'name': req.body.name,
@@ -59,9 +60,10 @@ router.post('/', (req, res, next) => {
   var feature = new Feature(data);
   feature.save(function (err) {
     if (err) {
-      res.redirect('/features/?message=create failed');
+      winston.log('info', err.message);
+      res.status(301).redirect('/features/?message=create failed');
     } else {
-      res.redirect('/features/?message=successfully created');
+      res.status(301).redirect('/features/?message=successfully created');
     }
   });
 
@@ -75,7 +77,8 @@ router.get('/edit/:name', (req, res, next) => {
   }
   Feature.findOne({"name": req.params.name}, '', function(err, feature){
       if(err){
-        return res.render('edit-feature', { error : err.message });
+        winston.log('info', err.message);
+        res.status(301).redirect('/features/?message=something went wrong');
       }
       else{
         return res.render('edit-feature', { feature : feature });
@@ -91,13 +94,13 @@ router.post('/:name', (req, res, next) => {
   }
   Feature.findOne({"name": req.params.name}, '', function(err, feature){
       if(err){
-        res.redirect('/features/?message=update failed')
+        res.status(301).redirect('/features/?message=update failed')
       }
       else{
         feature.name = req.body.name;
         feature.color = req.body.color;
         feature.save();
-        res.redirect('/features/?message=successfully updated')
+        res.status(301).redirect('/features/?message=successfully updated')
       }
     });
 });
@@ -110,12 +113,12 @@ router.get('/remove/:name', (req, res, next) => {
   }
   Feature.findOne({"name": req.params.name}, '', function(err, feature){
       if(err){
-        res.redirect('/features/?message=delete failed')
+        res.status(301).redirect('/features/?message=delete failed')
       }
       else{
         feature.is_deleted = true
         feature.save();
-        res.redirect('/features/?message=successfully deleted')
+        res.status(301).redirect('/features/?message=successfully deleted')
       }
     });
 });

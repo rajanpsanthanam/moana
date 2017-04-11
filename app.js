@@ -9,6 +9,7 @@ var flash = require('connect-flash')
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var winston = require('winston');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -68,6 +69,16 @@ passport.deserializeUser(User.deserializeUser());
 // mongoose
 mongoose.connect('mongodb://localhost/moana');
 
+
+// logging
+winston.configure({
+    transports: [
+      new (winston.transports.File)({ filename: 'app.log' })
+    ]
+  });
+
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -79,23 +90,23 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
+// if (app.get('env') === 'development') {
+//     app.use(function(err, req, res, next) {
+//         res.status(err.status || 500);
+//         res.render('error', {
+//             error: err.message,
+//             err: err
+//         });
+//     });
+// }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+    winston.log('info', err.message);
     res.status(err.status || 500);
     res.render('error', {
-        message: err.message,
-        error: {}
+        error: 'something went wrong! please try again later',
     });
 });
 

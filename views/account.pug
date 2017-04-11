@@ -24,30 +24,56 @@ block content
       .col-sm-10
         .row
           .col-sm-3
-            button.btn.btn-primary#stageButton(onclick="stageBarReport('" + account.name + "')") Bar Chart
-          .col-sm-3
-            button.btn.btn-primary(onclick="stagePieReport('" + account.name + "')") Pie Chart
-          .col-sm-3
-            button.btn.btn-primary(onclick="stageLineReport('" + account.name + "')") Line Chart
+            button.btn.btn-primary#stageButton(onclick="stageBarReport('" + account.name + "')") Days / Stage
         br
         .row
             canvas#myChart(style='width: 300px; height: 100px')
       .col-sm-2
         .list-group
           .row
-            form(role='form', action='/accounts/manage/'+account.name+'/add-comment', method="post")
-              .row
-                textarea.form-control(rows='3', name='comment')
-              br
-              .row.text-center
-                button.btn.btn-warning(type='submit') add comment
-          hr
-          .row
-            p.lead Comments
-            if(account.comments)
-              for comment in account.comments.reverse().slice(0, 3)
-                p.list-group-item-text #{comment.body}
-                p by #{comment.by.username} on #{comment.date}
-                br
+            p Agreed On
+            if(account.agreed_date)
+              | #{account.agreed_date}
             else
-              p No comments yet
+              | ~
+            hr
+            p Onboarding Started On
+            if(account.onboarding_start_date)
+              | #{account.onboarding_start_date}
+            else
+              | ~
+            hr
+            p Expected Live Date
+            if(account.expected_go_live_date)
+              | #{account.expected_go_live_date}
+            else
+              | ~
+            hr
+            p Actual Live Date
+            if(account.actual_live_date)
+              | #{account.actual_live_date}
+            else
+              | ~
+    br
+    hr
+    br
+    .row
+      .list-group
+        .row
+          form(role='form', action='/accounts/manage/'+account.name+'/add-comment', method="post")
+            .row
+              textarea.form-control(rows='3', name='comment')
+            br
+            .row.text-center
+              button.btn.btn-warning(type='submit') add comment
+        hr
+        .row
+          p.lead Comments
+          if(account.comments)
+            for comment in account.comments.reverse().slice(0, 3)
+              p.list-group-item-text #{comment.body}
+              br
+              p by #{comment.by.username} on #{comment.date}
+              hr
+          else
+            p No comments yet

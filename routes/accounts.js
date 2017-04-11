@@ -4,9 +4,10 @@ const Account = require('../models/account');
 const User = require('../models/user');
 const Feature = require('../models/feature');
 const Stage = require('../models/stage');
+const winston = require('winston');
 
 
-// auth middleware
+// middleware for auth check
 router.use(function (req, res, next) {
   if (!req.user){
       res.redirect('/');
@@ -22,7 +23,8 @@ router.get('/view/:name', (req, res, next) => {
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec(function(err, account) {
     if(err){
-        return res.render('accounts', { error : err.message });
+        winston.log('info', err.message);
+        return res.status(301).redirect('/accounts?message=something went wrong');
     } else{
         return res.render('account', { account : account });
     }
@@ -37,7 +39,8 @@ router.get('/analytics/:name/stage', (req, res, next) => {
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec(function(err, account) {
     if(err){
-        return res.render('accounts', { error : err.message });
+        winston.log('info', err.message);
+        return res.status(301).redirect('/accounts?message=something went wrong');
     }
     else{
       var labels = [];
@@ -65,11 +68,13 @@ router.get('/analytics/:name/stage', (req, res, next) => {
 })
 
 
+// add comment to account
 router.post('/manage/:name/add-comment', (req, res, next) => {
   var comment = req.body.comment
   Account.findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } }, function(err, account){
       if(err){
-        res.redirect('/accounts/view/'+req.params.name+'/')
+        winston.log('info', err.message);
+        return res.status(301).redirect('/accounts?message=something went wrong');
       }
       else{
         res.redirect('/accounts/view/'+req.params.name+'/')
@@ -84,7 +89,8 @@ router.get('/manage/:name/stages', (req, res, next) => {
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec( function(err, account) {
     if(err){
-      return res.render('manage-stage', { error : err.message });
+      winston.log('info', err.message);
+      return res.status(301).redirect('/accounts?message=something went wrong');
     } else{
       return res.render('manage-stage', { account : account });
     }
@@ -96,16 +102,20 @@ router.get('/manage/:name/add-stage', (req, res, next) => {
   .findOne({ "name": req.params.name })
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec(function(err, account) {
-    if (err)
-      return res.render('add-stage', { error : err.message });
-    var account = account;
-    Stage.find({"is_deleted": false}, '', function(err, stages){
+    if(err){
+      winston.log('info', err.message);
+      return res.status(301).redirect('/accounts?message=something went wrong');
+    }
+    else{
+      var account = account;
+      Stage.find({"is_deleted": false}, '', function(err, stages){
           if(err){
               return res.render('add-stage', { error : err.message });
           } else{
               return res.render('add-stage', { account: account, stages : stages});
           }
       });
+    }
   });
 });
 
@@ -114,7 +124,8 @@ router.post('/manage/:name/add-stage', (req, res, next) => {
   var stage = req.body.stage
   Account.findOneAndUpdate({"name": req.params.name}, { $push: {"stages": {"stage": stage, "last_updated_by": req.user._id} } }, function(err, account){
       if(err){
-        return res.render('manage-stage', { error : err.message });
+        winston.log('info', err.message);
+        return res.status(301).redirect('/accounts?message=something went wrong');
       }
       else{
         res.redirect('/accounts/manage/'+req.params.name+'/stages/')
@@ -129,15 +140,19 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
   .findOne({ "name": req.params.name })
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec(function(err, account) {
-    if (err)
-      return res.render('manage-stage', { error : err.message });
-    for(i=0; i<account.stages.length; i++){
-      if(account.stages[i].stage.name == stage){
-        account.stages[i].end_date = new Date();
-        account.save();
-      }
+    if(err){
+      winston.log('info', err.message);
+      return res.status(301).redirect('/accounts?message=something went wrong');
     }
-    res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+    else{
+      for(i=0; i<account.stages.length; i++){
+        if(account.stages[i].stage.name == stage){
+          account.stages[i].end_date = new Date();
+          account.save();
+        }
+      }
+      res.redirect('/accounts/manage/'+req.params.name+'/stages/')
+    }
   });
 });
 
@@ -179,7 +194,8 @@ router.get('/', (req, res, next) => {
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec(function(err, accounts){
     if(err){
-      return res.render('accounts', { error : err.message });
+      winston.log('info', err.message);
+      res.render('index', { error : err.message });
     }
     else{
       var accounts = accounts;
@@ -187,7 +203,8 @@ router.get('/', (req, res, next) => {
       .find({"is_deleted": false}, 'username')
       .exec(function(err, users){
           if(err){
-              return res.render('accounts', { error : err.message });
+            winston.log('info', err.message);
+            res.render('index', { error : err.message });
           }
           else{
             return res.render('accounts', { accounts : accounts, users: users, filters: filters, message: message });
@@ -302,7 +319,7 @@ router.post('/:name', (req, res, next) => {
 router.get('/add', (req, res, next) => {
   User.find({"is_deleted": false}, 'username', function(err, users){
         if(err){
-            return res.render('new-account', { error : err.message });
+            return res.status(301).redirect('/accounts?message=something went wrong');
         } else{
             var users = users;
             Feature.find({"is_deleted": false}, '_id, name', function(err, features){
@@ -324,13 +341,13 @@ router.get('/edit/:name', (req, res, next) => {
   .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
   .exec( function(err, account){
       if(err){
-          return res.render('edit-account', { error : err.message });
+          return res.status(301).redirect('/accounts?message=something went wrong');
       }
       else{
           var account = account;
           User.find({"is_deleted": false}, 'username', function(err, users){
             if(err){
-                return res.render('edit-account', { error : err.message });
+                return res.status(301).redirect('/accounts?message=something went wrong');
             }
             else{
               var users = users;

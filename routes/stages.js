@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const Stage = require('../models/stage');
+const winston = require('winston');
 
 
 // auth middleware
 router.use(function (req, res, next) {
   if (!req.user){
-      res.redirect('/');
+      res.status(301).redirect('/');
   }
   next();
 });
@@ -15,7 +16,7 @@ router.use(function (req, res, next) {
 // admin auth middleware
 router.use(function (req, res, next) {
   if(!req.user.is_admin){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   next();
 });
@@ -24,14 +25,15 @@ router.use(function (req, res, next) {
 // get all stages
 router.get('/', (req, res, next) => {
   if (!req.user){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   var message = req.query.message;
   Stage.find({"is_deleted": false}, '', function(err, stages){
         if(err){
-            return res.render('stages', { error : err.message });
+          winston.log('info', err.message);
+          res.render('index', { error : err.message });
         } else{
-            return res.render('stages', { stages : stages, message: message});
+          return res.render('stages', { stages : stages, message: message});
         }
     });
 });
@@ -40,7 +42,7 @@ router.get('/', (req, res, next) => {
 // route to add new stage form
 router.get('/add', (req, res, next) => {
   if (!req.user){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   res.render('new-stage');
 });
@@ -49,7 +51,7 @@ router.get('/add', (req, res, next) => {
 // create stage
 router.post('/', (req, res, next) => {
   if (!req.user){
-    res.redirect('/');
+    res.status(301).redirect('/');
   }
   data = {
     'name': req.body.name,
@@ -59,9 +61,10 @@ router.post('/', (req, res, next) => {
   var stage = new Stage(data);
   stage.save(function (err) {
     if (err) {
-      res.redirect('/stages/?message=create failed');
+      winston.log('info', err.message);
+      res.status(301).redirect('/stages/?message=create failed');
     } else {
-      res.redirect('/stages/?message=successfully created');
+      res.status(301).redirect('/stages/?message=successfully created');
     }
   });
 
@@ -75,7 +78,8 @@ router.get('/edit/:name', (req, res, next) => {
   }
   Stage.findOne({"name": req.params.name}, '', function(err, stage){
       if(err){
-        return res.render('edit-stage', { error : err.message });
+        winston.log('info', err.message);
+        res.status(301).redirect('/stages/?message=something went wrong');
       }
       else{
         return res.render('edit-stage', { stage : stage });
@@ -91,6 +95,7 @@ router.post('/:name', (req, res, next) => {
   }
   Stage.findOne({"name": req.params.name}, '', function(err, stage){
       if(err){
+        winston.log('info', err.message);
         res.redirect('/stages/?message=update failed')
       }
       else{
@@ -111,6 +116,7 @@ router.get('/remove/:name', (req, res, next) => {
   }
   Stage.findOne({"name": req.params.name}, '', function(err, stage){
       if(err){
+        winston.log('info', err.message);
         res.redirect('/stages/?message=delete failed')
       }
       else{

@@ -1,3 +1,9 @@
+function ISOToDateFormat(dateString){
+  dateString=new Date(dateString).toUTCString();
+  dateString=dateString.split(' ').slice(0, 4).join(' ');
+  return dateString;
+}
+
 
 function stagePieReport(account){
   $.get( "/accounts/analytics/"+ account +"/stage", function( analytics ) {
@@ -13,8 +19,7 @@ function stagePieReport(account){
             labels: labels,
             datasets: [{
                 label: '# of days spent per stage',
-                // data: analyticsData,
-                data: [3, 9, 1, 12],
+                data: analyticsData,
                 backgroundColor: backgroundColor,
                 borderColor: borderColor,
                 borderWidth: 1
@@ -39,8 +44,7 @@ function stageLineReport(account){
             labels: labels,
             datasets: [{
                 label: '# of days spent per stage',
-                // data: analyticsData,
-                data: [3, 9, 1, 12],
+                data: analyticsData,
                 fill: false,
                 lineTension: 0,
                 borderWidth: 2,
@@ -65,8 +69,7 @@ function stageBarReport(account){
             labels: labels,
             datasets: [{
                 label: '# of days spent per stage',
-                // data: analyticsData,
-                data: [3, 9, 1, 12],
+                data: analyticsData,
                 backgroundColor: backgroundColor,
                 borderColor: borderColor,
                 borderWidth: 1
