@@ -18,7 +18,7 @@ block content
         small  managed by #{account.primary_manager.username}
       .row.text-center
         for feature in account.features
-          .col-xs-1.col-sm-1.col-md-1
+          .col-xs-1.col-sm-1.col-md-2
             button.btn.btn.btn-danger.btn-block.btn-xs #{feature.name}
     .row
       .col-sm-10
@@ -70,7 +70,7 @@ block content
         .row
           p.lead Timeline
           if(account.comments.length > 0)
-            for comment in account.comments.reverse().slice(0, 3)
+            for comment in account.comments.reverse().slice(0, 20)
               if(comment.body.includes('New Stage:'))
                 p.list-group-item-text
                 span.label.label-info Stage Added

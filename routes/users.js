@@ -7,7 +7,7 @@ const winston = require('winston');
 // auth middleware
 router.use(function (req, res, next) {
   if (!req.user){
-    res.status(301).redirect('/');
+    return res.status(301).redirect('/');
   }
   next()
 })
@@ -16,7 +16,7 @@ router.use(function (req, res, next) {
 // admin auth middleware
 router.use(function (req, res, next) {
   if(!req.user.is_admin){
-    res.status(301).redirect('/');
+    return res.status(301).redirect('/');
   }
   next();
 });
@@ -31,7 +31,7 @@ router.get('/', (req, res, next) => {
   User.find({"is_deleted": false}, 'username is_admin', function(err, users){
         if(err){
           winston.log('info', err.message);
-          res.render('index', { error : err.message });
+          return res.render('index', { error : err.message });
         } else{
           return res.render('users', { users : users, message: message });
         }
@@ -43,10 +43,10 @@ router.get('/', (req, res, next) => {
 router.get('/revoke/:username', (req, res, next) => {
   User.findOneAndUpdate({username: req.params.username}, {is_admin: false}, function(err, user){
     if(err){
-      res.status(301).redirect('/users/?message=revoke failed')
+      return res.status(301).redirect('/users/?message=revoke failed')
     }
     else {
-      res.status(301).redirect('/users/?message=revoke successfull')
+      return res.status(301).redirect('/users/?message=revoke successfull')
     }
   })
 });
@@ -56,10 +56,10 @@ router.get('/revoke/:username', (req, res, next) => {
 router.get('/grant/:username', (req, res, next) => {
   User.findOneAndUpdate({username: req.params.username}, {is_admin: true}, function(err, user){
     if(err){
-      res.status(301).redirect('/users/?message=grant failed')
+      return res.status(301).redirect('/users/?message=grant failed')
     }
     else {
-      res.status(301).redirect('/users/?message=grant successfull')
+      return res.status(301).redirect('/users/?message=grant successfull')
     }
   })
 });
@@ -68,12 +68,12 @@ router.get('/grant/:username', (req, res, next) => {
 router.get('/remove/:username', (req, res, next) => {
   User.findOne({username: req.params.username}, function(err, user){
     if(err){
-      res.status(301).redirect('/users/?message=delete failed')
+      return res.status(301).redirect('/users/?message=delete failed')
     }
     else {
       user.is_deleted = true;
       user.save();
-      res.status(301).redirect('/users/?message=delete successfull')
+      return res.status(301).redirect('/users/?message=delete successfull')
     }
   })
 });

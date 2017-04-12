@@ -56,7 +56,7 @@ router.post('/register', (req, res, next) => {
                 if (err) {
                     return next(err);
                 }
-                return res.redirect('/');
+                return res.status(301).redirect('/');
             });
         });
     });
@@ -65,7 +65,7 @@ router.post('/register', (req, res, next) => {
 
 // login page
 router.get('/login', (req, res) => {
-    res.render('index', { user : req.user, error : req.flash('error')});
+    return res.render('index', { user : req.user, error : req.flash('error')});
 });
 
 
@@ -75,7 +75,7 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/login'
         if (err) {
             return next(err);
         }
-        res.redirect('/');
+        return res.status(301).redirect('/');
     });
 });
 
@@ -87,7 +87,7 @@ router.get('/logout', (req, res, next) => {
         if (err) {
             return next(err);
         }
-        res.redirect('/');
+        return res.status(301).redirect('/');
     });
 });
 
