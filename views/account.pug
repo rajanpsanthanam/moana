@@ -18,8 +18,9 @@ block content
         small  managed by #{account.primary_manager.username}
       .row.text-center
         for feature in account.features
-          .col-xs-1.col-sm-1.col-md-2
+          .col-xs-6.col-sm-4.col-md-2
             button.btn.btn.btn-danger.btn-block.btn-xs #{feature.name}
+            br
     .row
       .col-sm-10
         .row

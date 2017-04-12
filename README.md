@@ -1,5 +1,5 @@
 ## Simba
-<img src="/public/images/simba.png" alt="Drawing" style="width: 200px;"/>
+<img src="/public/images/simba.png" alt="Drawing" style="width: 120px; height: 150px;"/>
 
 Simba is a generic tool which can be used to track any process followed in an organization with regards to the client.
 
@@ -23,9 +23,11 @@ node ./bin/www
       {"username": "admin"}, {$set: {"is_admin": true}}
   )
   ```
-  note: change the username to the name with which you registered
+note: change the username to the name with which you registered
+
 6. Now refresh and see the admin related options
 
 
-## Credits
+## References and Credits
 Logo: https://pixabay.com/en/lion-animal-art-big-cat-africa-2154762/
+Authentication: https://github.com/mjhea0/passport-local-express4

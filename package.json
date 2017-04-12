@@ -1,17 +1,16 @@
 {
-  "name": "moana",
+  "name": "simba",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon app.js"
+    "start": "node ./bin/www"
   },
   "repository": {
-    "type": "",
-    "url": ""
+    "type": "git",
+    "url": "https://github.com/rajanpsanthanam/simba"
   },
-  "author": "",
-  "license": "",
+  "author": "Rajan Santhanam",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.10.2",
     "chart.js": "^2.5.0",

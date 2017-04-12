@@ -66,8 +66,13 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+var mongoServer = process.env.SIMBA_MONGODB_HOST || 'localhost'
+var mongoPort = process.env.SIMBA_MONGODB_PORT || '27017'
+
+var mongoConnection = 'mongodb://'+mongoServer+':'+mongoPort+'/moana'
 // mongoose
-mongoose.connect('mongodb://localhost/moana');
+// mongodb://localhost/moana
+mongoose.connect(mongoConnection);
 
 
 // logging
