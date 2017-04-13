@@ -37,7 +37,7 @@ block content
             input#actual_live_date.form-control(name='actual_live_date', type='date')
         .col-sm-4
           h4 Choose features
-          if(features)
+          if(features.length > 0)
             for feature in features
               .checkbox
                 label

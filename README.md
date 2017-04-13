@@ -1,5 +1,5 @@
 ## Simba
-<img src="/public/images/simba.png" alt="Drawing" style="width: 120px; height: 150px;"/>
+<img src="/public/images/simba.png" alt="logo" style="width: 60px; height: 75px;"/>
 
 Simba is a generic tool which can be used to track any process followed in an organization with regards to the client.
 
@@ -12,7 +12,7 @@ admin can also mange users by making someone admin or revoking the access or eve
 ### Setup
 1. Clone the repo
 2. `npm install` in the root directory of the project
-3. Make sure mongo is running and in default port, if not make changes to the connection in `app.js` accordingly
+3. Make sure mongodb is running and set the host and port of mongodb to `SIMBA_MONGODB_HOST` and `SIMBA_MONGODB_PORT` env variables if not default host and port
 4. run the command to start the app
 ```
 node ./bin/www
