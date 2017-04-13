@@ -69,9 +69,8 @@ passport.deserializeUser(User.deserializeUser());
 var mongoServer = process.env.SIMBA_MONGODB_HOST || 'localhost'
 var mongoPort = process.env.SIMBA_MONGODB_PORT || '27017'
 
-var mongoConnection = 'mongodb://'+mongoServer+':'+mongoPort+'/moana'
+var mongoConnection = 'mongodb://'+mongoServer+':'+mongoPort+'/simba'
 // mongoose
-// mongodb://localhost/moana
 mongoose.connect(mongoConnection);
 
 
