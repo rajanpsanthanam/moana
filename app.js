@@ -62,7 +62,7 @@ app.use('/accounts', accounts);
 
 // passport config
 var User = require('./models/user');
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -88,22 +88,24 @@ winston.configure({
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
-    next(err);
+    res.render('error', {
+        error: 'page not found',
+    });
 });
 
 // error handlers
 
 // development error handler
 // will print stacktrace
-// if (app.get('env') === 'development') {
-//     app.use(function(err, req, res, next) {
-//         res.status(err.status || 500);
-//         res.render('error', {
-//             error: err.message,
-//             err: err
-//         });
-//     });
-// }
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            error: err.message,
+            err: err
+        });
+    });
+}
 
 // production error handler
 // no stacktraces leaked to user
