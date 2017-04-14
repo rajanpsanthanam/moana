@@ -1,5 +1,4 @@
 ## Simba
-<img src="/public/images/simba.png" alt="logo" style="width: 60px; height: 75px;"/>
 
 Simba is a generic tool which can be used to track any process followed in an organization with regards to the client.
 
@@ -29,5 +28,6 @@ note: change the username to the name with which you registered
 
 
 ## References and Credits
-Logo: https://pixabay.com/en/lion-animal-art-big-cat-africa-2154762/
-Authentication: https://github.com/mjhea0/passport-local-express4
+
+* Logo: https://pixabay.com/en/lion-animal-art-big-cat-africa-2154762/
+* Authentication: https://github.com/mjhea0/passport-local-express4

@@ -359,6 +359,34 @@ router.post('/', (req, res, next) => {
 });
 
 
+function updateAccount(account, req, opted_features){
+  account.name = req.body.name;
+  account.stage = req.body.stage;
+  account.primary_manager = req.body.primary_manager;
+  account.secondary_manager = req.body.secondary_manager;
+  if (req.body.no_of_stores){
+    account.no_of_stores = req.body.no_of_stores;
+  }
+  if (req.body.agreed_date){
+    account.agreed_date = new Date(req.body.agreed_date);
+  }
+  if (req.body.onboarding_start_date){
+    account.onboarding_start_date = new Date(req.body.onboarding_start_date);
+  }
+  if (req.body.expected_go_live_date){
+    account.expected_go_live_date = new Date(req.body.expected_go_live_date);
+  }
+  if (req.body.actual_live_date){
+    account.actual_live_date = new Date(req.body.actual_live_date);
+  }
+  if(opted_features){
+    account.features = opted_features;
+  }
+  account.save();
+  return true;
+}
+
+
 // update account data
 router.post('/:name', (req, res, next) => {
   Feature
@@ -375,54 +403,43 @@ router.post('/:name', (req, res, next) => {
         }
       }
       Account
-      .findOne({"name": req.body.name})
+      .findOne({"name": req.params.name})
       .exec(function(err, account) {
         if(err){
-            winston.log('info', err.message);
-            return res.status(301).redirect('/accounts?error='+genericError);
-        } else{
-          if(!account){
+          winston.log('info', err.message);
+          return res.status(301).redirect('/accounts?error='+genericError);
+        }
+        else{
+          if(account){
             Account
-            .findOne({"name": req.params.name}, '')
-            .exec(function(err, account){
+            .findOne({"name": req.body.name}, '')
+            .exec(function(err, duplicate){
               if(err){
                 return res.status(301).redirect('/accounts/?error='+updateFailed);
               }
               else{
-                account.name = req.body.name;
-                account.stage = req.body.stage;
-                account.primary_manager = req.body.primary_manager;
-                account.secondary_manager = req.body.secondary_manager;
-                if (req.body.no_of_stores){
-                  account.no_of_stores = req.body.no_of_stores;
+                if(!duplicate){
+                  updateAccount(account, req, opted_features);
+                  return res.status(301).redirect('/accounts/?message='+updateSuccess);
                 }
-                if (req.body.agreed_date){
-                  account.agreed_date = new Date(req.body.agreed_date);
+                else if(duplicate.name == req.params.name){
+                  updateAccount(account, req, opted_features);
+                  return res.status(301).redirect('/accounts/?message='+updateSuccess);
                 }
-                if (req.body.onboarding_start_date){
-                  account.onboarding_start_date = new Date(req.body.onboarding_start_date);
+                else{
+                  var error = 'Account already exists with name '+req.body.name;
+                  return res.status(301).redirect('/accounts/?error='+error);
                 }
-                if (req.body.expected_go_live_date){
-                  account.expected_go_live_date = new Date(req.body.expected_go_live_date);
-                }
-                if (req.body.actual_live_date){
-                  account.actual_live_date = new Date(req.body.actual_live_date);
-                }
-                if(opted_features){
-                  account.features = opted_features;
-                }
-                account.save();
-                return res.status(301).redirect('/accounts/?message='+updateSuccess);
-                }
-              });
-            }
-            else{
-              var error = 'Account already exists with name '+req.body.name;
-              return res.status(301).redirect('/accounts/?error='+error);
-            }
+              }
+            });
+          }
+          else{
+            winston.log('info', err.message);
+            return res.status(301).redirect('/accounts?error='+genericError);
+          }
         }
       });
-      }
+    }
   });
 });
 

@@ -106,29 +106,40 @@ router.get('/edit/:name', (req, res, next) => {
 // edit feature
 router.post('/:name', (req, res, next) => {
   Feature
-  .findOne({"name": req.body.name})
+  .findOne({"name": req.params.name})
   .exec(function(err, feature){
     if(err){
-        winston.log('info', err.message);
-        return res.status(301).redirect('/features/?error='+genericError);
+      winston.log('info', err.message);
+      return res.status(301).redirect('/features/?error='+genericError);
     }
     else{
-      if(!feature){
-        Feature.findOne({"name": req.params.name}, '', function(err, feature){
-            if(err){
-              return res.status(301).redirect('/features/?error='+updateFailed)
-            }
-            else{
+      if(feature){
+        Feature.findOne({"name": req.body.name}, '', function(err, duplicate){
+          if(err){
+            return res.status(301).redirect('/features/?error='+updateFailed)
+          }
+          else{
+            if(!duplicate){
               feature.name = req.body.name;
               feature.color = req.body.color;
               feature.save();
-              return res.status(301).redirect('/features/?message='+updateSuccess)
+              return res.status(301).redirect('/features/?message='+updateSuccess);
             }
-          });
+            else if(duplicate.name == req.params.name){
+              feature.color = req.body.color;
+              feature.save();
+              return res.status(301).redirect('/features/?message='+updateSuccess);
+            }
+            else{
+              let error = 'Feature already exists with name '+req.body.name;
+              return res.status(301).redirect('/features/?error='+error);
+            }
+          }
+        });
       }
       else{
-        let error = 'Feature already exists with name '+req.body.name;
-        return res.status(301).redirect('/features/?error='+error);
+        winston.log('info', err.message);
+        return res.status(301).redirect('/features/?error='+genericError);
       }
     }
   });

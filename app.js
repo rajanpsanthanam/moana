@@ -21,7 +21,10 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug')
+app.set('view engine', 'pug');
+
+// should be production
+app.set('env', 'production');
 
 // favicon
 app.use(favicon(__dirname + '/public/images/favicon.ico'));

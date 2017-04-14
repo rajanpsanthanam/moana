@@ -109,31 +109,43 @@ router.get('/edit/:name', (req, res, next) => {
 // edit stage
 router.post('/:name', (req, res, next) => {
   Stage
-  .findOne({"name": req.body.name})
+  .findOne({"name": req.params.name})
   .exec(function(err, stage){
     if(err){
         winston.log('info', err.message);
         return res.status(301).redirect('/stages/?error='+genericError);
     }
     else{
-      if(!stage){
-        Stage.findOne({"name": req.params.name}, '', function(err, stage){
+      if(stage){
+        Stage.findOne({"name": req.body.name}, '', function(err, duplicate){
           if(err){
             winston.log('info', err.message);
             return res.status(301).redirect('/stages/?error='+updateFailed)
           }
           else{
-            stage.name = req.body.name;
-            stage.color = req.body.color;
-            stage.order = req.body.order;
-            stage.save();
-            return res.status(301).redirect('/stages/?message='+updateSuccess)
+            if(!duplicate){
+              stage.name = req.body.name;
+              stage.color = req.body.color;
+              stage.order = req.body.order;
+              stage.save();
+              return res.status(301).redirect('/stages/?message='+updateSuccess)
+            }
+            else if(duplicate.name == req.params.name){
+              stage.color = req.body.color;
+              stage.order = req.body.order;
+              stage.save();
+              return res.status(301).redirect('/stages/?message='+updateSuccess);
+            }
+            else{
+              let error = 'Stage already exists with name '+req.body.name;
+              return res.status(301).redirect('/stages/?error='+error);
+            }
           }
         });
       }
       else{
-        let error = 'Stage already exists with name '+req.body.name;
-        return res.status(301).redirect('/stages/?error='+error);
+        winston.log('info', err.message);
+        return res.status(301).redirect('/stages/?error='+genericError);
       }
     }
   });
