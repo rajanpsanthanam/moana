@@ -19,7 +19,7 @@ block content
       .row.text-center
         for feature in account.features
           .col-xs-6.col-sm-4.col-md-2
-            button.btn.btn.btn-danger.btn-block.btn-xs #{feature.name}
+            button.btn.btn.btn-block.btn-xs(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{feature.name}
             br
     .row
       .col-sm-10
@@ -32,27 +32,27 @@ block content
       .col-sm-2
         .list-group
           .row
-            p Agreed On
-            if(account.agreed_date)
-              | #{account.agreed_date}
+            p Signup Date
+            if(account.signup_date)
+              | #{account.signup_date}
             else
               | ~
             hr
-            p Onboarding Started On
-            if(account.onboarding_start_date)
-              | #{account.onboarding_start_date}
+            p Process Started On
+            if(account.process_start_date)
+              | #{account.process_start_date}
             else
               | ~
             hr
-            p Expected Live Date
-            if(account.expected_go_live_date)
-              | #{account.expected_go_live_date}
+            p Expected Completion Date
+            if(account.expected_completion_date)
+              | #{account.expected_completion_date}
             else
               | ~
             hr
-            p Actual Live Date
-            if(account.actual_live_date)
-              | #{account.actual_live_date}
+            p Actual Completion Date
+            if(account.actual_completion_date)
+              | #{account.actual_completion_date}
             else
               | ~
     br

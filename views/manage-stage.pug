@@ -23,7 +23,7 @@ block content
         for stage in account.stages
           tr
             td
-              p #{stage.stage.name}
+              button.btn.btn.btn-block.btn-xs(style="background-color:" + stage.stage.bg_color + ";border-color:" + stage.stage.bg_color + ";color:"+ stage.stage.font_color) #{stage.stage.name}
             td
               p #{stage.start_date}
             td

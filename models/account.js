@@ -18,13 +18,12 @@ const Stages = new Schema({
 
 const Account = new Schema({
     name: String,
-    agreed_date: Date,
-    onboarding_start_date: Date,
-    expected_go_live_date: Date,
-    actual_live_date: Date,
     primary_manager:{ type: Schema.Types.ObjectId, ref: 'user' },
     secondary_manager:{ type: Schema.Types.ObjectId, ref: 'user' },
-    no_of_stores:{ type: Number, default: 0 },
+    signup_date: Date,
+    process_start_date: Date,
+    expected_completion_date: Date,
+    actual_completion_date: Date,
     comments: [Comments],
     stages: [Stages],
     features: [{ type: Schema.Types.ObjectId, ref: 'feature' }],

@@ -115,24 +115,44 @@ router.get('/logout', (req, res, next) => {
 });
 
 
-// change password form
-router.get('/change-password', (req, res, next) => {
-  return res.render('change-password', { });
+// profile update form
+router.get('/profile-update', (req, res, next) => {
+  return res.render('profile-update', { });
 })
 
+
+// profile update
+router.post('/email-update', (req, res, next) => {
+  email = req.body.email;
+  if(req.user.email != email){
+    req.user.email = email;
+    req.user.save(function(err){
+      if (err) {
+        return res.render('profile-update', { error : 'Update email Failed' });
+      }
+      req.logout();
+      req.session.save((err) => {
+        if (err) {
+            return next(err);
+        }
+        return res.render('index', { user : req.user, message : 'Email updated successfully! Login with new email'});
+      });
+    });
+  }
+});
 
 // change password
 router.post('/change-password', (req, res, next) => {
   newPassword = req.body.newPassword;
   confirmPassword = req.body.confirmPassword;
   if (newPassword != confirmPassword){
-    return res.render('change-password', { error : 'Password did not match! Try again' });
+    return res.render('profile-update', { error : 'Password did not match! Try again' });
   }
   req.user.setPassword(confirmPassword, (err, user) => {
     if(!err){
       req.user.save(function(err){
           if (err) {
-            return res.render('change-password', { error : 'Change Password Failed' });
+            return res.render('profile-update', { error : 'Change Password Failed' });
           }
           req.logout();
           req.session.save((err) => {
@@ -144,7 +164,7 @@ router.post('/change-password', (req, res, next) => {
       });
     }
     else{
-      return res.render('change-password', { error : 'Change Password Failed' });
+      return res.render('profile-update', { error : 'Change Password Failed' });
     }
   });
 });

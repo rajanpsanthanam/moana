@@ -19,7 +19,8 @@ block content
           tr
             th Stage
             th Order
-            th Color
+            th Background Color
+            th Font Color
             th Edit
             th Delete
         for stage in stages
@@ -29,7 +30,9 @@ block content
             td
               p #{stage.order}
             td
-              p #{stage.color}
+              button.btn.btn(style="background-color:" + stage.bg_color + ";border-color:" + stage.bg_color + ";padding: 10px 50px;")
+            td
+              button.btn.btn(style="background-color:" + stage.font_color + ";border-color:" + stage.font_color + ";padding: 10px 50px;")
             td
               a(href='/stages/edit/'+stage.name+'/')
                 i.fa.fa-pencil(aria-hidden='true')

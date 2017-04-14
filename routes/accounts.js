@@ -21,6 +21,9 @@ var deleteSuccess = constants.deleteSuccess;
 var deleteFailed = constants.deleteFailed;
 
 
+var accountFields = 'primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by'
+
+
 // middleware for auth check
 router.use(function (req, res, next) {
   if (!req.user){
@@ -34,7 +37,7 @@ router.use(function (req, res, next) {
 router.get('/view/:name', (req, res, next) => {
   Account
   .findOne({"name": req.params.name})
-  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .populate(accountFields)
   .exec(function(err, account) {
     if(err){
         winston.log('info', err.message);
@@ -50,7 +53,7 @@ router.get('/view/:name', (req, res, next) => {
 router.get('/analytics/:name/stage', (req, res, next) => {
   Account
   .findOne({"name": req.params.name})
-  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .populate(accountFields)
   .exec(function(err, account) {
     if(err){
         winston.log('info', err.message);
@@ -72,8 +75,8 @@ router.get('/analytics/:name/stage', (req, res, next) => {
           var data_point = 0;
         }
         data_points.push(Math.ceil(data_point));
-        background_color.push(account.stages[i].stage.color)
-        border_color.push(account.stages[i].stage.color)
+        background_color.push(account.stages[i].stage.bg_color)
+        border_color.push(account.stages[i].stage.bg_color)
       }
       res_data = {
         'labels': labels,
@@ -108,7 +111,7 @@ router.post('/manage/:name/add-comment', (req, res, next) => {
 router.get('/manage/:name/stages', (req, res, next) => {
   Account
   .findOne({"name": req.params.name})
-  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .populate(accountFields)
   .exec( function(err, account) {
     if(err){
       winston.log('info', err.message);
@@ -124,7 +127,7 @@ router.get('/manage/:name/stages', (req, res, next) => {
 router.get('/manage/:name/add-stage', (req, res, next) => {
   Account
   .findOne({ "name": req.params.name })
-  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .populate(accountFields)
   .exec(function(err, account) {
     if(err){
       winston.log('info', err.message);
@@ -187,7 +190,7 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
   var stage = req.params.stage;
   Account
   .findOne({ "name": req.params.name })
-  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .populate(accountFields)
   .exec(function(err, account) {
     if(err){
       winston.log('info', err.message);
@@ -264,7 +267,7 @@ router.get('/', (req, res, next) => {
   var filters = filter_data(req.query);
   Account
   .find(filters)
-  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .populate(accountFields)
   .exec(function(err, accounts){
     if(err){
       winston.log('info', err.message);
@@ -317,24 +320,20 @@ router.post('/', (req, res, next) => {
             if(!account){
               data = {
                 'name': req.body.name,
-                'stage': req.body.stage,
                 'primary_manager': req.body.primary_manager,
                 'secondary_manager': req.body.secondary_manager
               }
-              if (req.body.no_of_stores){
-                data['no_of_stores'] = req.body.no_of_stores
+              if (req.body.signup_date){
+                data['signup_date'] = new Date(req.body.signup_date)
               }
-              if (req.body.agreed_date){
-                data['agreed_date'] = new Date(req.body.agreed_date)
+              if (req.body.process_start_date){
+                data['process_start_date'] = new Date(req.body.process_start_date)
               }
-              if (req.body.onboarding_start_date){
-                data['onboarding_start_date'] = new Date(req.body.onboarding_start_date)
+              if (req.body.expected_completion_date){
+                data['expected_completion_date'] = new Date(req.body.expected_completion_date)
               }
-              if (req.body.expected_go_live_date){
-                data['expected_go_live_date'] = new Date(req.body.expected_go_live_date)
-              }
-              if (req.body.actual_live_date){
-                data['actual_live_date'] = new Date(req.body.actual_live_date)
+              if (req.body.actual_completion_date){
+                data['actual_completion_date'] = new Date(req.body.actual_completion_date)
               }
               if(opted_features){
                 data['features'] = opted_features;
@@ -361,23 +360,19 @@ router.post('/', (req, res, next) => {
 
 function updateAccount(account, req, opted_features){
   account.name = req.body.name;
-  account.stage = req.body.stage;
   account.primary_manager = req.body.primary_manager;
   account.secondary_manager = req.body.secondary_manager;
-  if (req.body.no_of_stores){
-    account.no_of_stores = req.body.no_of_stores;
+  if (req.body.signup_date){
+    account.signup_date = new Date(req.body.signup_date);
   }
-  if (req.body.agreed_date){
-    account.agreed_date = new Date(req.body.agreed_date);
+  if (req.body.process_start_date){
+    account.process_start_date = new Date(req.body.process_start_date);
   }
-  if (req.body.onboarding_start_date){
-    account.onboarding_start_date = new Date(req.body.onboarding_start_date);
+  if (req.body.expected_completion_date){
+    account.expected_completion_date = new Date(req.body.expected_completion_date);
   }
-  if (req.body.expected_go_live_date){
-    account.expected_go_live_date = new Date(req.body.expected_go_live_date);
-  }
-  if (req.body.actual_live_date){
-    account.actual_live_date = new Date(req.body.actual_live_date);
+  if (req.body.actual_completion_date){
+    account.actual_completion_date = new Date(req.body.actual_completion_date);
   }
   if(opted_features){
     account.features = opted_features;
@@ -469,7 +464,7 @@ router.get('/add', (req, res, next) => {
 router.get('/edit/:name', (req, res, next) => {
   Account
   .findOne({"name": req.params.name})
-  .populate('primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by')
+  .populate(accountFields)
   .exec( function(err, account){
       if(err){
           return res.status(301).redirect('/accounts?error='+genericError);

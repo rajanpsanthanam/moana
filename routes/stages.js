@@ -71,7 +71,8 @@ router.post('/', (req, res, next) => {
         data = {
           'name': req.body.name,
           'order': req.body.order,
-          'color': req.body.color
+          'bg_color': req.body.bgColor,
+          'font_color': req.body.fontColor
         };
         var stage = new Stage(data);
         stage.save(function (err) {
@@ -125,13 +126,15 @@ router.post('/:name', (req, res, next) => {
           else{
             if(!duplicate){
               stage.name = req.body.name;
-              stage.color = req.body.color;
+              stage.bg_color = req.body.bgColor;
+              stage.font_color = req.body.fontColor;
               stage.order = req.body.order;
               stage.save();
               return res.status(301).redirect('/stages/?message='+updateSuccess)
             }
             else if(duplicate.name == req.params.name){
-              stage.color = req.body.color;
+              stage.bg_color = req.body.bgColor;
+              stage.font_color = req.body.fontColor;
               stage.order = req.body.order;
               stage.save();
               return res.status(301).redirect('/stages/?message='+updateSuccess);
