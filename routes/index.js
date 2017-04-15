@@ -19,11 +19,11 @@ router.get('/', (req, res) => {
             Account.find({"secondary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
               if(err){
                   winston.log('info', err.message);
-                  return res.render('index', { error : err.message });
+                  return res.render('dashboard', { error : err.message });
               }
               else{
                   var secondary_accounts = accounts;
-                  return res.render('index', {
+                  return res.render('dashboard', {
                     user : req.user, primary_accounts : primary_accounts, secondary_accounts: secondary_accounts
                   });
                 }
@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
           });
         }
   else{
-    return res.render('index', { user : req.user});
+    return res.render('index');
   }
 });
 
@@ -60,12 +60,6 @@ router.post('/register', (req, res, next) => {
             });
         });
     });
-});
-
-
-// login page
-router.get('/login', (req, res) => {
-    return res.render('index', { user : req.user, error : req.flash('error')});
 });
 
 
@@ -113,6 +107,12 @@ router.get('/logout', (req, res, next) => {
         return res.status(301).redirect('/');
     });
 });
+
+
+// profile
+router.get('/profile', (req, res, next) => {
+  return res.render('profile', {user: req.user });
+})
 
 
 // profile update form

@@ -2,95 +2,30 @@ extends layout
 
 block content
     .container
-      if (!user)
-        .cover-container
-          a(href="/")
-            img.img-square(src='/images/simba.png', height='200', width='150')
-          br
-          br
-          p.lead Hey there, I am Simba. Your virtual assistant.
-          br
-          h1 Sign In..
-          br
-          form(role='form', action="/login",method="post", style='max-width: 300px;')
-            .form-group
-                input.form-control(type='text', name="email", placeholder='Enter Email')
-            .form-group
-              input.form-control(type='password', name="password", placeholder='Password')
-            .row
-              .col-xs-6.col-sm-6.col-md-6
-                input.btn.btn.btn-warning.btn-block(type='submit', value='Sign In')
-              .col-xs-6.col-sm-6.col-md-6
-                a.btn.btn.btn-primary.btn-block(href='/') Cancel
-          br
-          br
-          p New around here?
-            a(href="/register")
-              |  Register
-          p Forgot Password?
-            a(href="/reset-password")
-              |  Reset
-      else
-        .row
-          .col-sm-8
-            p.lead Hey #{user.username}, Good to see you back.
-          .col-sm-2
-            a.btn.btn-warning(href='/profile-update', role='button') Profile Update
-          .col-sm-2
-            a(href="/logout")
-              i.fa.fa-sign-out.fa-2x
+      .cover-container
+        a(href="/")
+          img.img-square(src='/images/simba.png', height='200', width='150')
         br
-        if (user.is_admin)
-          p.lead.text-center Manage Section
+        br
+        p.lead Hey there, I am Simba. Your virtual assistant.
+        br
+        h1 Sign In..
+        br
+        form(role='form', action="/login",method="post", style='max-width: 300px;')
+          .form-group
+              input.form-control(type='text', name="email", placeholder='Enter Email')
+          .form-group
+            input.form-control(type='password', name="password", placeholder='Password')
           .row
-            .col-sm-6
-              .row
-                .col-sm-10.col-sm-offset-2.text-center
-                  a(href="/accounts")
-                    h3 Accounts
-                  p
-                    | Add new account, or manage existing account and lot more..
-            .col-sm-6.text-center
-              .row
-                .col-sm-10.col-sm-offset-1.text-center
-                  a(href="/users")
-                    h3 Users
-                  p Manage users, grant admin access, revoke, remove user & more..
-          .row
-            .col-sm-6
-              .row
-                .col-sm-10.col-sm-offset-2.text-center
-                  a(href="/stages")
-                    h3 Stages
-                  p
-                    | Manage custom stages which constitutes onboarding lifecycle
-            .col-sm-6.text-center
-              .row
-                .col-sm-10.col-sm-offset-1.text-center
-                  a(href="/features")
-                    h3 Features
-                  p Manage the features offered to accounts
-          hr
-        .row
-          .col-sm-6
-            .row
-              .col-sm-10.col-sm-offset-2.text-center
-                h3 Primary Accounts
-                if(primary_accounts.length > 0)
-                  for primary_account in primary_accounts
-                    a(href='/accounts/view/'+primary_account.name) #{primary_account.name}
-                    br
-                    br
-                else
-                  p you are yet to start managing accounts
-          .col-sm-6.text-center
-            .row
-              .col-sm-10.col-sm-offset-1.text-center
-                h3 Secondary Accounts
-                if(secondary_accounts.length > 0)
-                  for secondary_account in secondary_accounts
-                    a(href='/accounts/view/'+secondary_account.name) #{secondary_account.name}
-                    br
-                    br
-                else
-                  p you don't have any secondary accounts
+            .col-xs-6.col-sm-6.col-md-6
+              input.btn.btn.btn-warning.btn-block(type='submit', value='Sign In')
+            .col-xs-6.col-sm-6.col-md-6
+              a.btn.btn.btn-primary.btn-block(href='/') Cancel
+        br
+        br
+        p New around here?
+          a(href="/register")
+            |  Register
+        p Forgot Password?
+          a(href="/reset-password")
+            |  Reset

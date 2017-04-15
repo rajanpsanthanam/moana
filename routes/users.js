@@ -33,7 +33,7 @@ router.get('/', (req, res, next) => {
           winston.log('info', err.message);
           return res.render('index', { error : err.message });
         } else{
-          return res.render('users', { users : users, message: message });
+          return res.render('users', { user: req.user, users : users, message: message });
         }
     })
 });

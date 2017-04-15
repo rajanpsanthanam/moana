@@ -285,7 +285,7 @@ router.get('/', (req, res, next) => {
           else{
             return res.render(
               'accounts',
-              { accounts : accounts, users: users, filters: filters, message: message, error: error }
+              { user: req.user, accounts : accounts, users: users, filters: filters, message: message, error: error }
             );
           }
       });

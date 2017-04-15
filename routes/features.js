@@ -42,7 +42,7 @@ router.get('/', (req, res, next) => {
             winston.log('info', err.message);
             return res.render('index', { error : err.message });
         } else{
-            return res.render('features', { features : features, message: message, error: error});
+            return res.render('features', { user: req.user, features : features, message: message, error: error});
         }
     });
 });

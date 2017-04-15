@@ -45,7 +45,7 @@ router.get('/', (req, res, next) => {
           winston.log('info', err.message);
           return res.render('index', { error : err.message });
         } else{
-          return res.render('stages', { stages : stages, message: message, error: error});
+          return res.render('stages', { user: req.user, stages : stages, message: message, error: error});
         }
     });
 });

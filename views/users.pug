@@ -1,16 +1,9 @@
-extends layout
+extends manage-header.pug
 
-block content
-  .container
+block pane
     .row
-      .col-sm-1
-        a(href='/')
-          i.fa.fa-chevron-left.fa-2x
       .col-sm-9
-        p.lead Manage Users
-      .col-sm-2
-        a(href="/logout")
-          i.fa.fa-sign-out.fa-2x
+        p.lead Users
     table.table.table-hover.table-stripped
       thead
         tr

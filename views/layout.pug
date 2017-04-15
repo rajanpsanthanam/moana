@@ -1,3 +1,4 @@
+// layout.pug
 doctype html
 html
   head
@@ -20,7 +21,9 @@ html
         |  #{message}
       br
     block content
-  script(src='/javascripts/jquery-3.2.0.min.js')
-  script(src='/javascripts/bootstrap.min.js')
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
-  script(src='/javascripts/custom.js', type='text/javascript')
+    block footer
+  block scripts
+    script(src='/javascripts/jquery-3.2.0.min.js')
+    script(src='/javascripts/bootstrap.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js')
+    script(src='/javascripts/custom.js', type='text/javascript')

@@ -1,18 +1,11 @@
-extends layout
+extends manage-header.pug
 
-block content
-  .container
+block pane
     .row
-      .col-sm-1
-        a(href='/')
-          i.fa.fa-chevron-left.fa-2x
-      .col-sm-8
-        p.lead Manage Features
+      .col-sm-9
+        p.lead Features
       .col-sm-2
         a.btn.btn-warning(href='/features/add', role='button') Add Feature
-      .col-sm-1
-        a(href="/logout")
-          i.fa.fa-sign-out.fa-2x
     if(features)
       table.table.table-hover.table-stripped
         thead
