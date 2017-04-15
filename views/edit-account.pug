@@ -1,7 +1,6 @@
-extends layout
+extends sub-layout.pug
 
-block content
-  .container
+block pane
     h1 Update Account
     form(role='form', action='/accounts/'+account.name, method='post', style='max-width: 800px;')
       .row

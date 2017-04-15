@@ -1,0 +1,12 @@
+extends layout.pug
+
+block content
+  .container
+    .row
+      .col-sm-10
+        a(href="/")
+          img.img-square(src='/images/simba.png', height='60', width='50')
+      .col-sm-2
+        a.btn.btn-primary(href='/logout', role='button') Logout
+    br
+    block pane

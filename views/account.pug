@@ -1,18 +1,11 @@
-extends layout
+extends sub-layout.pug
 
-block content
-  .container
-    .row
-      .col-sm-9
-        a(href='/accounts')
-          i.fa.fa-chevron-left.fa-2x
-      .col-sm-2
-        form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
-          button.btn.btn-warning(type='submit') Manage Stage
-      .col-sm-1
-        a(href="/logout")
-          i.fa.fa-sign-out.fa-2x
-    .page-header
+block pane
+  .row
+    .col-sm-1
+      a(href='/accounts')
+        i.fa.fa-backward.fa-2x
+    .col-md-9
       h1
         | #{account.name}
         small  managed by #{account.primary_manager.username}
@@ -20,73 +13,76 @@ block content
         for feature in account.features
           .col-xs-6.col-sm-4.col-md-2
             button.btn.btn.btn-block.btn-xs(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{feature.name}
-            br
-    .row
-      .col-sm-10
-        .row
-          .col-sm-3
-            button.btn.btn-primary#stageButton(onclick="stageBarReport('" + account.name + "')") Days / Stage
-        br
-        .row
-            canvas#myChart(style='width: 300px; height: 100px')
-      .col-sm-2
-        .list-group
-          .row
-            p Signup Date
-            if(account.signup_date)
-              | #{account.signup_date}
-            else
-              | ~
-            hr
-            p Process Started On
-            if(account.process_start_date)
-              | #{account.process_start_date}
-            else
-              | ~
-            hr
-            p Expected Completion Date
-            if(account.expected_completion_date)
-              | #{account.expected_completion_date}
-            else
-              | ~
-            hr
-            p Actual Completion Date
-            if(account.actual_completion_date)
-              | #{account.actual_completion_date}
-            else
-              | ~
-    br
-    hr
-    br
-    .row
+    .col-md-2
+      form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
+        button.btn.btn-warning(type='submit') Manage Stage
+  hr
+  .row
+    .col-sm-10
+      .row
+        .col-sm-3
+          button.btn.btn-primary#stageButton(onclick="stageBarReport('" + account.name + "')") Days / Stage
+      br
+      .row
+          canvas#myChart(style='width: 300px; height: 100px')
+    .col-sm-2
       .list-group
         .row
-          form(role='form', action='/accounts/manage/'+account.name+'/add-comment', method="post")
-            .row
-              textarea.form-control(rows='3', name='comment')
-            br
-            .row.text-center
-              button.btn.btn-warning(type='submit') add comment
-        hr
-        .row
-          p.lead Timeline
-          if(account.comments.length > 0)
-            for comment in account.comments.reverse().slice(0, 20)
-              if(comment.body.includes('New Stage:'))
-                p.list-group-item-text
-                span.label.label-info Stage Added
-                |  #{comment.body.replace('New Stage:', '')}
-              else if(comment.body.includes('Stage Completed:'))
-                p.list-group-item-text
-                span.label.label-success Stage Completed
-                |  #{comment.body.replace('Stage Completed:', '')}
-              else
-                p.list-group-item-text #{comment.body}
-              br
-              p
-              i  #{comment.by.username}
-              |  @
-              i  #{comment.date}
-              hr
+          p Signup Date
+          if(account.signup_date)
+            | #{account.signup_date}
           else
-            p No updates on the account yet
+            | ~
+          hr
+          p Process Started On
+          if(account.process_start_date)
+            | #{account.process_start_date}
+          else
+            | ~
+          hr
+          p Expected Completion Date
+          if(account.expected_completion_date)
+            | #{account.expected_completion_date}
+          else
+            | ~
+          hr
+          p Actual Completion Date
+          if(account.actual_completion_date)
+            | #{account.actual_completion_date}
+          else
+            | ~
+  br
+  hr
+  br
+  .row
+    .list-group
+      .row
+        form(role='form', action='/accounts/manage/'+account.name+'/add-comment', method="post")
+          .row
+            textarea.form-control(rows='3', name='comment')
+          br
+          .row.text-center
+            button.btn.btn-warning(type='submit') add comment
+      hr
+      .row
+        p.lead Timeline
+        if(account.comments.length > 0)
+          for comment in account.comments.reverse().slice(0, 20)
+            if(comment.body.includes('New Stage:'))
+              p.list-group-item-text
+              span.label.label-info Stage Added
+              |  #{comment.body.replace('New Stage:', '')}
+            else if(comment.body.includes('Stage Completed:'))
+              p.list-group-item-text
+              span.label.label-success Stage Completed
+              |  #{comment.body.replace('Stage Completed:', '')}
+            else
+              p.list-group-item-text #{comment.body}
+            br
+            p
+            i  #{comment.by.username}
+            |  @
+            i  #{comment.date}
+            hr
+        else
+          p No updates on the account yet

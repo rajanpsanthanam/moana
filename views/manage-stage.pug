@@ -1,34 +1,30 @@
-extends layout
+extends sub-layout.pug
 
-block content
-  .container
-    .row
-      .col-sm-1
-        a(href='/accounts/view/'+account.name)
-          i.fa.fa-chevron-left.fa-2x
-      .col-sm-8
-        p.lead Stage data for #{account.name}
-      .col-sm-2
-        a.btn.btn-warning(href='/accounts/manage/'+account.name+'/add-stage', role='button') Add Stage
-      .col-sm-1
-        a(href="/logout")
-          i.fa.fa-sign-out.fa-2x
-    if(account.stages)
-      table.table.table-hover.table-stripped
-        thead
-          tr
-            th Stage
-            th Started On
-            th Completed On
-        for stage in account.stages
-          tr
-            td
-              button.btn.btn.btn-block.btn-xs(style="background-color:" + stage.stage.bg_color + ";border-color:" + stage.stage.bg_color + ";color:"+ stage.stage.font_color) #{stage.stage.name}
-            td
-              p #{stage.start_date}
-            td
-              if(stage.end_date)
-                p #{stage.end_date}
-              else
-                form(role='form', action='/accounts/manage/'+account.name+'/complete-stage/'+stage.stage.name, method="get")
-                  button.btn.btn-warning(type='submit') Complete
+block pane
+  .row
+    .col-sm-2
+      a(href='/accounts/view/'+account.name)
+        i.fa.fa-backward.fa-2x
+    .col-sm-8
+      p.lead Stage data for #{account.name}
+    .col-sm-2
+      a.btn.btn-warning(href='/accounts/manage/'+account.name+'/add-stage', role='button') Add Stage
+  if(account.stages)
+    table.table.table-hover.table-stripped
+      thead
+        tr
+          th Stage
+          th Started On
+          th Completed On
+      for stage in account.stages
+        tr
+          td
+            button.btn.btn.btn-block.btn-xs(style="background-color:" + stage.stage.bg_color + ";border-color:" + stage.stage.bg_color + ";color:"+ stage.stage.font_color) #{stage.stage.name}
+          td
+            p #{stage.start_date}
+          td
+            if(stage.end_date)
+              p #{stage.end_date}
+            else
+              form(role='form', action='/accounts/manage/'+account.name+'/complete-stage/'+stage.stage.name, method="get")
+                button.btn.btn-warning(type='submit') Complete

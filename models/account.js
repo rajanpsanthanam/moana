@@ -17,7 +17,7 @@ const Stages = new Schema({
 
 
 const Account = new Schema({
-    name: String,
+    name: { type: String, required: true, unique: true },
     primary_manager:{ type: Schema.Types.ObjectId, ref: 'user' },
     secondary_manager:{ type: Schema.Types.ObjectId, ref: 'user' },
     signup_date: Date,

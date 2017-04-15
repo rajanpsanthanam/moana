@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Feature = require('../models/feature');
 const constants = require('../common/constants');
+const winston = require('winston');
 
 // constants needed for the module
 var genericError = constants.genericError;
@@ -66,20 +67,26 @@ router.post('/', (req, res, next) => {
     }
     else{
       if(!feature){
-        data = {
-          'name': req.body.name,
-          'bg_color': req.body.bgColor,
-          'font_color': req.body.fontColor
-        };
-        var feature = new Feature(data);
-        feature.save(function (err) {
-          if (err) {
-            winston.log('info', err.message);
-            return res.status(301).redirect('/features/?error='+createFailed);
-          } else {
-            return res.status(301).redirect('/features/?message='+createSuccess);
-          }
-        });
+        if(req.body.name){
+          data = {
+            'name': req.body.name,
+            'bg_color': req.body.bgColor,
+            'font_color': req.body.fontColor
+          };
+          var feature = new Feature(data);
+          feature.save(function (err) {
+            if (err) {
+              winston.log('info', err.message);
+              return res.status(301).redirect('/features/?error='+createFailed);
+            } else {
+              return res.status(301).redirect('/features/?message='+createSuccess);
+            }
+          });
+        }
+        else{
+          let error = 'Feature name is mandatory';
+          return res.status(301).redirect('/features/?error='+error);
+        }
       }
       else{
         let error = 'Feature already exists';

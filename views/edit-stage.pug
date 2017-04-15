@@ -1,21 +1,20 @@
-extends layout
+extends sub-layout.pug
 
-block content
-  .container
-    .cover-container
-      h1 Update Stage
-      br
-      form(role='form', action='/stages/'+stage.name, method='post', style='max-width: 300px;')
-        .form-group
-          input.form-control(type='text', name="name", placeholder='Enter name', value=stage.name)
-        .form-group
-          input.form-control(name='order', type='number', placeholder='enter the order', value=stage.order)
-        .form-group
-          input.form-control(type='text', name="bgColor", placeholder='Enter background color', value=stage.bg_color)
-        .form-group
-          input.form-control(type='text', name="fontColor", placeholder='Enter font color', value=stage.font_color)
-        .row
-          .col-xs-6.col-sm-6.col-md-6
-            input.btn.btn.btn-warning.btn-block(type='submit', value='Update')
-          .col-xs-6.col-sm-6.col-md-6
-            a.btn.btn.btn-primary.btn-block(href='/stages') Cancel
+block pane
+  .cover-container
+    h1 Update Stage
+    br
+    form(role='form', action='/stages/'+stage.name, method='post', style='max-width: 300px;')
+      .form-group
+        input.form-control(type='text', name="name", placeholder='Enter name', value=stage.name)
+      .form-group
+        input.form-control(name='order', type='number', placeholder='enter the order', value=stage.order)
+      .form-group
+        input.form-control(type='text', name="bgColor", placeholder='Enter background color', value=stage.bg_color)
+      .form-group
+        input.form-control(type='text', name="fontColor", placeholder='Enter font color', value=stage.font_color)
+      .row
+        .col-xs-6.col-sm-6.col-md-6
+          input.btn.btn.btn-warning.btn-block(type='submit', value='Update')
+        .col-xs-6.col-sm-6.col-md-6
+          a.btn.btn.btn-primary.btn-block(href='/stages') Cancel

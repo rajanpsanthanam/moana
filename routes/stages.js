@@ -68,21 +68,27 @@ router.post('/', (req, res, next) => {
     }
     else{
       if(!stage){
-        data = {
-          'name': req.body.name,
-          'order': req.body.order,
-          'bg_color': req.body.bgColor,
-          'font_color': req.body.fontColor
-        };
-        var stage = new Stage(data);
-        stage.save(function (err) {
-          if (err) {
-            winston.log('info', err.message);
-            return res.status(301).redirect('/stages/?error='+createFailed);
-          } else {
-            return res.status(301).redirect('/stages/?message='+createSuccess);
-          }
-        });
+        if(req.body.name){
+          data = {
+            'name': req.body.name,
+            'order': req.body.order,
+            'bg_color': req.body.bgColor,
+            'font_color': req.body.fontColor
+          };
+          var stage = new Stage(data);
+          stage.save(function (err) {
+            if (err) {
+              winston.log('info', err.message);
+              return res.status(301).redirect('/stages/?error='+createFailed);
+            } else {
+              return res.status(301).redirect('/stages/?message='+createSuccess);
+            }
+          });
+        }
+        else{
+          let error = 'Stage name is mandatory';
+          return res.status(301).redirect('/stages/?error='+error);
+        }
       }
       else{
         let error = 'Stage already exists';
