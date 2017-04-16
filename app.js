@@ -24,7 +24,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // should be production
-app.set('env', 'development');
+var env = process.env.SIMBA_ENV || 'production'
+app.set('env', env);
 
 // favicon
 app.use(favicon(__dirname + '/public/images/favicon.ico'));

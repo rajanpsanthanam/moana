@@ -74,6 +74,11 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/login'
 });
 
 
+router.get('/login', (req, res) => {
+    res.render('index', { user : req.user, error : req.flash('error')});
+});
+
+
 // change password form
 router.get('/reset-password', (req, res, next) => {
   return res.render('reset-password', { });
