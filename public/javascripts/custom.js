@@ -1,10 +1,3 @@
-function ISOToDateFormat(dateString){
-  dateString=new Date(dateString).toUTCString();
-  dateString=dateString.split(' ').slice(0, 4).join(' ');
-  return dateString;
-}
-
-
 function stagePieReport(account){
   $.get( "/accounts/analytics/"+ account +"/stage", function( analytics ) {
     analytics = JSON.parse(analytics);

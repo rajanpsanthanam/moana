@@ -1,18 +1,28 @@
 extends sub-layout.pug
 
 block pane
+  -
+    var ISOToDateFormat = function(dateString, limit){
+      dateString=new Date(dateString).toLocaleString();
+      dateString=dateString.split(',').slice(0, limit).join(' ');
+      return dateString;
+     }
   .row
-    .col-sm-1
-      a(href='/accounts')
-        i.fa.fa-backward.fa-2x
-    .col-md-9
-      h1
-        | #{account.name}
-        small  managed by #{account.primary_manager.username}
+    .col-md-10
+      .row
+        .col-md-1
+          a(href='/accounts')
+            i.fa.fa-backward
+      h2 #{account.name}
+      h4 managed by #{account.primary_manager.username}
       .row.text-center
         for feature in account.features
+          if(feature.name.length > 20)
+            - var featureName = feature.name.substring(0, 15)+'...'
+          else
+            - var featureName = feature.name
           .col-xs-6.col-sm-4.col-md-2
-            button.btn.btn.btn-block.btn-xs(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{feature.name}
+            button.btn.btn.btn-block.btn-xs(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{featureName}
     .col-md-2
       form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
         button.btn.btn-warning(type='submit') Manage Stage
@@ -26,29 +36,30 @@ block pane
       .row
           canvas#myChart(style='width: 300px; height: 100px')
     .col-sm-2
+      p.lead Important Dates
       .list-group
         .row
           p Signup Date
           if(account.signup_date)
-            | #{account.signup_date}
+            | #{ISOToDateFormat(account.signup_date, 1)}
           else
             | ~
           hr
           p Process Started On
           if(account.process_start_date)
-            | #{account.process_start_date}
+            | #{ISOToDateFormat(account.process_start_date, 1)}
           else
             | ~
           hr
           p Expected Completion Date
           if(account.expected_completion_date)
-            | #{account.expected_completion_date}
+            | #{ISOToDateFormat(account.expected_completion_date, 1)}
           else
             | ~
           hr
           p Actual Completion Date
           if(account.actual_completion_date)
-            | #{account.actual_completion_date}
+            | #{ISOToDateFormat(account.actual_completion_date, 1)}
           else
             | ~
   br
@@ -82,7 +93,7 @@ block pane
             p
             i  #{comment.by.username}
             |  @
-            i  #{comment.date}
+            i  #{ISOToDateFormat(comment.date, 2)}
             hr
         else
           p No updates on the account yet
