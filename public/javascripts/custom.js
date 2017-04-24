@@ -81,7 +81,21 @@ function stageBarReport(account){
   });
 };
 
+var ISOToDateFormat = function(dateString, limit){
+  console.log(dateString);
+  dateString=new Date(dateString).toLocaleString();
+  dateString=dateString.split(',').slice(0, limit).join(' ');
+  return dateString;
+ }
+
 
 $( document ).ready(function() {
     $('#stageButton').click();
+    $("#accSignupDate").text(ISOToDateFormat($('#accSignupDate').text(), 1));
+    $("#accProcessStartDate").text(ISOToDateFormat($('#accProcessStartDate').text(), 1));
+    $("#accExpectedCompletionDate").text(ISOToDateFormat($('#accExpectedCompletionDate').text(), 1));
+    $("#accActualCompletionDate").text(ISOToDateFormat($('#accActualCompletionDate').text(), 1));
+    $(".commentDate").each(function() {
+      $(this).text(ISOToDateFormat($(this).text(), 2));
+    });
 });

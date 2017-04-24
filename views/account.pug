@@ -3,8 +3,6 @@ extends sub-layout.pug
 block pane
   -
     var ISOToDateFormat = function(dateString, limit){
-      dateString=new Date(dateString).toLocaleString();
-      dateString=dateString.split(',').slice(0, limit).join(' ');
       return dateString;
      }
   .row
@@ -31,7 +29,7 @@ block pane
     .col-sm-10
       .row
         .col-sm-3
-          button.btn.btn-primary#stageButton(onclick="stageBarReport('" + account.name + "')") Days / Stage
+          button.btn.btn-primary#stageButton(onclick='stageBarReport("' + account.name + '")') Days / Stage
       br
       .row
           canvas#myChart(style='width: 300px; height: 100px')
@@ -41,25 +39,25 @@ block pane
         .row
           p Signup Date
           if(account.signup_date)
-            | #{ISOToDateFormat(account.signup_date, 1)}
+            p#accSignupDate #{account.signup_date}
           else
             | ~
           hr
           p Process Started On
           if(account.process_start_date)
-            | #{ISOToDateFormat(account.process_start_date, 1)}
+            p#accProcessStartDate #{account.process_start_date}
           else
             | ~
           hr
           p Expected Completion Date
           if(account.expected_completion_date)
-            | #{ISOToDateFormat(account.expected_completion_date, 1)}
+            p#accExpectedCompletionDate #{account.expected_completion_date}
           else
             | ~
           hr
           p Actual Completion Date
           if(account.actual_completion_date)
-            | #{ISOToDateFormat(account.actual_completion_date, 1)}
+            p#accActualCompletionDate #{account.actual_completion_date}
           else
             | ~
   br
@@ -76,7 +74,7 @@ block pane
             button.btn.btn-warning(type='submit') add comment
       hr
       .row
-        p.lead Timeline
+        p#timelineDate.lead Timeline
         if(account.comments.length > 0)
           for comment in account.comments.reverse().slice(0, 20)
             if(comment.body.includes('New Stage:'))
@@ -93,7 +91,7 @@ block pane
             p
             i  #{comment.by.username}
             |  @
-            i  #{ISOToDateFormat(comment.date, 2)}
+            i.commentDate #{comment.date}
             hr
         else
           p No updates on the account yet

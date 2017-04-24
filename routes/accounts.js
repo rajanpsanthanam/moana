@@ -68,7 +68,7 @@ router.get('/analytics/:name/stage', (req, res, next) => {
       for(i=0; i<account.stages.length; i++){
         labels.push(account.stages[i].stage.name);
         if(account.stages[i].start_date && account.stages[i].end_date){
-          var millisBetween = account.stages[i].start_date.getTime() - account.stages[i].end_date.getTime();
+          var millisBetween = account.stages[i].end_date.getTime() - account.stages[i].start_date.getTime();
           var data_point = millisBetween / millisecondsPerDay;
         }
         else{
@@ -76,7 +76,7 @@ router.get('/analytics/:name/stage', (req, res, next) => {
         }
         data_points.push(Math.ceil(data_point));
         background_color.push(account.stages[i].stage.bg_color)
-        border_color.push(account.stages[i].stage.bg_color)
+        border_color.push(account.stages[i].stage.font_color)
       }
       res_data = {
         'labels': labels,
@@ -198,7 +198,7 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
     }
     else{
       for(i=0; i<account.stages.length; i++){
-        if(account.stages[i].stage.name == stage){
+        if(account.stages[i].stage.name == stage && !account.stages[i].end_date){
           account.stages[i].end_date = new Date();
           account.save();
         }
