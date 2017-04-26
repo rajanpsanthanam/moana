@@ -35,21 +35,31 @@ block main-pane
           thead
             tr
               th Account
-              th Primary Manager
-              th Secondary Manager
-              th Edit
-              th Delete
+              th Current Stage
+              th Contact
+              th Backup
+              th Features
           for account in accounts
             tr
               td
                 a(href='/accounts/view/'+account.name) #{account.name}
               td
+                - var len = account.stages.length
+                if(len > 0)
+                  - var stage = account.stages[len-1].stage
+                  button.btn.btn.btn-block.btn-xs(style="background-color:" + stage.bg_color + ";border-color:" + stage.bg_color + ";color:"+ stage.font_color) #{stage.name}
+                else
+                  p Yet to start
+              td
                 p #{account.primary_manager.username}
               td
                 p #{account.secondary_manager.username}
               td
-                a(href='/accounts/edit/'+account.name)
-                  i.fa.fa-pencil(aria-hidden='true')
-              td
-                a(href='/accounts/remove/'+account.name)
-                  i.fa.fa-trash(aria-hidden='true')
+                for feature in account.features
+                  if(feature.name.length > 4)
+                    - var featureName = feature.name.substring(0, 3)+'...'
+                  else
+                    - var featureName = feature.name
+                  .col-xs-12.col-sm-6.col-md-4
+                    button.btn.btn.btn-block.btn-xs(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{featureName}
+                    br

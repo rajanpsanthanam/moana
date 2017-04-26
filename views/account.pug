@@ -1,18 +1,19 @@
 extends sub-layout.pug
 
 block pane
-  -
-    var ISOToDateFormat = function(dateString, limit){
-      return dateString;
-     }
   .row
-    .col-md-10
+    .col-md-8
       .row
         .col-md-1
           a(href='/accounts')
             i.fa.fa-backward
-      h2 #{account.name}
-      h4 managed by #{account.primary_manager.username}
+      .row
+        .col-md-12
+          .page-header
+            h2
+              | #{account.name}
+              small  managed by #{account.primary_manager.username}
+                |
       .row.text-center
         for feature in account.features
           if(feature.name.length > 20)
@@ -21,9 +22,22 @@ block pane
             - var featureName = feature.name
           .col-xs-6.col-sm-4.col-md-2
             button.btn.btn.btn-block.btn-xs(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{featureName}
-    .col-md-2
-      form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
-        button.btn.btn-warning(type='submit') Manage Stage
+            br
+    .col-md-4
+      if(user.is_admin)
+        .row
+          .col-md-3
+            form(role='form', action='/accounts/edit/'+account.name, method="get")
+              button.btn.btn-sm(type='submit') Edit
+          .col-md-3
+            form(role='form', action='/accounts/remove/'+account.name, method="get")
+              button.btn.btn-sm(type='submit') Delete
+          .col-md-6
+            form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
+              button.btn.btn-warning(type='submit') Manage Stage
+      else
+        form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
+          button.btn.btn-warning(type='submit') Manage Stage
   hr
   .row
     .col-sm-10
@@ -32,7 +46,7 @@ block pane
           button.btn.btn-primary#stageButton(onclick='stageBarReport("' + account.name + '")') Days / Stage
       br
       .row
-          canvas#myChart(style='width: 300px; height: 100px')
+          canvas#stageBarChart(style='width: 300px; height: 100px')
     .col-sm-2
       p.lead Important Dates
       .list-group
@@ -74,7 +88,7 @@ block pane
             button.btn.btn-warning(type='submit') add comment
       hr
       .row
-        p#timelineDate.lead Timeline
+        p.lead Timeline
         if(account.comments.length > 0)
           for comment in account.comments.reverse().slice(0, 20)
             if(comment.body.includes('New Stage:'))

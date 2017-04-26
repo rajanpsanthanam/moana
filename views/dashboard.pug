@@ -1,29 +1,46 @@
 extends manage-header.pug
 
 block main-pane
-    .row
-      .col-sm-8
-        p.lead Hello #{user.username}, Good to see you back.
-    .row
-      .col-sm-6
-        .row
-          .col-sm-10.col-sm-offset-2.text-center
-            h3 Primary Accounts
-            if(primary_accounts.length > 0)
-              for primary_account in primary_accounts
-                a(href='/accounts/view/'+primary_account.name) #{primary_account.name}
-                br
-                br
-            else
-              p you are yet to start managing accounts
-      .col-sm-6.text-center
-        .row
-          .col-sm-10.col-sm-offset-1.text-center
-            h3 Secondary Accounts
-            if(secondary_accounts.length > 0)
-              for secondary_account in secondary_accounts
-                a(href='/accounts/view/'+secondary_account.name) #{secondary_account.name}
-                br
-                br
-            else
-              p you don't have any secondary accounts
+    if(user.is_admin)
+      .row
+        .col-sm-8
+          p.lead Hello #{user.username}, Good to see you back.
+      .row
+        .col-md-3
+          button.btn.btn-primary.btn-sm#dashbordChart(onclick='dashbordChart()') account's report
+      hr
+      .row
+        h4.text-center no: of accounts per stage
+        canvas#stageChart(style='width: 300px; height: 100px')
+      hr
+      .row
+        h4.text-center no: of accounts per feature
+        canvas#featureChart(style='width: 300px; height: 100px')
+      hr
+      .row
+        h4.text-center no: of accounts per state
+        canvas#stateChart(style='width: 300px; height: 100px')
+    else
+      .row
+        .col-sm-6
+          .row
+            .col-sm-10.col-sm-offset-2.text-center
+              h3 Primary Accounts
+              if(primary_accounts.length > 0)
+                for primary_account in primary_accounts
+                  a(href='/accounts/view/'+primary_account.name) #{primary_account.name}
+                  br
+                  br
+              else
+                p you are yet to start managing accounts
+        .col-sm-6.text-center
+          .row
+            .col-sm-10.col-sm-offset-1.text-center
+              h3 Secondary Accounts
+              if(secondary_accounts.length > 0)
+                for secondary_account in secondary_accounts
+                  a(href='/accounts/view/'+secondary_account.name) #{secondary_account.name}
+                  br
+                  br
+              else
+                p you don't have any secondary accounts

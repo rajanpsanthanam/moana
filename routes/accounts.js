@@ -43,13 +43,155 @@ router.get('/view/:name', (req, res, next) => {
         winston.log('info', err.message);
         return res.status(301).redirect('/accounts?message='+genericError);
     } else{
-        return res.render('account', { account : account });
+        return res.render('account', { account : account, user: req.user });
     }
   });
 });
 
 
-// return stage analytics data
+// return account per state analytics data
+router.get('/analytics/state', (req, res, next) => {
+  Account
+  .find({"is_deleted": false})
+  .populate(accountFields)
+  .exec(function(err, accounts) {
+    if(err){
+        winston.log('info', err.message);
+        return res.status(301).redirect('/accounts?message='+genericError);
+    }
+    else{
+      let notStarted = 0;
+      let inProgress = 0;
+      let completed = 0;
+      for(i=0; i<accounts.length; i++){
+        if(accounts[i].actual_completion_date){
+          completed += 1;
+        }
+        else if(accounts[i].stages.length == 0){
+          notStarted += 1;
+        }
+        else{
+          inProgress += 1;
+        }
+      }
+      var labels = ['not-started', 'in-progress', 'completed'];
+      var data_points = [notStarted, inProgress, completed];
+      var background_color = ['#0c4070', '#831e89', '#1e695f'];
+      var border_color = ['#fff', '#fff', '#fff'];
+      res_data = {
+        'labels': labels,
+        'data': data_points,
+        'background_color': background_color,
+        'border_color': border_color
+      }
+      return res.send(JSON.stringify(res_data));
+    }
+  });
+});
+
+
+// return accounts per stage analytics data
+router.get('/analytics/stage', (req, res, next) => {
+  Account
+  .find({"is_deleted": false})
+  .populate(accountFields)
+  .exec(function(err, accounts) {
+    if(err){
+        winston.log('info', err.message);
+        return res.status(301).redirect('/accounts?message='+genericError);
+    }
+    else{
+      var stages = {};
+      var labels = [];
+      var data_points = [];
+      var background_color = [];
+      var border_color = [];
+      for(var i in accounts){
+        var account = accounts[i];
+        var total_stages = account.stages.length;
+        if(total_stages>0){
+          for(j=0; j<total_stages; j++){
+            if(!stages.hasOwnProperty(account.stages[j].stage.name)){
+              stages[account.stages[j].stage.name] = {
+                'count': 0,
+                'bg_color': account.stages[j].stage.bg_color,
+                'font_color': account.stages[j].stage.font_color
+              }
+            }
+          }
+          stages[account.stages[total_stages-1].stage.name]['count'] += 1;
+        }
+      }
+      console.log(stages);
+      for(var stage in stages){
+        labels.push(stage);
+        data_points.push(stages[stage]['count']);
+        background_color.push(stages[stage]['bg_color']);
+        border_color.push(stages[stage]['font_color']);
+      }
+      res_data = {
+        'labels': labels,
+        'data': data_points,
+        'background_color': background_color,
+        'border_color': border_color
+      }
+      return res.send(JSON.stringify(res_data));
+    }
+  });
+});
+
+
+// return account per feature analytics data
+router.get('/analytics/feature', (req, res, next) => {
+  Account
+  .find({"is_deleted": false})
+  .populate(accountFields)
+  .exec(function(err, accounts) {
+    if(err){
+        winston.log('info', err.message);
+        return res.status(301).redirect('/accounts?message='+genericError);
+    }
+    else{
+      var features = {};
+      var labels = [];
+      var data_points = [];
+      var background_color = [];
+      var border_color = [];
+      for(var i in accounts){
+        var account = accounts[i];
+        if(account.features){
+          for(j=0; j<account.features.length; j++){
+            if(!features.hasOwnProperty(account.features[j].name)){
+              features[account.features[j].name] = {
+                'count': 1,
+                'bg_color': account.features[j].bg_color,
+                'font_color': account.features[j].font_color
+              }
+            }
+            else{
+              features[account.features[j].name]['count'] += 1;
+            }
+          }
+        }
+      }
+      for(var feature in features){
+        labels.push(feature);
+        data_points.push(features[feature]['count']);
+        background_color.push(features[feature]['bg_color']);
+        border_color.push(features[feature]['font_color']);
+      }
+      res_data = {
+        'labels': labels,
+        'data': data_points,
+        'background_color': background_color,
+        'border_color': border_color
+      }
+      return res.send(JSON.stringify(res_data));
+    }
+  });
+});
+
+// return days per stage analytics data
 router.get('/analytics/:name/stage', (req, res, next) => {
   Account
   .findOne({"name": req.params.name})
@@ -87,7 +229,7 @@ router.get('/analytics/:name/stage', (req, res, next) => {
       return res.send(JSON.stringify(res_data));
     }
   });
-})
+});
 
 
 // add comment to account

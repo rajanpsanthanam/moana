@@ -1,70 +1,78 @@
-function stagePieReport(account){
-  $.get( "/accounts/analytics/"+ account +"/stage", function( analytics ) {
+function accountStagePieReport(){
+  $.get( "/accounts/analytics/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
-    var analyticsData = analytics.data;
-    var labels = analytics.labels;
-    var backgroundColor = analytics.background_color;
-    var borderColor = analytics.border_color;
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
+    var option = {
         type: 'pie',
         data: {
-            labels: labels,
+            labels: analytics.labels,
             datasets: [{
-                label: '# of days spent per stage',
-                data: analyticsData,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
+                label: '# of accounts per stage',
+                data: analytics.data,
+                backgroundColor: analytics.background_color,
+                borderColor: analytics.border_color,
                 borderWidth: 1
             }]
         }
-    });
+    };
+    var myChart = new Chart($('#stageChart'), option);
   });
 };
 
 
-function stageLineReport(account){
-  $.get( "/accounts/analytics/"+ account +"/stage", function( analytics ) {
+function accountFeaturePieReport(){
+  $.get( "/accounts/analytics/feature", function( analytics ) {
     analytics = JSON.parse(analytics);
-    var analyticsData = analytics.data;
-    var labels = analytics.labels;
-    var backgroundColor = analytics.background_color;
-    var borderColor = analytics.border_color;
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
-        type: 'line',
+    var option = {
+        type: 'pie',
         data: {
-            labels: labels,
+            labels: analytics.labels,
             datasets: [{
-                label: '# of days spent per stage',
-                data: analyticsData,
-                fill: false,
-                lineTension: 0,
-                borderWidth: 2,
-                borderColor: '#d62d20'
+                label: '# of accounts per feature',
+                data: analytics.data,
+                backgroundColor: analytics.background_color,
+                borderColor: analytics.border_color,
+                borderWidth: 1
             }]
         }
-    });
+    };
+    var myChart = new Chart($('#featureChart'), option);
   });
 };
+
+
+function accountStatePieReport(){
+  $.get( "/accounts/analytics/state", function( analytics ) {
+    analytics = JSON.parse(analytics);
+    var option = {
+        type: 'doughnut',
+        data: {
+            labels: analytics.labels,
+            datasets: [{
+                label: '# of accounts per state',
+                data: analytics.data,
+                backgroundColor: analytics.background_color,
+                borderColor: analytics.border_color,
+                borderWidth: 1
+            }]
+        }
+    };
+    var myChart = new Chart($('#stateChart'), option);
+  });
+};
+
 
 function stageBarReport(account){
   $.get( "/accounts/analytics/"+ account +"/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
-    var analyticsData = analytics.data;
-    var labels = analytics.labels;
-    var backgroundColor = analytics.background_color;
-    var borderColor = analytics.border_color;
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
+    var myChart = new Chart($('#stageBarChart'), {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: analytics.labels,
             datasets: [{
                 label: '# of days spent per stage',
-                data: analyticsData,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
+                data: analytics.data,
+                backgroundColor: analytics.background_color,
+                borderColor: analytics.border_color,
                 borderWidth: 1
             }]
         },
@@ -82,14 +90,20 @@ function stageBarReport(account){
 };
 
 var ISOToDateFormat = function(dateString, limit){
-  console.log(dateString);
   dateString=new Date(dateString).toLocaleString();
   dateString=dateString.split(',').slice(0, limit).join(' ');
   return dateString;
  }
 
+ function dashbordChart(){
+   accountStatePieReport();
+   accountStagePieReport();
+   accountFeaturePieReport();
+ }
+
 
 $( document ).ready(function() {
+    $('#dashbordChart').click();
     $('#stageButton').click();
     $("#accSignupDate").text(ISOToDateFormat($('#accSignupDate').text(), 1));
     $("#accProcessStartDate").text(ISOToDateFormat($('#accProcessStartDate').text(), 1));
