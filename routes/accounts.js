@@ -122,7 +122,6 @@ router.get('/analytics/stage', (req, res, next) => {
           stages[account.stages[total_stages-1].stage.name]['count'] += 1;
         }
       }
-      console.log(stages);
       for(var stage in stages){
         labels.push(stage);
         data_points.push(stages[stage]['count']);

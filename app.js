@@ -10,6 +10,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var winston = require('winston');
+var helmet = require('helmet')
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -33,6 +34,10 @@ app.use(favicon(__dirname + '/public/images/favicon.ico'));
 // log
 app.use(logger('dev'));
 
+// helmet
+// refer: https://expressjs.com/en/advanced/best-practice-security.html
+app.use(helmet())
+
 // parse json data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,11 +46,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // session
-app.use(require('express-session')({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: false
-}));
+
+var sess = {
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {}
+}
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
+
+app.use(require('express-session')(sess));
 
 app.use(flash());
 
