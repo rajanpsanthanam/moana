@@ -1,21 +1,27 @@
 extends sub-layout.pug
 
+block main-menu
+  .dropdown
+    btn.btn-sm.btn-primary#dLabel(type='button', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+      | Menu
+      span.caret
+    ul.dropdown-menu(aria-labelledby='dLabel')
+      if(user.is_admin)
+        li
+          a(href='/accounts') Accounts
+        li
+          a(href='/users') Users
+        li
+          a(href='/stages') Stages
+        li
+          a(href='/features') Features
+        li.divider(role='separator')
+      li
+        a(href='/profile') Profile
+      li
+        a(href='/logout') Logout
+
 block pane
   .row
-    .col-md-2
-      block left-side-pane
-        p.lead Manage
-        ul.nav.nav-pills.nav-stacked
-          if (user.is_admin)
-            li(role='presentation')
-              a(href='/accounts') Accounts
-            li(role='presentation')
-              a(href='/users') Users
-            li(role='presentation')
-              a(href='/stages') Stages
-            li(role='presentation')
-              a(href='/features') Features
-          li(role='presentation')
-            a(href='/profile') Profile
-    .col-md-10
+    .col-md-12
       block main-pane

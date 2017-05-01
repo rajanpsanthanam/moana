@@ -10,16 +10,17 @@ block main-pane
           button.btn.btn-primary.btn-sm#dashbordChart(onclick='dashbordChart()') account's report
       hr
       .row
-        h4.text-center no: of accounts per stage
-        canvas#stageChart(style='width: 300px; height: 100px')
+        .col-md-6
+          h4.text-center no: of accounts per stage
+          canvas#stageChart(style='width: 150px; height: 100px')
+        .col-md-6
+          h4.text-center no: of accounts per feature
+          canvas#featureChart(style='width: 150px; height: 100px')
       hr
       .row
-        h4.text-center no: of accounts per feature
-        canvas#featureChart(style='width: 300px; height: 100px')
-      hr
-      .row
-        h4.text-center no: of accounts per state
-        canvas#stateChart(style='width: 300px; height: 100px')
+        .col-md-6
+          h4.text-center no: of accounts per state
+          canvas#stateChart(style='width: 150px; height: 100px')
     else
       .row
         .col-sm-6

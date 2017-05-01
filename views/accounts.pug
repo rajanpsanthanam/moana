@@ -19,7 +19,7 @@ block main-pane
               option(value=user._id, selected=user.username == filters.secondary_manager) #{user.username}
         button.btn.btn-warning(type='submit') Submit
 
-    .col-md-8
+    .col-md-10
       .row
         .col-sm-8
           form(role='form', action="/accounts/", method="get")
@@ -31,13 +31,12 @@ block main-pane
           a.btn.btn-warning(href='/accounts/add', role='button') Add Account
       br
       .row
-        table.table.table-hover.table-stripped
+        table.table.table-hover.table-stripped.table-responsive
           thead
             tr
               th Account
               th Current Stage
               th Contact
-              th Backup
               th Features
           for account in accounts
             tr
@@ -47,19 +46,18 @@ block main-pane
                 - var len = account.stages.length
                 if(len > 0)
                   - var stage = account.stages[len-1].stage
-                  button.btn.btn.btn-block.btn-xs(style="background-color:" + stage.bg_color + ";border-color:" + stage.bg_color + ";color:"+ stage.font_color) #{stage.name}
+                  - var stageName = stage.name.substring(0, 3)+'...'
+                  button.btn.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title=stage.name, style="background-color:" + stage.bg_color + ";border-color:" + stage.bg_color + ";color:"+ stage.font_color) #{stageName}
                 else
-                  p Yet to start
+                  button.btn.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title='Not Started Yet') NA
               td
-                p #{account.primary_manager.username}
-              td
-                p #{account.secondary_manager.username}
+                p #{account.primary_manager.username} / #{account.secondary_manager.username}
               td
                 for feature in account.features
                   if(feature.name.length > 4)
                     - var featureName = feature.name.substring(0, 3)+'...'
                   else
                     - var featureName = feature.name
-                  .col-xs-12.col-sm-6.col-md-4
-                    button.btn.btn.btn-block.btn-xs(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{featureName}
+                  .col-xs-12.col-sm-3.col-md-3
+                    button.btn.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title=feature.name, style='background-color:' + feature.bg_color + ';border-color:' + feature.bg_color + ';color:'+ feature.font_color) #{featureName}
                     br

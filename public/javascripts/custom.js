@@ -1,5 +1,5 @@
 function accountStagePieReport(){
-  $.get( "/accounts/analytics/stage", function( analytics ) {
+  $.get( "/reports/accounts/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
     var option = {
         type: 'pie',
@@ -20,7 +20,7 @@ function accountStagePieReport(){
 
 
 function accountFeaturePieReport(){
-  $.get( "/accounts/analytics/feature", function( analytics ) {
+  $.get( "/reports/accounts/feature", function( analytics ) {
     analytics = JSON.parse(analytics);
     var option = {
         type: 'pie',
@@ -41,7 +41,7 @@ function accountFeaturePieReport(){
 
 
 function accountStatePieReport(){
-  $.get( "/accounts/analytics/state", function( analytics ) {
+  $.get( "/reports/accounts/state", function( analytics ) {
     analytics = JSON.parse(analytics);
     var option = {
         type: 'doughnut',
@@ -62,7 +62,7 @@ function accountStatePieReport(){
 
 
 function stageBarReport(account){
-  $.get( "/accounts/analytics/"+ account +"/stage", function( analytics ) {
+  $.get( "/reports/accounts/"+ account +"/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
     var myChart = new Chart($('#stageBarChart'), {
         type: 'bar',
@@ -103,6 +103,9 @@ var ISOToDateFormat = function(dateString, limit){
 
 
 $( document ).ready(function() {
+    $(".alert").alert();
+    $('.dropdown-toggle').dropdown();
+    $('[data-toggle="tooltip"]').tooltip()
     $('#dashbordChart').click();
     $('#stageButton').click();
     $("#accSignupDate").text(ISOToDateFormat($('#accSignupDate').text(), 1));

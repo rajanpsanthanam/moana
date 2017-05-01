@@ -12,13 +12,19 @@ html
   body
     if (error && error.length > 0)
       br
-      .alert.alert-danger.text-center(role='alert')
-        |  #{error}
+      .row(align='center')
+        .alert.alert-danger.alert-dismissible.text-center(role='alert', style='height:50px;width:500px')
+          button.close(type='button', data-dismiss='alert', aria-label='Close')
+            span(aria-hidden='true') ×
+          |  #{error}
       br
     if (message && message.length > 0)
       br
-      .alert.alert-info.text-center(role='alert')
-        |  #{message}
+      .row(align='center')
+        .alert.alert-info.alert-dismissible.text-center(role='alert', style='height:50px;width:500px')
+          button.close(type='button', data-dismiss='alert', aria-label='Close')
+            span(aria-hidden='true') ×
+          |  #{message}
       br
     block content
     block footer

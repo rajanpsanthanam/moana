@@ -7,30 +7,7 @@ const Stage = require('../models/stage');
 const winston = require('winston');
 const constants = require('../common/constants');
 
-
-// constants needed for the module
-var genericError = constants.genericError;
-
-var createSuccess = constants.createSuccess;
-var createFailed = constants.createFailed;
-
-var updateSuccess = constants.updateSuccess;
-var updateFailed = constants.updateFailed;
-
-var deleteSuccess = constants.deleteSuccess;
-var deleteFailed = constants.deleteFailed;
-
-
 var accountFields = 'primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by'
-
-
-// middleware for auth check
-router.use(function (req, res, next) {
-  if (!req.user){
-      return res.status(301).redirect('/');
-  }
-  next();
-});
 
 
 // get a single account
@@ -41,191 +18,10 @@ router.get('/view/:name', (req, res, next) => {
   .exec(function(err, account) {
     if(err){
         winston.log('info', err.message);
-        return res.status(301).redirect('/accounts?message='+genericError);
+        req.flash('error', constants.genericError);
+        return res.status(301).redirect('/accounts');
     } else{
         return res.render('account', { account : account, user: req.user });
-    }
-  });
-});
-
-
-// return account per state analytics data
-router.get('/analytics/state', (req, res, next) => {
-  Account
-  .find({"is_deleted": false})
-  .populate(accountFields)
-  .exec(function(err, accounts) {
-    if(err){
-        winston.log('info', err.message);
-        return res.status(301).redirect('/accounts?message='+genericError);
-    }
-    else{
-      let notStarted = 0;
-      let inProgress = 0;
-      let completed = 0;
-      for(i=0; i<accounts.length; i++){
-        if(accounts[i].actual_completion_date){
-          completed += 1;
-        }
-        else if(accounts[i].stages.length == 0){
-          notStarted += 1;
-        }
-        else{
-          inProgress += 1;
-        }
-      }
-      var labels = ['not-started', 'in-progress', 'completed'];
-      var data_points = [notStarted, inProgress, completed];
-      var background_color = ['#0c4070', '#831e89', '#1e695f'];
-      var border_color = ['#fff', '#fff', '#fff'];
-      res_data = {
-        'labels': labels,
-        'data': data_points,
-        'background_color': background_color,
-        'border_color': border_color
-      }
-      return res.send(JSON.stringify(res_data));
-    }
-  });
-});
-
-
-// return accounts per stage analytics data
-router.get('/analytics/stage', (req, res, next) => {
-  Account
-  .find({"is_deleted": false})
-  .populate(accountFields)
-  .exec(function(err, accounts) {
-    if(err){
-        winston.log('info', err.message);
-        return res.status(301).redirect('/accounts?message='+genericError);
-    }
-    else{
-      var stages = {};
-      var labels = [];
-      var data_points = [];
-      var background_color = [];
-      var border_color = [];
-      for(var i in accounts){
-        var account = accounts[i];
-        var total_stages = account.stages.length;
-        if(total_stages>0){
-          for(j=0; j<total_stages; j++){
-            if(!stages.hasOwnProperty(account.stages[j].stage.name)){
-              stages[account.stages[j].stage.name] = {
-                'count': 0,
-                'bg_color': account.stages[j].stage.bg_color,
-                'font_color': account.stages[j].stage.font_color
-              }
-            }
-          }
-          stages[account.stages[total_stages-1].stage.name]['count'] += 1;
-        }
-      }
-      for(var stage in stages){
-        labels.push(stage);
-        data_points.push(stages[stage]['count']);
-        background_color.push(stages[stage]['bg_color']);
-        border_color.push(stages[stage]['font_color']);
-      }
-      res_data = {
-        'labels': labels,
-        'data': data_points,
-        'background_color': background_color,
-        'border_color': border_color
-      }
-      return res.send(JSON.stringify(res_data));
-    }
-  });
-});
-
-
-// return account per feature analytics data
-router.get('/analytics/feature', (req, res, next) => {
-  Account
-  .find({"is_deleted": false})
-  .populate(accountFields)
-  .exec(function(err, accounts) {
-    if(err){
-        winston.log('info', err.message);
-        return res.status(301).redirect('/accounts?message='+genericError);
-    }
-    else{
-      var features = {};
-      var labels = [];
-      var data_points = [];
-      var background_color = [];
-      var border_color = [];
-      for(var i in accounts){
-        var account = accounts[i];
-        if(account.features){
-          for(j=0; j<account.features.length; j++){
-            if(!features.hasOwnProperty(account.features[j].name)){
-              features[account.features[j].name] = {
-                'count': 1,
-                'bg_color': account.features[j].bg_color,
-                'font_color': account.features[j].font_color
-              }
-            }
-            else{
-              features[account.features[j].name]['count'] += 1;
-            }
-          }
-        }
-      }
-      for(var feature in features){
-        labels.push(feature);
-        data_points.push(features[feature]['count']);
-        background_color.push(features[feature]['bg_color']);
-        border_color.push(features[feature]['font_color']);
-      }
-      res_data = {
-        'labels': labels,
-        'data': data_points,
-        'background_color': background_color,
-        'border_color': border_color
-      }
-      return res.send(JSON.stringify(res_data));
-    }
-  });
-});
-
-// return days per stage analytics data
-router.get('/analytics/:name/stage', (req, res, next) => {
-  Account
-  .findOne({"name": req.params.name})
-  .populate(accountFields)
-  .exec(function(err, account) {
-    if(err){
-        winston.log('info', err.message);
-        return res.status(301).redirect('/accounts?message='+genericError);
-    }
-    else{
-      var labels = [];
-      var data_points = [];
-      var background_color = [];
-      var border_color = [];
-      var millisecondsPerDay = 1000 * 60 * 60 * 24;
-      for(i=0; i<account.stages.length; i++){
-        labels.push(account.stages[i].stage.name);
-        if(account.stages[i].start_date && account.stages[i].end_date){
-          var millisBetween = account.stages[i].end_date.getTime() - account.stages[i].start_date.getTime();
-          var data_point = millisBetween / millisecondsPerDay;
-        }
-        else{
-          var data_point = 0;
-        }
-        data_points.push(Math.ceil(data_point));
-        background_color.push(account.stages[i].stage.bg_color)
-        border_color.push(account.stages[i].stage.font_color)
-      }
-      res_data = {
-        'labels': labels,
-        'data': data_points,
-        'background_color': background_color,
-        'border_color': border_color
-      }
-      return res.send(JSON.stringify(res_data));
     }
   });
 });
@@ -239,7 +35,8 @@ router.post('/manage/:name/add-comment', (req, res, next) => {
   .exec(function(err, account){
       if(err){
         winston.log('info', err.message);
-        return res.status(301).redirect('/accounts?message='+genericError);
+        req.flash('error', constants.genericError);
+        return res.status(301).redirect('/accounts');
       }
       else{
         return res.status(301).redirect('/accounts/view/'+req.params.name+'/')
@@ -256,7 +53,8 @@ router.get('/manage/:name/stages', (req, res, next) => {
   .exec( function(err, account) {
     if(err){
       winston.log('info', err.message);
-      return res.status(301).redirect('/accounts?message='+genericError);
+      req.flash('error', constants.genericError);
+      return res.status(301).redirect('/accounts');
     } else{
       return res.render('manage-stage', { account : account });
     }
@@ -272,7 +70,8 @@ router.get('/manage/:name/add-stage', (req, res, next) => {
   .exec(function(err, account) {
     if(err){
       winston.log('info', err.message);
-      return res.status(301).redirect('/accounts?message='+genericError);
+      req.flash('error', constants.genericError);
+      return res.status(301).redirect('/accounts');
     }
     else{
       var account = account;
@@ -296,7 +95,8 @@ router.post('/manage/:name/add-stage', (req, res, next) => {
   .exec(function(err, account){
       if(err){
         winston.log('info', err.message);
-        return res.status(301).redirect('/accounts?message='+genericError);
+        req.flash('error', constants.genericError);
+        return res.status(301).redirect('/accounts');
       }
       else{
         Stage
@@ -304,7 +104,8 @@ router.post('/manage/:name/add-stage', (req, res, next) => {
         .exec(function(err, stage_data){
           if(err){
             winston.log('info', err.message);
-            return res.status(301).redirect('/accounts?message='+genericError);
+            req.flash('error', constants.genericError);
+            return res.status(301).redirect('/accounts');
           } else{
               // event name: message
               var comment = 'New Stage: stage "'+stage_data.name+'" added into account';
@@ -313,7 +114,8 @@ router.post('/manage/:name/add-stage', (req, res, next) => {
               .exec(function(err, account){
                 if(err){
                   winston.log('info', err.message);
-                  return res.status(301).redirect('/accounts?message='+genericError);
+                  req.flash('error', constants.genericError);
+                  return res.status(301).redirect('/accounts');
                 }
                 else{
                   return res.status(301).redirect('/accounts/manage/'+req.params.name+'/stages/')
@@ -335,7 +137,8 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
   .exec(function(err, account) {
     if(err){
       winston.log('info', err.message);
-      return res.status(301).redirect('/accounts?message='+genericError);
+      req.flash('error', constants.genericError);
+      return res.status(301).redirect('/accounts');
     }
     else{
       for(i=0; i<account.stages.length; i++){
@@ -349,7 +152,8 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
       .exec(function(err, stage_data){
         if(err){
           winston.log('info', err.message);
-          return res.status(301).redirect('/accounts?message='+genericError);
+          req.flash('error', constants.genericError);
+          return res.status(301).redirect('/accounts');
         }
         else{
           // event name: message
@@ -359,7 +163,8 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
           .exec(function(err, account){
             if(err){
               winston.log('info', err.message);
-              return res.status(301).redirect('/accounts?message='+genericError);
+              req.flash('error', constants.genericError);
+              return res.status(301).redirect('/accounts');
             }
             else{
               return res.status(301).redirect('/accounts/manage/'+req.params.name+'/stages/')
@@ -374,7 +179,10 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
 
 // admin auth middleware
 router.use(function (req, res, next) {
-  if(!req.user.is_admin){
+  if(!req.user){
+    return res.status(301).redirect('/');
+  }
+  else if(!req.user.is_admin){
     return res.status(301).redirect('/');
   }
   next();
@@ -403,8 +211,6 @@ function filter_data(params){
 
 // get all accounts
 router.get('/', (req, res, next) => {
-  var message = req.query.message;
-  var error = req.query.error;
   var filters = filter_data(req.query);
   Account
   .find(filters)
@@ -426,7 +232,7 @@ router.get('/', (req, res, next) => {
           else{
             return res.render(
               'accounts',
-              { user: req.user, accounts : accounts, users: users, filters: filters, message: message, error: error }
+              { user: req.user, accounts : accounts, users: users, filters: filters, message: req.flash('info'), error: req.flash('error') }
             );
           }
       });
@@ -442,7 +248,8 @@ router.post('/', (req, res, next) => {
   .exec(function(err, features){
     if(err){
         winston.log('info', err.message);
-        return res.status(301).redirect('/accounts/?error='+genericError);
+        req.flash('error', constants.genericError);
+        return res.status(301).redirect('/accounts');
     }
     else{
       var opted_features = []
@@ -456,7 +263,8 @@ router.post('/', (req, res, next) => {
       .exec(function(err, account) {
         if(err){
             winston.log('info', err.message);
-            return res.status(301).redirect('/accounts?error='+genericError);
+            req.flash('error', constants.genericError);
+            return res.status(301).redirect('/accounts');
         } else{
             if(!account){
               data = {
@@ -482,15 +290,17 @@ router.post('/', (req, res, next) => {
               var account = new Account(data);
               account.save(function (err) {
                 if (err) {
-                  return res.status(301).redirect('/accounts/?error='+createFailed);
+                  req.flash('error', constants.createFailed);
+                  return res.status(301).redirect('/accounts');
                 } else {
-                  return res.status(301).redirect('/accounts/?message='+createSuccess);
+                  req.flash('info', constants.createSuccess);
+                  return res.status(301).redirect('/accounts');
                 }
               });
             }
             else{
-              let error = 'Account already exists';
-              return res.status(301).redirect('/accounts/?error='+error);
+              req.flash('error', constants.alreadyExists);
+              return res.status(301).redirect('/accounts');
             }
           }
       });
@@ -543,7 +353,8 @@ router.post('/:name', (req, res, next) => {
       .exec(function(err, account) {
         if(err){
           winston.log('info', err.message);
-          return res.status(301).redirect('/accounts?error='+genericError);
+          req.flash('error', constants.genericError);
+          return res.status(301).redirect('/accounts');
         }
         else{
           if(account){
@@ -551,27 +362,32 @@ router.post('/:name', (req, res, next) => {
             .findOne({"name": req.body.name}, '')
             .exec(function(err, duplicate){
               if(err){
-                return res.status(301).redirect('/accounts/?error='+updateFailed);
+                req.flash('error', constants.updateFailed);
+                return res.status(301).redirect('/accounts');
               }
               else{
                 if(!duplicate){
                   updateAccount(account, req, opted_features);
-                  return res.status(301).redirect('/accounts/?message='+updateSuccess);
+                  req.flash('info', constants.updateSuccess);
+                  return res.status(301).redirect('/accounts');
                 }
                 else if(duplicate.name == req.params.name){
                   updateAccount(account, req, opted_features);
-                  return res.status(301).redirect('/accounts/?message='+updateSuccess);
+                  req.flash('info', constants.updateSuccess);
+                  return res.status(301).redirect('/accounts');
                 }
                 else{
                   var error = 'Account already exists with name '+req.body.name;
-                  return res.status(301).redirect('/accounts/?error='+error);
+                  req.flash('error', error)
+                  return res.status(301).redirect('/accounts');
                 }
               }
             });
           }
           else{
             winston.log('info', err.message);
-            return res.status(301).redirect('/accounts?error='+genericError);
+            req.flash('error', genericError);
+            return res.status(301).redirect('/accounts');
           }
         }
       });
@@ -586,7 +402,8 @@ router.get('/add', (req, res, next) => {
   .find({"is_deleted": false}, 'username')
   .exec(function(err, users){
         if(err){
-            return res.status(301).redirect('/accounts?error='+genericError);
+          req.flash('error', constants.genericError);
+            return res.status(301).redirect('/accounts');
         } else{
             var users = users;
             Feature.find({"is_deleted": false}, '_id, name', function(err, features){
@@ -608,13 +425,15 @@ router.get('/edit/:name', (req, res, next) => {
   .populate(accountFields)
   .exec( function(err, account){
       if(err){
-          return res.status(301).redirect('/accounts?error='+genericError);
+          req.flash('error', constants.genericError);
+          return res.status(301).redirect('/accounts');
       }
       else{
           var account = account;
           User.find({"is_deleted": false}, 'username', function(err, users){
             if(err){
-                return res.status(301).redirect('/accounts?error='+genericError);
+                req.flash('error', constants.genericError);
+                return res.status(301).redirect('/accounts');
             }
             else{
               var users = users;
@@ -650,12 +469,14 @@ router.get('/remove/:name', (req, res, next) => {
   .findOne({"name": req.params.name}, '')
   .exec(function(err, account){
       if(err){
-        return res.status(301).redirect('/accounts/?error='+deleteFailed)
+        req.flash('error', constants.deleteFailed);
+        return res.status(301).redirect('/accounts')
       }
       else{
         account.is_deleted = true
         account.save();
-        res.redirect('/accounts/?message='+deleteSuccess)
+        req.flash('info', constants.deleteSuccess);
+        return res.status(301).redirect('/accounts')
       }
     });
 });

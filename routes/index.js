@@ -7,30 +7,34 @@ const winston = require('winston');
 
 
 // dashboard
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
   if(req.user){
-    Account.find({"primary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
-          if(err){
-              winston.log('info', err.message);
-              return res.render('index', { error : err.message });
-          }
-          else{
-            var primary_accounts = accounts;
-            Account.find({"secondary_manager": req.user._id, "is_deleted": false}, '', function(err, accounts){
-              if(err){
-                  winston.log('info', err.message);
-                  return res.render('dashboard', { error : err.message });
-              }
-              else{
-                  var secondary_accounts = accounts;
-                  return res.render('dashboard', {
-                    user : req.user, primary_accounts : primary_accounts, secondary_accounts: secondary_accounts
-                  });
-                }
-              });
-            }
-          });
+    Account
+    .find({"primary_manager": req.user._id, "is_deleted": false}, '')
+    .exec(
+      function(err, accounts){
+        if(err){
+            return next(err);
         }
+        else
+        {
+          var primary_accounts = accounts;
+          Account
+          .find({"secondary_manager": req.user._id, "is_deleted": false}, '')
+          .exec(function(err, accounts){
+            if(err){
+                return next(err);
+            }
+            else{
+                var secondary_accounts = accounts;
+                return res.render('dashboard', {
+                  user : req.user, primary_accounts : primary_accounts, secondary_accounts: secondary_accounts
+                });
+              }
+            });
+          }
+        });
+      }
   else{
     return res.render('index');
   }
@@ -90,17 +94,6 @@ router.post('/reset-password', (req, res, next) => {
   return res.status(301).redirect('/');
 });
 
-
-
-
-
-// auth middleware
-router.use(function (req, res, next) {
-  if (!req.user){
-    return res.status(301).redirect('/');
-  }
-  next()
-})
 
 // logout route
 router.get('/logout', (req, res, next) => {
