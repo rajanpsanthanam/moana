@@ -10,9 +10,9 @@ block pane
       .form-group
         input.form-control(name='order', type='number', placeholder='enter the order', value=stage.order)
       .form-group
-        input.form-control(type='text', name="bgColor", placeholder='Enter background color', value=stage.bg_color)
+        input.form-control.jscolor(name="bgColor", value=stage.bg_color)
       .form-group
-        input.form-control(type='text', name="fontColor", placeholder='Enter font color', value=stage.font_color)
+        input.form-control.jscolor(name="fontColor", value=stage.font_color)
       .row
         .col-xs-6.col-sm-6.col-md-6
           input.btn.btn.btn-warning.btn-block(type='submit', value='Update')

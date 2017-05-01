@@ -13,20 +13,15 @@ block main-pane
             th Feature
             th Background Color
             th Font Color
-            th Edit
             th Delete
         for feature in features
           tr
             td
-              p #{feature.name}
+              a(href='/features/edit/'+feature.name) #{feature.name}
             td
               button.btn.btn(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";padding: 10px 50px;")
             td
               button.btn.btn(style="background-color:" + feature.font_color + ";border-color:" + feature.font_color + ";padding: 10px 50px;")
-            td
-              a(href='/features/edit/'+feature.name)
-                i.fa.fa-pencil(aria-hidden='true')
-
             td
               a(href='/features/remove/'+feature.name)
                 i.fa.fa-trash(aria-hidden='true')

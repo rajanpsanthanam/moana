@@ -53,8 +53,8 @@ router.post('/', (req, res, next) => {
         if(req.body.name){
           data = {
             'name': req.body.name,
-            'bg_color': req.body.bgColor,
-            'font_color': req.body.fontColor
+            'bg_color': '#'+req.body.bgColor,
+            'font_color': '#'+req.body.fontColor
           };
           var feature = new Feature(data);
           feature.save(function (err) {
@@ -119,15 +119,15 @@ router.post('/:name', (req, res, next) => {
           else{
             if(!duplicate){
               feature.name = req.body.name;
-              feature.bg_color = req.body.bgColor,
-              feature.font_color = req.body.fontColor
+              feature.bg_color = '#'+req.body.bgColor,
+              feature.font_color = '#'+req.body.fontColor
               feature.save();
               req.flash('info', constants.updateSuccess);
               return res.status(301).redirect('/features');
             }
             else if(duplicate.name == req.params.name){
-              feature.bg_color = req.body.bgColor,
-              feature.font_color = req.body.fontColor
+              feature.bg_color = '#'+req.body.bgColor,
+              feature.font_color = '#'+req.body.fontColor
               feature.save();
               req.flash('info', constants.updateSuccess);
               return res.status(301).redirect('/features');
