@@ -2,7 +2,7 @@ function accountStagePieReport(){
   $.get( "/reports/accounts/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
     var option = {
-        type: 'pie',
+        type: 'bar',
         data: {
             labels: analytics.labels,
             datasets: [{
@@ -61,6 +61,34 @@ function accountStatePieReport(){
 };
 
 
+function accountUserPieReport(){
+  $.get( "/reports/accounts/user", function( analytics ) {
+    analytics = JSON.parse(analytics);
+    var backgroundColor = [];
+    var borderColor = [];
+    for(i=0; i<analytics.labels.length; i++){
+      let color = getRandomColor();
+      backgroundColor.push(color);
+      borderColor.push(color);
+    }
+    var option = {
+        type: 'polarArea',
+        data: {
+            labels: analytics.labels,
+            datasets: [{
+                label: '# of accounts per user',
+                data: analytics.data,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1
+            }]
+        }
+    };
+    var myChart = new Chart($('#userChart'), option);
+  });
+};
+
+
 function stageBarReport(account){
   $.get( "/reports/accounts/"+ account +"/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
@@ -89,6 +117,17 @@ function stageBarReport(account){
   });
 };
 
+
+var getRandomColor = function () {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+
 var ISOToDateFormat = function(dateString, limit){
   dateString=new Date(dateString).toLocaleString();
   dateString=dateString.split(',').slice(0, limit).join(' ');
@@ -99,6 +138,7 @@ var ISOToDateFormat = function(dateString, limit){
    accountStatePieReport();
    accountStagePieReport();
    accountFeaturePieReport();
+   accountUserPieReport();
  }
 
 

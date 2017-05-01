@@ -209,4 +209,48 @@ router.get('/accounts/:name/stage', (req, res, next) => {
 });
 
 
+
+// return accounts per user analytics data
+router.get('/accounts/user', (req, res, next) => {
+  Account
+  .find({"is_deleted": false})
+  .populate(accountFields)
+  .exec(function(err, accounts) {
+    if(err){
+        winston.log('info', err.message);
+        req.flash('error', constants.genericError);
+        return res.status(301).redirect('/accounts');
+    }
+    else{
+      var users = {};
+      var labels = [];
+      var data_points = [];
+      var background_color = [];
+      var border_color = [];
+      for(var i in accounts){
+        var account = accounts[i];
+        if(!users.hasOwnProperty(account.primary_manager.username)){
+          users[account.primary_manager.username]={
+            'count': 1
+          };
+        }
+        else{
+          users[account.primary_manager.username]['count']+=1;
+        }
+      }
+      for(var user in users){
+        labels.push(user);
+        data_points.push(users[user]['count']);
+      }
+      res_data = {
+        'labels': labels,
+        'data': data_points
+      }
+      return res.send(JSON.stringify(res_data));
+    }
+  });
+});
+
+
+
 module.exports = router;
