@@ -6,7 +6,8 @@ const User = new Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   is_admin: { type: Boolean, default: false },
-  is_deleted: { type: Boolean, default: false }
+  is_deleted: { type: Boolean, default: false },
+  api_token: { type: String, unique: true }
 });
 
 

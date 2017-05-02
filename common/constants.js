@@ -17,6 +17,13 @@ exports.revokeFailed = 'Revoke failed';
 exports.grantSuccess = 'Successfully granted';
 exports.grantFailed = 'Grant failed';
 
+exports.apiTokenCreateSuccess = 'Successfully created API token';
+exports.apiTokenCreateFailed = 'API token creation failed';
+
+exports.apiTokenDeleteSuccess = 'Successfully deleted API token';
+exports.apiTokenDeleteFailed = 'API token deletion failed';
+
+
 // generic
 exports.genericError = 'Something went wrong! Please try again later';
 

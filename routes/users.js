@@ -41,11 +41,11 @@ router.get('/revoke/:username', (req, res, next) => {
   .findOneAndUpdate({username: req.params.username}, {is_admin: false})
   .exec(function(err, user){
     if(err){
-      req.flash('error', 'revoke failed');
+      req.flash('error', constants.revokeFailed);
       return res.status(301).redirect('/users');
     }
     else {
-      req.flash('info', 'revoke successfull');
+      req.flash('info', constants.revokeSuccess);
       return res.status(301).redirect('/users');
     }
   });
@@ -58,11 +58,11 @@ router.get('/grant/:username', (req, res, next) => {
   .findOneAndUpdate({username: req.params.username}, {is_admin: true})
   .exec(function(err, user){
     if(err){
-      req.flash('error', 'grant failed');
+      req.flash('error', constants.grantFailed);
       return res.status(301).redirect('/users');
     }
     else {
-      req.flash('info', 'grant successfull');
+      req.flash('info', constants.grantSuccess);
       return res.status(301).redirect('/users');
     }
   });
@@ -74,14 +74,57 @@ router.get('/remove/:username', (req, res, next) => {
   .findOne({username: req.params.username})
   .exec(function(err, user){
     if(err){
-      req.flash('error', 'delete failed');
+      req.flash('error', constants.deleteFailed);
       return res.status(301).redirect('/users');
     }
     else {
       user.is_deleted = true;
       user.save();
-      req.flash('info', 'delete successfull');
+      req.flash('info', constants.deleteSuccess);
       return res.status(301).redirect('/users');
+    }
+  });
+});
+
+
+var randomString = function (length, chars) {
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+    return result;
+}
+
+
+router.get('/:username/create-token', (req, res, next) => {
+  User
+  .findOne({username: req.params.username})
+  .exec(function(err, user){
+    if(err){
+      req.flash('error', constants.apiTokenCreateFailed);
+      return res.status(301).redirect('/profile');
+    }
+    else {
+      user.api_token = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      user.save();
+      req.flash('info', constants.apiTokenCreateSuccess);
+      return res.status(301).redirect('/profile');
+    }
+  });
+});
+
+
+router.get('/:username/delete-token', (req, res, next) => {
+  User
+  .findOne({username: req.params.username})
+  .exec(function(err, user){
+    if(err){
+      req.flash('error', constants.apiTokenDeleteFailed);
+      return res.status(301).redirect('/profile');
+    }
+    else {
+      user.api_token = '';
+      user.save();
+      req.flash('info', constants.apiTokenDeleteSuccess);
+      return res.status(301).redirect('/profile');
     }
   });
 });

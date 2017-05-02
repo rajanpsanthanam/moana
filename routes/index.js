@@ -95,6 +95,16 @@ router.post('/reset-password', (req, res, next) => {
 });
 
 
+
+// auth middleware
+router.use(function (req, res, next) {
+  if(!req.user){
+    return res.status(301).redirect('/');
+  }
+  next();
+});
+
+
 // logout route
 router.get('/logout', (req, res, next) => {
     req.logout();
@@ -109,7 +119,7 @@ router.get('/logout', (req, res, next) => {
 
 // profile
 router.get('/profile', (req, res, next) => {
-  return res.render('profile', {user: req.user });
+  return res.render('profile', {user: req.user, message: req.flash('info'), error: req.flash('error')});
 })
 
 
