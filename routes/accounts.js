@@ -182,7 +182,7 @@ router.use(function (req, res, next) {
   if(!req.user){
     return res.status(301).redirect('/');
   }
-  else if(!req.user.is_admin){
+  else if(req.user.role != 'administrator'){
     return res.status(301).redirect('/');
   }
   next();
@@ -195,14 +195,9 @@ function filter_data(params){
   if('name' in params){
     filters['name'] = { $regex: params.name+'.*', $options: 'i' };
   };
-  if ('primary_manager' in params){
-    if (params.primary_manager != 'all'){
-      filters['primary_manager'] = params.primary_manager;
-    };
-  };
-  if ('secondary_manager' in params){
-    if (params.secondary_manager != 'all'){
-      filters['secondary_manager'] = params.secondary_manager;
+  if ('contact' in params){
+    if (params.contact != 'all'){
+      filters['primary_manager'] = params.contact;
     };
   };
   return filters;
@@ -232,7 +227,7 @@ router.get('/', (req, res, next) => {
           else{
             return res.render(
               'accounts',
-              { user: req.user, accounts : accounts, users: users, filters: filters, message: req.flash('info'), error: req.flash('error') }
+              { user: req.user, accounts : accounts, users: users, query_param: req.query, message: req.flash('info'), error: req.flash('error') }
             );
           }
       });

@@ -6,7 +6,7 @@ block main-menu
       | Menu
       span.caret
     ul.dropdown-menu(aria-labelledby='dLabel')
-      if(user.is_admin)
+      if(user.role == 'administrator')
         li
           a(href='/accounts') Accounts
         li

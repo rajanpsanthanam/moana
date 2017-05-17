@@ -1,3 +1,141 @@
+$('.user-role').change(function(){
+  let role = $(this).val();
+  let username = $(this).attr('user');
+  $.post( "/users/edit", {'username': username, 'role': role}, function( result ) {
+    location.reload();
+  });
+})
+
+function restoreFeature(name){
+  $.confirm({
+    title: 'Restore!',
+    content: 'Are you sure want to restore '+name+'?' ,
+    buttons: {
+        confirm: function () {
+          $.get( "/features/restore/"+name, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+function deleteFeature(name){
+  $.confirm({
+    title: 'Delete!',
+    content: 'Are you sure want to delete '+name+'?' ,
+    buttons: {
+        confirm: function () {
+          $.get( "/features/remove/"+name, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+function restoreStage(name){
+  $.confirm({
+    title: 'Restore!',
+    content: 'Are you sure want to restore '+name+'?' ,
+    buttons: {
+        confirm: function () {
+          $.get( "/stages/restore/"+name, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+function deleteStage(name){
+  $.confirm({
+    title: 'Delete!',
+    content: 'Are you sure want to delete '+name+'?' ,
+    buttons: {
+        confirm: function () {
+          $.get( "/stages/remove/"+name, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+function restoreUser(username){
+  $.confirm({
+    title: 'Restore!',
+    content: 'Are you sure want to restore '+username+'?' ,
+    buttons: {
+        confirm: function () {
+          $.get( "/users/restore/"+username, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+function deleteUser(username){
+  $.confirm({
+    title: 'Delete!',
+    content: 'Are you sure want to delete '+username+'?' ,
+    buttons: {
+        confirm: function () {
+          $.get( "/users/remove/"+username, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+function grantUser(username){
+  $.confirm({
+    title: 'Grant!',
+    content: 'Are you sure want to grant admin access to '+username+'?',
+    buttons: {
+        confirm: function () {
+          $.get( "/users/grant/"+username, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+
+function revokeUser(username){
+  $.confirm({
+    title: 'Revoke!',
+    content: 'Are you sure want to revoke admin access from '+username+'?',
+    buttons: {
+        confirm: function () {
+          $.get( "/users/revoke/"+username, function(result) {
+            location.reload();
+          });
+        },
+        cancel: function () {
+        }
+    }
+  });
+}
+
+
 function accountStagePieReport(){
   $.get( "/reports/accounts/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
@@ -143,6 +281,18 @@ var ISOToDateFormat = function(dateString, limit){
 
 
 $( document ).ready(function() {
+    $("#userTable").hpaging({
+      "limit": 10
+    });
+    $("#accountTable").hpaging({
+      "limit": 10
+    });
+    $("#stageTable").hpaging({
+      "limit": 10
+    });
+    $("#featureTable").hpaging({
+      "limit": 10
+    });
     $(".alert").alert();
     $('.dropdown-toggle').dropdown();
     $('[data-toggle="tooltip"]').tooltip()

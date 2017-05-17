@@ -11,6 +11,9 @@ exports.updateFailed = 'Update failed';
 exports.deleteSuccess = 'Successfully deleted';
 exports.deleteFailed = 'Delete failed';
 
+exports.restoreSuccess = 'Successfully restored';
+exports.restoreFailed = 'Restore failed';
+
 exports.revokeSuccess = 'Successfully revoked';
 exports.revokeFailed = 'Revoke failed';
 

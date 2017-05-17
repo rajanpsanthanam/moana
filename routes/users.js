@@ -9,29 +9,91 @@ router.use(function (req, res, next) {
   if(!req.user){
     return res.status(301).redirect('/');
   }
-  else if(!req.user.is_admin){
+  else if(req.user.role != 'administrator'){
     return res.status(301).redirect('/');
   }
   next();
 });
 
 
+
+// register page
+router.get('/add', (req, res) => {
+    return res.render('add-user', { });
+});
+
+
+// register route
+router.post('/', (req, res, next) => {
+      User.register(new User({ 'username' : req.body.username, 'email' : req.body.email }), req.body.password, (err, user) => {
+          if (err) {
+            winston.log('info', err.message);
+            return res.render('add-user', { error : err.message });
+          }
+          return res.status(301).redirect('/users');
+      });
+});
+
+
+// filter data on users list
+function filter_data(params){
+  // var filters = {"username": {"$ne": req.user.username}};
+  filters = {};
+  filters['is_deleted'] = false;
+  if('name' in params){
+    filters['username'] = { $regex: params.name+'.*', $options: 'i' };
+  };
+  if('role' in params){
+    if (params.role != 'all'){
+      filters['role'] = params.role;
+    };
+  }
+  if('state' in params){
+    if (params.state == 'active'){
+      filters['is_deleted'] = false;
+    };
+    if (params.state == 'deleted'){
+      filters['is_deleted'] = true;
+    };
+  }
+  return filters;
+}
+
 /*
 Note: to create initial admin
 db.users.updateOne({"username": "admin"}, {$set: {"is_admin": true}})
 */
 router.get('/', (req, res, next) => {
+  var filters = filter_data(req.query);
   var message = req.query.message;
   User
-  .find({"is_deleted": false}, 'username is_admin')
+  .find(filters)
+  .sort('username')
   .exec(function(err, users){
         if(err){
           winston.log('info', err.message);
           return res.render('index', { error : err.message });
         } else{
-          return res.render('users', { user: req.user, users : users, message: req.flash('info'), error: req.flash('error') });
+          return res.render('users', { user: req.user, query_param: req.query, users : users, message: req.flash('info'), error: req.flash('error') });
         }
     });
+});
+
+
+// edit user details
+router.post('/edit/', (req, res, next) => {
+  User
+  .findOne({username: req.body.username})
+  .exec(function(err, user){
+    if(err){
+      return res.send(JSON.stringify({ 'status': false }));
+    }
+    else {
+      user.role = req.body.role;
+      user.save();
+      return res.send(JSON.stringify({ 'status': true }));
+    }
+  });
 });
 
 
@@ -78,9 +140,28 @@ router.get('/remove/:username', (req, res, next) => {
       return res.status(301).redirect('/users');
     }
     else {
+      user.is_admin = false;
       user.is_deleted = true;
       user.save();
       req.flash('info', constants.deleteSuccess);
+      return res.status(301).redirect('/users');
+    }
+  });
+});
+
+// restore deleted user
+router.get('/restore/:username', (req, res, next) => {
+  User
+  .findOne({username: req.params.username})
+  .exec(function(err, user){
+    if(err){
+      req.flash('error', constants.restoreFailed);
+      return res.status(301).redirect('/users');
+    }
+    else {
+      user.is_deleted = false;
+      user.save();
+      req.flash('info', constants.restoreSuccess);
       return res.status(301).redirect('/users');
     }
   });

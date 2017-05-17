@@ -1,26 +1,18 @@
 extends manage-header.pug
 
 block main-pane
-    if(user.is_admin)
-      .row
-        .col-sm-8
-          p.lead Hello #{user.username}, Good to see you back.
+    .row
+      .col-sm-12
+        p.lead.text-center Hello #{user.username}, Good to see you back.
+    if(user.role=='administrator')
       .row
         .col-md-3
-          button.btn.btn-primary.btn-sm#dashbordChart(onclick='dashbordChart()') account's report
+          button.btn.btn-primary.btn-sm#dashbordChart(onclick='dashbordChart()' style="display:none") account's report
       hr
       .row
-        .col-md-6
-          h4.text-center no: of accounts per stage
-          canvas#stageChart(style='width: 150px; height: 100px')
         .col-md-6
           h4.text-center no: of accounts per feature
           canvas#featureChart(style='width: 150px; height: 100px')
-      hr
-      .row
-        .col-md-6
-          h4.text-center no: of accounts per state
-          canvas#stateChart(style='width: 150px; height: 100px')
         .col-md-6
           h4.text-center no: of accounts per user
           canvas#userChart(style='width: 150px; height: 100px')
