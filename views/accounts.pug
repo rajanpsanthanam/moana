@@ -40,10 +40,10 @@ block main-pane
             p #{account.primary_manager.username} / #{account.secondary_manager.username}
           td
             for feature in account.features
-              if(feature.name.length > 4)
+              if(feature.name.length > 3)
                 - var featureName = feature.name.substring(0, 3)+'...'
               else
                 - var featureName = feature.name
               .col-xs-12.col-sm-3.col-md-3
-                button.btn.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title=feature.name, style='background-color:' + feature.bg_color + ';border-color:' + feature.bg_color + ';color:'+ feature.font_color) #{featureName}
+                button.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title=feature.name, style='background-color:' + feature.bg_color + ';border-color:' + feature.bg_color + ';color:'+ feature.font_color) #{featureName}
                 br

@@ -7,7 +7,7 @@ const Stage = require('../models/stage');
 const winston = require('winston');
 const constants = require('../common/constants');
 
-var accountFields = 'primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by'
+var accountFields = 'primary_manager secondary_manager features stages stages.stage stages.feature stages.last_updated_by comments.by'
 
 
 // get a single account
@@ -56,7 +56,16 @@ router.get('/manage/:name/stages', (req, res, next) => {
       req.flash('error', constants.genericError);
       return res.status(301).redirect('/accounts');
     } else{
-      return res.render('manage-stage', { account : account });
+      var filtered_stages = [];
+      var feature = req.query.feature;
+      if (feature){
+        for(i=0; i<account.stages.length;i++){
+          if(account.stages[i].feature && account.stages[i].feature._id==feature){
+            filtered_stages.push(account.stages[i])
+          }
+        }
+      }
+      return res.render('manage-stage', { account : account, filtered_stages: filtered_stages, query_param: req.query, user: req.user});
     }
   });
 });
@@ -90,8 +99,9 @@ router.get('/manage/:name/add-stage', (req, res, next) => {
 // add stage to account
 router.post('/manage/:name/add-stage', (req, res, next) => {
   var stage = req.body.stage
+  var feature = req.body.feature
   Account
-  .findOneAndUpdate({"name": req.params.name}, { $push: {"stages": {"stage": stage, "last_updated_by": req.user._id} } })
+  .findOneAndUpdate({"name": req.params.name}, { $push: {"stages": {"stage": stage, "feature": feature, "last_updated_by": req.user._id} } })
   .exec(function(err, account){
       if(err){
         winston.log('info', err.message);
@@ -107,18 +117,30 @@ router.post('/manage/:name/add-stage', (req, res, next) => {
             req.flash('error', constants.genericError);
             return res.status(301).redirect('/accounts');
           } else{
-              // event name: message
-              var comment = 'New Stage: stage "'+stage_data.name+'" added into account';
-              Account
-              .findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } })
-              .exec(function(err, account){
+              var stage_data = stage_data;
+              Feature
+              .findOne({"_id": feature}, '')
+              .exec(function(err, feature_data){
                 if(err){
                   winston.log('info', err.message);
                   req.flash('error', constants.genericError);
                   return res.status(301).redirect('/accounts');
                 }
                 else{
-                  return res.status(301).redirect('/accounts/manage/'+req.params.name+'/stages/')
+                  // event name: message
+                  var comment = 'New Stage: stage "'+stage_data.name+'" added for "'+feature_data.name+'"';
+                  Account
+                  .findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } })
+                  .exec(function(err, account){
+                    if(err){
+                      winston.log('info', err.message);
+                      req.flash('error', constants.genericError);
+                      return res.status(301).redirect('/accounts');
+                    }
+                    else{
+                      return res.status(301).redirect('/accounts/manage/'+req.params.name+'/stages/?feature='+feature)
+                    }
+                  });
                 }
             });
           }
@@ -129,8 +151,8 @@ router.post('/manage/:name/add-stage', (req, res, next) => {
 
 
 // complete a stage for an account
-router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
-  var stage = req.params.stage;
+router.get('/manage/:name/complete-stage', (req, res, next) => {
+  var stage = req.query.stage;
   Account
   .findOne({ "name": req.params.name })
   .populate(accountFields)
@@ -142,36 +164,32 @@ router.get('/manage/:name/complete-stage/:stage', (req, res, next) => {
     }
     else{
       for(i=0; i<account.stages.length; i++){
-        if(account.stages[i].stage.name == stage && !account.stages[i].end_date){
+        if(account.stages[i]._id==stage){
+          var stage_info = account.stages[i]
           account.stages[i].end_date = new Date();
           account.save();
+          break;
         }
       }
-      Stage
-      .findOne({"name": stage}, '')
-      .exec(function(err, stage_data){
-        if(err){
-          winston.log('info', err.message);
-          req.flash('error', constants.genericError);
-          return res.status(301).redirect('/accounts');
-        }
-        else{
-          // event name: message
-          var comment = 'Stage Completed: stage "'+stage_data.name+'" got completed';
-          Account
-          .findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } })
-          .exec(function(err, account){
-            if(err){
-              winston.log('info', err.message);
-              req.flash('error', constants.genericError);
-              return res.status(301).redirect('/accounts');
-            }
-            else{
-              return res.status(301).redirect('/accounts/manage/'+req.params.name+'/stages/')
-            }
-          });
-        }
-      });
+      if(stage_info){
+        // event name: message
+        var comment = 'Stage Completed: stage "'+stage_info.stage.name+'" for "'+stage_info.feature.name+'" got completed';
+        Account
+        .findOneAndUpdate({"name": req.params.name}, { $push: {"comments": {"body": comment, "by": req.user._id} } })
+        .exec(function(err, account){
+          if(err){
+            winston.log('info', err.message);
+            req.flash('error', constants.genericError);
+            return res.status(301).redirect('/accounts');
+          }
+          else{
+            return res.status(301).redirect('/accounts/manage/'+req.params.name+'/stages/?feature='+stage_info.feature._id)
+          }
+        });
+      }else{
+        req.flash('error', constants.genericError);
+        return res.status(301).redirect('/accounts');
+      }
     }
   });
 });

@@ -1,3 +1,8 @@
+function featureStatusReport(account, feature){
+  $('#feature-status').show();
+  featureStatusBarChart(account);
+}
+
 $('.user-role').change(function(){
   let role = $(this).val();
   let username = $(this).attr('user');
@@ -135,7 +140,7 @@ function revokeUser(username){
   });
 }
 
-
+/*
 function accountStagePieReport(){
   $.get( "/reports/accounts/stage", function( analytics ) {
     analytics = JSON.parse(analytics);
@@ -156,6 +161,26 @@ function accountStagePieReport(){
   });
 };
 
+function accountStatePieReport(){
+  $.get( "/reports/accounts/state", function( analytics ) {
+    analytics = JSON.parse(analytics);
+    var option = {
+        type: 'doughnut',
+        data: {
+            labels: analytics.labels,
+            datasets: [{
+                label: '# of accounts per state',
+                data: analytics.data,
+                backgroundColor: analytics.background_color,
+                borderColor: analytics.border_color,
+                borderWidth: 1
+            }]
+        }
+    };
+    var myChart = new Chart($('#stateChart'), option);
+  });
+};
+*/
 
 function accountFeaturePieReport(){
   $.get( "/reports/accounts/feature", function( analytics ) {
@@ -176,28 +201,6 @@ function accountFeaturePieReport(){
     var myChart = new Chart($('#featureChart'), option);
   });
 };
-
-
-function accountStatePieReport(){
-  $.get( "/reports/accounts/state", function( analytics ) {
-    analytics = JSON.parse(analytics);
-    var option = {
-        type: 'doughnut',
-        data: {
-            labels: analytics.labels,
-            datasets: [{
-                label: '# of accounts per state',
-                data: analytics.data,
-                backgroundColor: analytics.background_color,
-                borderColor: analytics.border_color,
-                borderWidth: 1
-            }]
-        }
-    };
-    var myChart = new Chart($('#stateChart'), option);
-  });
-};
-
 
 function accountUserPieReport(){
   $.get( "/reports/accounts/user", function( analytics ) {
@@ -227,10 +230,10 @@ function accountUserPieReport(){
 };
 
 
-function stageBarReport(account){
-  $.get( "/reports/accounts/"+ account +"/stage", function( analytics ) {
+function featureStatusReport(account, feature){
+  $.get( "/reports/account/"+ account +"/feature/"+ feature +"/stage-data", function( analytics ) {
     analytics = JSON.parse(analytics);
-    var myChart = new Chart($('#stageBarChart'), {
+    var myChart = new Chart($('#featureStatusReport'), {
         type: 'bar',
         data: {
             labels: analytics.labels,
@@ -273,14 +276,15 @@ var ISOToDateFormat = function(dateString, limit){
  }
 
  function dashbordChart(){
-   accountStatePieReport();
-   accountStagePieReport();
    accountFeaturePieReport();
    accountUserPieReport();
  }
 
 
 $( document ).ready(function() {
+    $("#commentsTable").hpaging({
+      "limit": 10
+    });
     $("#userTable").hpaging({
       "limit": 10
     });
@@ -298,10 +302,10 @@ $( document ).ready(function() {
     $('[data-toggle="tooltip"]').tooltip()
     $('#dashbordChart').click();
     $('#stageButton').click();
-    $("#accSignupDate").text(ISOToDateFormat($('#accSignupDate').text(), 1));
-    $("#accProcessStartDate").text(ISOToDateFormat($('#accProcessStartDate').text(), 1));
-    $("#accExpectedCompletionDate").text(ISOToDateFormat($('#accExpectedCompletionDate').text(), 1));
-    $("#accActualCompletionDate").text(ISOToDateFormat($('#accActualCompletionDate').text(), 1));
+    // $("#accSignupDate").text(ISOToDateFormat($('#accSignupDate').text(), 1));
+    // $("#accProcessStartDate").text(ISOToDateFormat($('#accProcessStartDate').text(), 1));
+    // $("#accExpectedCompletionDate").text(ISOToDateFormat($('#accExpectedCompletionDate').text(), 1));
+    // $("#accActualCompletionDate").text(ISOToDateFormat($('#accActualCompletionDate').text(), 1));
     $(".commentDate").each(function() {
       $(this).text(ISOToDateFormat($(this).text(), 2));
     });

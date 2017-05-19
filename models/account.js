@@ -10,6 +10,7 @@ const Comments = new Schema({
 
 const Stages = new Schema({
   stage: { type: Schema.Types.ObjectId, ref: 'stage' },
+  feature: { type: Schema.Types.ObjectId, ref: 'feature' },
   start_date: { type: Date, default: Date.now },
   end_date: Date,
   last_updated_by: { type: Schema.Types.ObjectId, ref: 'user' }
