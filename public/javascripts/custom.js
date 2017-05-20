@@ -233,7 +233,7 @@ function accountUserPieReport(){
 function featureStatusReport(account, feature){
   $.get( "/reports/account/"+ account +"/feature/"+ feature +"/stage-data", function( analytics ) {
     analytics = JSON.parse(analytics);
-    var myChart = new Chart($('#featureStatusReport'), {
+    var myChart = new Chart($('#'+feature), {
         type: 'bar',
         data: {
             labels: analytics.labels,
@@ -280,6 +280,13 @@ var ISOToDateFormat = function(dateString, limit){
    accountUserPieReport();
  }
 
+ function accountStatusReport(account, features){
+   var features = features.split(',');
+   for(i=0;i<features.length;i++){
+     featureStatusReport(account, features[i]);
+   }
+ }
+
 
 $( document ).ready(function() {
     $("#commentsTable").hpaging({
@@ -301,11 +308,7 @@ $( document ).ready(function() {
     $('.dropdown-toggle').dropdown();
     $('[data-toggle="tooltip"]').tooltip()
     $('#dashbordChart').click();
-    $('#stageButton').click();
-    // $("#accSignupDate").text(ISOToDateFormat($('#accSignupDate').text(), 1));
-    // $("#accProcessStartDate").text(ISOToDateFormat($('#accProcessStartDate').text(), 1));
-    // $("#accExpectedCompletionDate").text(ISOToDateFormat($('#accExpectedCompletionDate').text(), 1));
-    // $("#accActualCompletionDate").text(ISOToDateFormat($('#accActualCompletionDate').text(), 1));
+    $('#accountStatusReport').click()
     $(".commentDate").each(function() {
       $(this).text(ISOToDateFormat($(this).text(), 2));
     });

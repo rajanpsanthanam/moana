@@ -21,7 +21,11 @@ router.get('/view/:name', (req, res, next) => {
         req.flash('error', constants.genericError);
         return res.status(301).redirect('/accounts');
     } else{
-        return res.render('account', { account : account, user: req.user });
+        var features = [];
+        for(i=0;i<account.features.length;i++){
+          features.push(account.features[i].name)
+        }
+        return res.render('account', { account : account, features: features, user: req.user });
     }
   });
 });

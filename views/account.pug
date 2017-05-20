@@ -27,8 +27,12 @@ block pane
   br
   .div
     .row
+      button.btn.btn-xs#accountStatusReport(onclick='accountStatusReport("' + account.name + '", "' + features + '")' style="display:none")
+    .row
       .col-md-6
-          canvas#featureStatusReport(style='width: 400px; height: 200px')
+          for feature in account.features
+            - var featureName = feature.name
+            canvas(id=featureName, style='width: 400px; height: 200px')
       .col-md-5.col-md-offset-1
           .row
             form(role='form', action='/accounts/manage/'+account.name+'/add-comment', method="post")
