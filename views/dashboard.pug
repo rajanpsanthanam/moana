@@ -4,7 +4,6 @@ block main-pane
     .row
       .col-sm-12
         p.lead.text-center Hello #{user.username}, Good to see you back.
-    if(user.role=='administrator')
       .row
         .col-md-3
           button.btn.btn-primary.btn-sm#dashbordChart(onclick='dashbordChart()' style="display:none") account's report
@@ -16,7 +15,7 @@ block main-pane
         .col-md-6
           h4.text-center no: of accounts per user
           canvas#userChart(style='width: 150px; height: 100px')
-    else
+      hr
       .row
         .col-sm-6
           .row

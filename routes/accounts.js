@@ -25,7 +25,7 @@ router.get('/view/:name', (req, res, next) => {
         for(i=0;i<account.features.length;i++){
           features.push(account.features[i].name)
         }
-        return res.render('account', { account : account, features: features, user: req.user });
+        return res.render('account', { account : account, features: features, req_user: req.user });
     }
   });
 });
@@ -199,18 +199,6 @@ router.get('/manage/:name/complete-stage', (req, res, next) => {
 });
 
 
-// admin auth middleware
-router.use(function (req, res, next) {
-  if(!req.user){
-    return res.status(301).redirect('/');
-  }
-  else if(req.user.role != 'administrator'){
-    return res.status(301).redirect('/');
-  }
-  next();
-});
-
-
 // filter data on accounts list
 function filter_data(params){
   var filters = {"is_deleted": false};
@@ -249,12 +237,26 @@ router.get('/', (req, res, next) => {
           else{
             return res.render(
               'accounts',
-              { user: req.user, accounts : accounts, users: users, query_param: req.query, message: req.flash('info'), error: req.flash('error') }
+              { req_user: req.user, accounts : accounts, users: users, query_param: req.query, message: req.flash('info'), error: req.flash('error') }
             );
           }
       });
     }
   });
+});
+
+
+
+
+// admin auth middleware
+router.use(function (req, res, next) {
+  if(!req.user){
+    return res.status(301).redirect('/');
+  }
+  else if(req.user.role != 'administrator'){
+    return res.status(301).redirect('/');
+  }
+  next();
 });
 
 

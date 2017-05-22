@@ -9,20 +9,22 @@ block main-pane
         form.form-inline(role='form', action="/stages/", method="get")
           .form-group
             input.form-control(type='text', name='name', value=query_param.name, placeholder='Search', style="margin-left:5px")
-          .form-group
-            label(for='#contact-filter', style="margin-left:5px") State:
-            select.form-control(name='state', style="margin-left:5px")
-              for item in ['active', 'deleted']
-                option(selected=query_param.state==item) #{item}
+          if(req_user.role=='administrator')
+            .form-group
+              label(for='#contact-filter', style="margin-left:5px") State:
+              select.form-control(name='state', style="margin-left:5px")
+                for item in ['active', 'deleted']
+                  option(selected=query_param.state==item) #{item}
           button.btn.btn-primary.btn-sm(type='submit', style="margin-left:5px") Apply
           if(query_param.state || query_param.name)
             a(href='/stages', style="margin-left:15px")
               i.fa.fa-times(aria-hidden='true')
               | clear
-      .col-md-2
-        a.btn.btn-primary.btn-sm(href='/stages/add', role='button')
-          i.fa.fa-plus(aria-hidden='true')
-          |  Add Stage
+      if(req_user.role=='administrator')
+        .col-md-2
+          a.btn.btn-primary.btn-sm(href='/stages/add', role='button')
+            i.fa.fa-plus(aria-hidden='true')
+            |  Add Stage
   br
   if(stages)
     table#stageTable.table.table-hover.table-stripped.table-responsive
@@ -32,21 +34,26 @@ block main-pane
           th Order
           th Background Color
           th Font Color
-          th
+          if(req_user.role=='administrator')
+            th
       for stage in stages
         tr
           td
-            a(href='/stages/edit/'+stage.name+'/') #{stage.name}
+            if(req_user.role=='administrator')
+                a(href='/stages/edit/'+stage.name+'/') #{stage.name}
+            else
+                p #{stage.name}
           td
             p #{stage.order}
           td
             button.btn.btn(style="background-color:" + stage.bg_color + ";border-color:" + stage.bg_color + ";padding: 10px 50px;")
           td
             button.btn.btn(style="background-color:" + stage.font_color + ";border-color:" + stage.font_color + ";padding: 10px 50px;")
-          td
-            if(stage.is_deleted)
-              button.btn.btn-primary.btn-xs#restoreStage(onclick='restoreStage("' + stage.name + '")') Restore
-            else
-              button.btn.btn-danger.btn-xs#deleteStage(onclick='deleteStage("' + stage.name + '")') Remove
+          if(req_user.role=='administrator')
+            td
+              if(stage.is_deleted)
+                button.btn.btn-primary.btn-xs#restoreStage(onclick='restoreStage("' + stage.name + '")') Restore
+              else
+                button.btn.btn-danger.btn-xs#deleteStage(onclick='deleteStage("' + stage.name + '")') Remove
   else
     p.text-center No stages created yet. create one

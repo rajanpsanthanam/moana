@@ -4,6 +4,65 @@ const User = require('../models/user');
 const winston = require('winston');
 const constants = require('../common/constants');
 
+
+// auth middleware
+router.use(function (req, res, next) {
+  if(!req.user){
+    return res.status(301).redirect('/');
+  }
+  next();
+});
+
+
+
+// filter data on users list
+function filter_data(req){
+  // var filters = {"username": {"$ne": req.user.username}};
+  params = req.query
+  filters = {};
+  filters['is_deleted'] = false;
+  if('name' in params){
+    filters['username'] = { $regex: params.name+'.*', $options: 'i' };
+  };
+  if(req.role=='administrator'){
+    if('role' in params){
+      if (params.role != 'all'){
+        filters['role'] = params.role;
+      };
+    }
+    if('state' in params){
+      if (params.state == 'active'){
+        filters['is_deleted'] = false;
+      };
+      if (params.state == 'deleted'){
+        filters['is_deleted'] = true;
+      };
+    }
+  }
+  return filters;
+}
+
+/*
+Note: to create initial admin
+db.users.updateOne({"username": "admin"}, {$set: {"is_admin": true}})
+*/
+router.get('/', (req, res, next) => {
+  var filters = filter_data(req);
+  var message = req.query.message;
+  User
+  .find(filters)
+  .sort('username')
+  .exec(function(err, users){
+        if(err){
+          winston.log('info', err.message);
+          return res.render('index', { error : err.message });
+        } else{
+          return res.render('users', { req_user: req.user, query_param: req.query, users : users, message: req.flash('info'), error: req.flash('error') });
+        }
+    });
+});
+
+
 // admin auth middleware
 router.use(function (req, res, next) {
   if(!req.user){
@@ -33,52 +92,6 @@ router.post('/', (req, res, next) => {
           return res.status(301).redirect('/users');
       });
 });
-
-
-// filter data on users list
-function filter_data(params){
-  // var filters = {"username": {"$ne": req.user.username}};
-  filters = {};
-  filters['is_deleted'] = false;
-  if('name' in params){
-    filters['username'] = { $regex: params.name+'.*', $options: 'i' };
-  };
-  if('role' in params){
-    if (params.role != 'all'){
-      filters['role'] = params.role;
-    };
-  }
-  if('state' in params){
-    if (params.state == 'active'){
-      filters['is_deleted'] = false;
-    };
-    if (params.state == 'deleted'){
-      filters['is_deleted'] = true;
-    };
-  }
-  return filters;
-}
-
-/*
-Note: to create initial admin
-db.users.updateOne({"username": "admin"}, {$set: {"is_admin": true}})
-*/
-router.get('/', (req, res, next) => {
-  var filters = filter_data(req.query);
-  var message = req.query.message;
-  User
-  .find(filters)
-  .sort('username')
-  .exec(function(err, users){
-        if(err){
-          winston.log('info', err.message);
-          return res.render('index', { error : err.message });
-        } else{
-          return res.render('users', { user: req.user, query_param: req.query, users : users, message: req.flash('info'), error: req.flash('error') });
-        }
-    });
-});
-
 
 // edit user details
 router.post('/edit/', (req, res, next) => {

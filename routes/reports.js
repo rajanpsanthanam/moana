@@ -15,9 +15,6 @@ router.use(function (req, res, next) {
   if(!req.user){
     return res.status(301).redirect('/');
   }
-  else if(req.user.role != 'administrator'){
-    return res.status(301).redirect('/');
-  }
   next();
 });
 

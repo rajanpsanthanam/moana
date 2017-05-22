@@ -20,10 +20,11 @@ block main-pane
             a(href='/accounts', style="margin-left:15px")
               i.fa.fa-times(aria-hidden='true')
               | clear
-      .col-md-2
-        a.btn.btn-primary.btn-sm(href='/accounts/add', role='button')
-          i.fa.fa-plus(aria-hidden='true')
-          |  Add Account
+      if(req_user.role=='administrator')
+        .col-md-2
+          a.btn.btn-primary.btn-sm(href='/accounts/add', role='button')
+            i.fa.fa-plus(aria-hidden='true')
+            |  Add Account
   br
   .row
     table#accountTable.table.table-hover.table-stripped.table-responsive

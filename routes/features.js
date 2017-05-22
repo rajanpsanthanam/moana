@@ -4,6 +4,52 @@ const Feature = require('../models/feature');
 const constants = require('../common/constants');
 const winston = require('winston');
 
+// auth middleware
+router.use(function (req, res, next) {
+  if(!req.user){
+    return res.status(301).redirect('/');
+  }
+  next();
+});
+
+// filter data on features list
+function filter_data(req){
+  params = req.query;
+  filters = {};
+  filters['is_deleted'] = false;
+  if('name' in params){
+    filters['name'] = { $regex: params.name+'.*', $options: 'i' };
+  };
+  if(req.user.role=='adminstrator'){
+    if('state' in params){
+      if (params.state == 'active'){
+        filters['is_deleted'] = false;
+      };
+      if (params.state == 'deleted'){
+        filters['is_deleted'] = true;
+      };
+    }
+  }
+  return filters;
+}
+
+
+// get all featues
+router.get('/', (req, res, next) => {
+  var filters = filter_data(req);
+  Feature
+  .find(filters)
+  .exec(function(err, features){
+    if(err){
+        winston.log('info', err.message);
+        return res.render('index', { error : err.message });
+    } else{
+        return res.render('features', { req_user: req.user, query_param: req.query, features : features, message: req.flash('info'), error: req.flash('error')});
+    }
+  });
+});
+
+
 // admin auth middleware
 router.use(function (req, res, next) {
   if(!req.user){
@@ -14,42 +60,6 @@ router.use(function (req, res, next) {
   }
   next();
 });
-
-// filter data on features list
-function filter_data(params){
-  filters = {};
-  filters['is_deleted'] = false;
-  if('name' in params){
-    filters['name'] = { $regex: params.name+'.*', $options: 'i' };
-  };
-  if('state' in params){
-    if (params.state == 'active'){
-      filters['is_deleted'] = false;
-    };
-    if (params.state == 'deleted'){
-      filters['is_deleted'] = true;
-    };
-  }
-  return filters;
-}
-
-
-// get all featues
-router.get('/', (req, res, next) => {
-  var filters = filter_data(req.query);
-  Feature
-  .find(filters)
-  .exec(function(err, features){
-    if(err){
-        winston.log('info', err.message);
-        return res.render('index', { error : err.message });
-    } else{
-        return res.render('features', { user: req.user, query_param: req.query, features : features, message: req.flash('info'), error: req.flash('error')});
-    }
-  });
-});
-
-
 
 // route to add new feature form
 router.get('/add', (req, res, next) => {
