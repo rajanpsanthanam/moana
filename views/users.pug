@@ -54,6 +54,6 @@ block main-pane
                   option(selected=role == user.role) #{role}
             td
               if(user.is_deleted)
-                button.btn.btn-primary.btn-xs#deleteUser(onclick='restoreUser("' + user.username + '")') Restore
+                button.btn.btn-primary.btn-xs#deleteUser(onclick='confirmationBox("Restore", "/users/restore/' + user.username + '")') Restore
               else
-                button.btn.btn-danger.btn-xs#deleteUser(onclick='deleteUser("' + user.username + '")') Remove
+                button.btn.btn-danger.btn-xs#deleteUser(onclick='confirmationBox("Remove", "/users/remove/' + user.username + '")') Remove

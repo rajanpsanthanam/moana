@@ -52,8 +52,8 @@ block main-pane
           if(req_user.role=='administrator')
             td
               if(stage.is_deleted)
-                button.btn.btn-primary.btn-xs#restoreStage(onclick='restoreStage("' + stage.name + '")') Restore
+                button.btn.btn-primary.btn-xs#restoreStage(onclick='confirmationBox("Restore", "/stages/restore/' + stage.name + '")') Restore
               else
-                button.btn.btn-danger.btn-xs#deleteStage(onclick='deleteStage("' + stage.name + '")') Remove
+                button.btn.btn-danger.btn-xs#deleteStage(onclick='confirmationBox("Remove", "/stages/remove/' + stage.name + '")') Remove
   else
     p.text-center No stages created yet. create one

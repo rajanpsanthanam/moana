@@ -16,11 +16,10 @@ router.use(function (req, res, next) {
 function filter_data(req){
   params = req.query;
   filters = {};
-  filters['is_deleted'] = false;
   if('name' in params){
     filters['name'] = { $regex: params.name+'.*', $options: 'i' };
   };
-  if(req.user.role=='adminstrator'){
+  if(req.user.role=='administrator'){
     if('state' in params){
       if (params.state == 'active'){
         filters['is_deleted'] = false;
@@ -29,6 +28,12 @@ function filter_data(req){
         filters['is_deleted'] = true;
       };
     }
+    else{
+      filters['is_deleted'] = false;
+    }
+  }
+  else{
+    filters['is_deleted'] = false;
   }
   return filters;
 }

@@ -20,11 +20,10 @@ function filter_data(req){
   // var filters = {"username": {"$ne": req.user.username}};
   params = req.query
   filters = {};
-  filters['is_deleted'] = false;
   if('name' in params){
     filters['username'] = { $regex: params.name+'.*', $options: 'i' };
   };
-  if(req.role=='administrator'){
+  if(req.user.role=='administrator'){
     if('role' in params){
       if (params.role != 'all'){
         filters['role'] = params.role;
@@ -38,6 +37,12 @@ function filter_data(req){
         filters['is_deleted'] = true;
       };
     }
+    else{
+      filters['is_deleted'] = false;
+    }
+  }
+  else{
+    filters['is_deleted'] = false;
   }
   return filters;
 }

@@ -49,8 +49,8 @@ block main-pane
           if(req_user.role=='administrator')
             td
               if(feature.is_deleted)
-                button.btn.btn-primary.btn-xs#restoreFeature(onclick='restoreFeature("' + feature.name + '")') Restore
+                button.btn.btn-primary.btn-xs#restoreFeature(onclick='confirmationBox("Restore", "/features/restore/' + feature.name + '")') Restore
               else
-                button.btn.btn-danger.btn-xs#deleteFeature(onclick='deleteFeature("' + feature.name + '")') Remove
+                button.btn.btn-danger.btn-xs#deleteFeature(onclick='confirmationBox("Remove", "/features/remove/' + feature.name + '")') Remove
   else
     p.text-center No features created yet. create one
