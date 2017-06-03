@@ -19,7 +19,7 @@ function filter_data(req){
   if('name' in params){
     filters['name'] = { $regex: params.name+'.*', $options: 'i' };
   };
-  if(req.user.role=='administrator'){
+  if(req.user.role == constants.adminRole){
     if('state' in params){
       if (params.state == 'active'){
         filters['is_deleted'] = false;
@@ -49,7 +49,7 @@ router.get('/', (req, res, next) => {
         winston.log('info', err.message);
         return res.render('index', { error : err.message });
     } else{
-        return res.render('features', { req_user: req.user, query_param: req.query, features : features, message: req.flash('info'), error: req.flash('error')});
+        return res.render('list-features', { req_user: req.user, query_param: req.query, features : features, message: req.flash('info'), error: req.flash('error')});
     }
   });
 });
@@ -60,7 +60,7 @@ router.use(function (req, res, next) {
   if(!req.user){
     return res.status(301).redirect('/');
   }
-  else if(req.user.role != 'administrator'){
+  else if(req.user.role != constants.adminRole){
     return res.status(301).redirect('/');
   }
   next();

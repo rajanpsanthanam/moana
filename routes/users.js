@@ -23,7 +23,7 @@ function filter_data(req){
   if('name' in params){
     filters['username'] = { $regex: params.name+'.*', $options: 'i' };
   };
-  if(req.user.role=='administrator'){
+  if(req.user.role == constants.adminRole){
     if('role' in params){
       if (params.role != 'all'){
         filters['role'] = params.role;
@@ -62,7 +62,7 @@ router.get('/', (req, res, next) => {
           winston.log('info', err.message);
           return res.render('index', { error : err.message });
         } else{
-          return res.render('users', { req_user: req.user, query_param: req.query, users : users, message: req.flash('info'), error: req.flash('error') });
+          return res.render('list-users', { req_user: req.user, query_param: req.query, users : users, message: req.flash('info'), error: req.flash('error') });
         }
     });
 });
@@ -73,7 +73,7 @@ router.use(function (req, res, next) {
   if(!req.user){
     return res.status(301).redirect('/');
   }
-  else if(req.user.role != 'administrator'){
+  else if(req.user.role != constants.adminRole){
     return res.status(301).redirect('/');
   }
   next();
@@ -83,7 +83,7 @@ router.use(function (req, res, next) {
 
 // register page
 router.get('/add', (req, res) => {
-    return res.render('add-user', { });
+    return res.render('new-user', { });
 });
 
 
@@ -92,7 +92,7 @@ router.post('/', (req, res, next) => {
       User.register(new User({ 'username' : req.body.username, 'email' : req.body.email }), req.body.password, (err, user) => {
           if (err) {
             winston.log('info', err.message);
-            return res.render('add-user', { error : err.message });
+            return res.render('new-user', { error : err.message });
           }
           return res.status(301).redirect('/users');
       });
