@@ -20,19 +20,6 @@ block pane
               for user in users
                 option(value=user._id) #{user.username}
         .col-sm-4
-          .form-group
-            label(for='signup_date') Signup Date
-            input#signup_date.form-control(name='signup_date', type='date')
-          .form-group
-            label(for='process_start_date') Process Start Date
-            input#process_start_date.form-control(name='process_start_date', type='date')
-          .form-group
-            label(for='expected_completion_date') Expected Completion Date
-            input#expected_completion_date.form-control(name='expected_completion_date', type='date')
-          .form-group
-            label(for='actual_completion_date') Actual Completion Date
-            input#actual_completion_date.form-control(name='actual_completion_date', type='date')
-        .col-sm-4
           h4 Choose features
           if(features.length > 0)
             for feature in features

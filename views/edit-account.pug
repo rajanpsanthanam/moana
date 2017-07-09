@@ -18,32 +18,6 @@ block pane
             select.form-control(name='secondary_manager')
               for user in users
                 option(value=user._id, selected=account.secondary_manager._id.toString() == user._id.toString()) #{user.username}
-
-        .col-sm-4
-          .form-group
-            label(for='signup_date') Signup Date
-            if (account.signup_date)
-              input#signup_date.form-control(name='signup_date', type='date', value=account.signup_date.toISOString().substring(0, 10))
-            else
-              input#signup_date.form-control(name='signup_date', type='date')
-          .form-group
-            label(for='process_start_date') Process Start Date
-            if(account.process_start_date)
-              input#process_start_date.form-control(name='process_start_date', type='date', value=account.process_start_date.toISOString().substring(0, 10))
-            else
-              input#process_start_date.form-control(name='process_start_date', type='date')
-          .form-group
-            label(for='expected_completion_date') Expected Completion Date
-            if(account.expected_completion_date)
-              input#expected_completion_date.form-control(name='expected_completion_date', type='date', value=account.expected_completion_date.toISOString().substring(0, 10))
-            else
-              input#expected_completion_date.form-control(name='expected_completion_date', type='date')
-          .form-group
-            label(for='actual_completion_date') Actual Live Date
-            if (account.actual_completion_date)
-              input#actual_completion_date.form-control(name='actual_completion_date', type='date', value=account.actual_completion_date.toISOString().substring(0, 10))
-            else
-              input#actual_completion_date.form-control(name='actual_completion_date', type='date')
         .col-sm-4
           h4 Choose features
           if(features)

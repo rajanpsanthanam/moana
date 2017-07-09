@@ -1,22 +1,33 @@
 extends sub-layout.pug
 
 block pane
-  .row
-    .col-sm-2
-      a(href='/accounts/view/'+account.name)
-        i.fa.fa-backward
-    .col-sm-8
-      p.lead Stage data for #{account.name}
-    .col-sm-2
-      a.btn.btn-warning(href='/accounts/manage/'+account.name+'/add-stage', role='button') Add Stage
-  if(account.stages)
+  .div.well(style="background-color:#E9F4F4")
+    .row
+      .col-md-2
+        a(href='/accounts/view/'+account.name)
+          i.fa.fa-2x.fa-chevron-circle-left(aria-hidden='true')
+      .col-md-8
+        form.form-inline(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
+          .form-group
+            label(style="margin-left:5px") Feature:
+            select#feature-filter.form-control(name='feature', style="margin-left:5px")
+              option ----
+              for feature in account.features
+                option(value=feature._id, selected=query_param.feature==feature._id) #{feature.name}
+          button.btn.btn-primary.btn-sm(type='submit', style="margin-left:5px") Apply
+      .col-md-2
+        a.btn.btn-primary.btn-sm(href='/accounts/manage/'+account.name+'/add-stage/', role='button')
+          i.fa.fa-plus(aria-hidden='true')
+          |  Add Stage
+  br
+  if(filtered_stages.length > 0)
     table.table.table-hover.table-stripped
       thead
         tr
           th Stage
           th Started On
           th Completed On
-      for stage in account.stages
+      for stage in filtered_stages
         tr
           td
             button.btn.btn.btn-block.btn-xs(style="background-color:" + stage.stage.bg_color + ";border-color:" + stage.stage.bg_color + ";color:"+ stage.stage.font_color) #{stage.stage.name}
@@ -26,5 +37,7 @@ block pane
             if(stage.end_date)
               p #{stage.end_date}
             else
-              form(role='form', action='/accounts/manage/'+account.name+'/complete-stage/'+stage.stage.name, method="get")
-                button.btn.btn-warning(type='submit') Complete
+              form(role='form', action='/accounts/manage/'+account.name+'/complete-stage/', method="get")
+                .form-group
+                  input(type='hidden', name='stage', value=stage._id)
+                  button.btn.btn-warning(type='submit') Complete

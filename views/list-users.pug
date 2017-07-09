@@ -1,0 +1,59 @@
+extends manage-header.pug
+
+block main-pane
+  .div.well(style="background-color:#E9F4F4")
+    .row
+      .col-md-2
+        p.lead Users
+      .col-md-8
+        form.form-inline(role='form', action="/users/", method="get")
+          .form-group
+            input.form-control(type='text', name='name', value=query_param.name, placeholder='Search', style="margin-left:5px")
+          if(req_user.role=='administrator')
+            .form-group
+              label(for='#contact-filter', style="margin-left:5px") Role:
+              select#state-filter.form-control(name='role', style="margin-left:5px")
+                option all
+                for role in ['administrator', 'member', 'viewer']
+                  option(selected=query_param.role==role) #{role}
+            .form-group
+              label(for='#contact-filter', style="margin-left:5px") State:
+              select.form-control(name='state', style="margin-left:5px")
+                for item in ['active', 'deleted']
+                  option(selected=query_param.state==item) #{item}
+          button.btn.btn-primary.btn-sm(type='submit', style="margin-left:5px") Apply
+          if(query_param.role || query_param.name)
+            a(href='/users', style="margin-left:15px")
+              i.fa.fa-times(aria-hidden='true')
+              | clear
+      .col-md-2
+        if(req_user.role=='administrator')
+          a.btn.btn-primary.btn-sm(href='/users/add', role='button')
+            i.fa.fa-plus(aria-hidden='true')
+            |  Add User
+  br
+  .row
+    table#userTable.table.table-hover.table-stripped.table-responsive
+      thead
+        tr
+          th Username
+          th Email
+          if(req_user.role=='administrator')
+            th Role
+            th
+      for user in users
+        tr
+          td
+            p #{user.username}
+          td
+            p #{user.email}
+          if(req_user.role=='administrator')
+            td
+              select.form-control.user-role(name='role', user=user.username)
+                for role in ['administrator', 'member', 'viewer']
+                  option(selected=role == user.role) #{role}
+            td
+              if(user.is_deleted)
+                button.btn.btn-primary.btn-xs#deleteUser(onclick='confirmationBox("Restore", "/users/restore/' + user.username + '")') Restore
+              else
+                button.btn.btn-danger.btn-xs#deleteUser(onclick='confirmationBox("Remove", "/users/remove/' + user.username + '")') Remove

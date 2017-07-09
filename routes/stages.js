@@ -4,31 +4,66 @@ const Stage = require('../models/stage');
 const winston = require('winston');
 const constants = require('../common/constants');
 
-// admin auth middleware
+// auth middleware
 router.use(function (req, res, next) {
   if(!req.user){
-    return res.status(301).redirect('/');
-  }
-  else if(!req.user.is_admin){
     return res.status(301).redirect('/');
   }
   next();
 });
 
+// filter data on stages list
+function filter_data(req){
+  params = req.query;
+  filters = {};
+  if('name' in params){
+    filters['name'] = { $regex: params.name+'.*', $options: 'i' };
+  };
+  if(req.user.role == constants.adminRole){
+    if('state' in params){
+      if (params.state == 'active'){
+        filters['is_deleted'] = false;
+      };
+      if (params.state == 'deleted'){
+        filters['is_deleted'] = true;
+      };
+    }
+    else{
+      filters['is_deleted'] = false;
+    }
+  }
+  else{
+    filters['is_deleted'] = false;
+  }
+  return filters;
+}
+
 
 // get all stages
 router.get('/', (req, res, next) => {
+  var filters = filter_data(req);
   Stage
-  .find({"is_deleted": false}, '')
+  .find(filters)
   .sort('order')
   .exec(function(err, stages){
     if(err){
       winston.log('info', err.message);
       return res.render('index', { error : err.message });
     } else{
-      return res.render('stages', { user: req.user, stages : stages, message: req.flash('info'), error: req.flash('error')});
+      return res.render('list-stages', { req_user: req.user, query_param: req.query, stages : stages, message: req.flash('info'), error: req.flash('error')});
     }
   });
+});
+
+// admin auth middleware
+router.use(function (req, res, next) {
+  if(!req.user){
+    return res.status(301).redirect('/');
+  }
+  else if(req.user.role != constants.adminRole){
+    return res.status(301).redirect('/');
+  }
+  next();
 });
 
 
@@ -165,6 +200,26 @@ router.get('/remove/:name', (req, res, next) => {
     }
     else{
       stage.is_deleted = true
+      stage.save();
+      req.flash('info', constants.deleteSuccess);
+      return res.status(301).redirect('/stages');
+    }
+  });
+});
+
+
+// restore stage
+router.get('/restore/:name', (req, res, next) => {
+  Stage
+  .findOne({"name": req.params.name}, '')
+  .exec(function(err, stage){
+    if(err){
+      winston.log('info', err.message);
+      req.flash('error', constants.deleteFailed);
+      return res.status(301).redirect('/stages');
+    }
+    else{
+      stage.is_deleted = false
       stage.save();
       req.flash('info', constants.deleteSuccess);
       return res.status(301).redirect('/stages');

@@ -4,33 +4,67 @@ const Feature = require('../models/feature');
 const constants = require('../common/constants');
 const winston = require('winston');
 
-// admin auth middleware
+// auth middleware
 router.use(function (req, res, next) {
   if(!req.user){
-    return res.status(301).redirect('/');
-  }
-  else if(!req.user.is_admin){
     return res.status(301).redirect('/');
   }
   next();
 });
 
+// filter data on features list
+function filter_data(req){
+  params = req.query;
+  filters = {};
+  if('name' in params){
+    filters['name'] = { $regex: params.name+'.*', $options: 'i' };
+  };
+  if(req.user.role == constants.adminRole){
+    if('state' in params){
+      if (params.state == 'active'){
+        filters['is_deleted'] = false;
+      };
+      if (params.state == 'deleted'){
+        filters['is_deleted'] = true;
+      };
+    }
+    else{
+      filters['is_deleted'] = false;
+    }
+  }
+  else{
+    filters['is_deleted'] = false;
+  }
+  return filters;
+}
+
 
 // get all featues
 router.get('/', (req, res, next) => {
+  var filters = filter_data(req);
   Feature
-  .find({"is_deleted": false}, '')
+  .find(filters)
   .exec(function(err, features){
     if(err){
         winston.log('info', err.message);
         return res.render('index', { error : err.message });
     } else{
-        return res.render('features', { user: req.user, features : features, message: req.flash('info'), error: req.flash('error')});
+        return res.render('list-features', { req_user: req.user, query_param: req.query, features : features, message: req.flash('info'), error: req.flash('error')});
     }
   });
 });
 
 
+// admin auth middleware
+router.use(function (req, res, next) {
+  if(!req.user){
+    return res.status(301).redirect('/');
+  }
+  else if(req.user.role != constants.adminRole){
+    return res.status(301).redirect('/');
+  }
+  next();
+});
 
 // route to add new feature form
 router.get('/add', (req, res, next) => {
@@ -161,6 +195,24 @@ router.get('/remove/:name', (req, res, next) => {
     }
     else{
       feature.is_deleted = true
+      feature.save();
+      req.flash('info', constants.deleteSuccess);
+      return res.status(301).redirect('/features');
+    }
+  });
+});
+
+// restore feature
+router.get('/restore/:name', (req, res, next) => {
+  Feature
+  .findOne({"name": req.params.name}, '')
+  .exec(function(err, feature){
+    if(err){
+      req.flash('error', constants.deleteFailed);
+      return res.status(301).redirect('/features');
+    }
+    else{
+      feature.is_deleted = false
       feature.save();
       req.flash('info', constants.deleteSuccess);
       return res.status(301).redirect('/features');

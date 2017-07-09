@@ -6,16 +6,15 @@ block main-menu
       | Menu
       span.caret
     ul.dropdown-menu(aria-labelledby='dLabel')
-      if(user.is_admin)
-        li
-          a(href='/accounts') Accounts
-        li
-          a(href='/users') Users
-        li
-          a(href='/stages') Stages
-        li
-          a(href='/features') Features
-        li.divider(role='separator')
+      li
+        a(href='/accounts') Accounts
+      li
+        a(href='/users') Users
+      li
+        a(href='/stages') Stages
+      li
+        a(href='/features') Features
+      li.divider(role='separator')
       li
         a(href='/profile') Profile
       li

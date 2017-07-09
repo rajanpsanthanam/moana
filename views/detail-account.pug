@@ -1,0 +1,73 @@
+extends sub-layout.pug
+
+block pane
+  .div.well(style="background-color:#E9F4F4")
+    .row
+      .col-md-2
+        a(href='/accounts/')
+          i.fa.fa-2x.fa-chevron-circle-left(aria-hidden='true')
+      .col-md-8.text-center
+        h1 #{account.name}
+        h4.text-muted managed by #{account.primary_manager.username}
+      if(req_user.role!='viewer')
+        .col-md-2
+          form(role='form', action='/accounts/manage/'+account.name+'/stages/', method="get")
+            button.btn.btn-warning(type='submit') Manage Stage
+    hr
+    .row
+      .col-md-12
+        .row.text-center
+          for feature in account.features
+            if(feature.name.length > 20)
+              - var featureName = feature.name.substring(0, 15)+'...'
+            else
+              - var featureName = feature.name
+            .col-xs-6.col-sm-4.col-md-2
+              button.btn.btn.btn-block.btn-xs(onclick='featureStatusReport("' + account.name + '", "' + feature.name +'")', style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";color:"+ feature.font_color) #{featureName}
+              br
+  br
+  .div
+    .row
+      button.btn.btn-xs#accountStatusReport(onclick='accountStatusReport("' + account.name + '", "' + features + '")' style="display:none")
+    .row
+      .col-md-6
+          for feature in account.features
+            - var featureName = feature.name
+            p.lead.text-center #{featureName}
+            canvas(id=featureName, style='width: 400px; height: 200px')
+            hr
+      .col-md-5.col-md-offset-1
+          if(req_user.role!='viewer')
+            .row
+              form(role='form', action='/accounts/manage/'+account.name+'/add-comment', method="post")
+                .row
+                  textarea.form-control(rows='3', name='comment')
+                br
+                .row.text-center
+                  button.btn.btn-warning(type='submit') add comment
+          if(account.comments.length > 0)
+            table#commentsTable.table.table-hover.table-stripped
+              thead
+                tr
+                  th
+                    p.lead Timeline
+              for comment in account.comments.reverse().slice(0, 20)
+                tr
+                  td
+                    if(comment.body.includes('New Stage:'))
+                      p.list-group-item-text
+                      span.label.label-info Stage Added
+                      |  #{comment.body.replace('New Stage:', '')}
+                    else if(comment.body.includes('Stage Completed:'))
+                      p.list-group-item-text
+                      span.label.label-success Stage Completed
+                      |  #{comment.body.replace('Stage Completed:', '')}
+                    else
+                      p.list-group-item-text #{comment.body}
+                    br
+                    p
+                    i  #{comment.by.username}
+                    |  @
+                    i.commentDate #{comment.date}
+          else
+            p No updates on the account yet

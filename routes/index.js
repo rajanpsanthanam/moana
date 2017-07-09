@@ -41,32 +41,6 @@ router.get('/', (req, res, next) => {
 });
 
 
-// register page
-router.get('/register', (req, res) => {
-    return res.render('register', { });
-});
-
-
-// register route
-router.post('/register', (req, res, next) => {
-    User.register(new User({ 'username' : req.body.username, 'email' : req.body.email }), req.body.password, (err, user) => {
-        if (err) {
-          winston.log('info', err.message);
-          return res.render('register', { error : err.message });
-        }
-
-        passport.authenticate('local')(req, res, () => {
-            req.session.save((err) => {
-              if (err) {
-                  return next(err);
-              }
-              return res.status(301).redirect('/');
-            });
-        });
-    });
-});
-
-
 // login route
 router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), (req, res, next) => {
     req.session.save((err) => {
