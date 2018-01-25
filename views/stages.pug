@@ -1,32 +1,27 @@
 extends manage-header.pug
 
 block main-pane
+    br
     .row
-      .col-sm-9
+      .col-sm-10
         p.lead Stages
-      .col-sm-2
-        a.btn.btn-warning(href='/stages/add', role='button') Add Stage
+      .col-sm-1
+        a.btn.btn-sm.btn-secondary(href='/stages/add', role='button') Add New
     if(stages)
-      table.table.table-hover.table-stripped.table-responsive
-        thead
-          tr
-            th Stage
-            th Order
-            th Background Color
-            th Font Color
-            th Delete
-        for stage in stages
-          tr
-            td
-              a(href='/stages/edit/'+stage.name+'/') #{stage.name}
-            td
-              p #{stage.order}
-            td
-              button.btn.btn(style="background-color:" + stage.bg_color + ";border-color:" + stage.bg_color + ";padding: 10px 50px;")
-            td
-              button.btn.btn(style="background-color:" + stage.font_color + ";border-color:" + stage.font_color + ";padding: 10px 50px;")
-            td
-              a(href='/stages/remove/'+stage.name+'/')
-                i.fa.fa-trash(aria-hidden='true')
+      .row
+        .col-sm-8
+          table.table.table-responsive
+            for stage in stages
+              tr
+                td
+                  button.btn-sm.btn(style="background-color:" + stage.bg_color + ";color:" + stage.font_color + ";border-color:" + stage.bg_color) #{stage.name}
+                td
+                  i.fa.fa-pencil(aria-hidden='true')
+                  a.text-muted(href='/stages/edit/'+stage.name)
+                    |  Edit
+                td
+                  i.fa.fa-times(aria-hidden='true')
+                  a.text-muted(href='/stages/remove/'+stage.name)
+                    |  Delete
     else
       p.text-center No stages created yet. create one

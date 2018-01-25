@@ -26,3 +26,7 @@ td i {
 td a i{
    padding-left: 0em;
 }
+
+.main-pane {
+  background-color: #fff;
+}

@@ -17,7 +17,7 @@ block main-pane
             option all
             for user in users
               option(value=user._id, selected=user.username == filters.secondary_manager) #{user.username}
-        button.btn.btn-warning(type='submit') Submit
+        button.btn.btn-secondary(type='submit') Submit
 
     .col-md-10
       .row
@@ -26,38 +26,20 @@ block main-pane
             .input-group
               input.form-control(type='text', placeholder='Search for...', name='name')
               span.input-group-btn
-                button.btn.btn-warning(type='submit') Go!
+                button.btn.btn-secondary(type='submit') Go!
         .col-sm-2
-          a.btn.btn-warning(href='/accounts/add', role='button') Add Account
+          a.btn.btn-secondary(href='/accounts/add', role='button') Add Account
       br
       .row
-        table.table.table-hover.table-stripped.table-responsive
-          thead
-            tr
-              th Account
-              th Current Stage
-              th Contact
-              th Features
-          for account in accounts
-            tr
-              td
-                a(href='/accounts/view/'+account.name) #{account.name}
-              td
+        for account in accounts
+          .col-sm-6
+            .card
+              .card-body
+                h5.card-title #{account.name}
                 - var len = account.stages.length
                 if(len > 0)
                   - var stage = account.stages[len-1].stage
-                  - var stageName = stage.name.substring(0, 3)+'...'
-                  button.btn.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title=stage.name, style="background-color:" + stage.bg_color + ";border-color:" + stage.bg_color + ";color:"+ stage.font_color) #{stageName}
+                  p.card-text #{stage.name}
                 else
-                  button.btn.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title='Not Started Yet') NA
-              td
-                p #{account.primary_manager.username} / #{account.secondary_manager.username}
-              td
-                for feature in account.features
-                  if(feature.name.length > 4)
-                    - var featureName = feature.name.substring(0, 3)+'...'
-                  else
-                    - var featureName = feature.name
-                  .col-xs-12.col-sm-3.col-md-3
-                    button.btn.btn.btn-block.btn-xs(data-toggle='tooltip', data-placement='top', title=feature.name, style='background-color:' + feature.bg_color + ';border-color:' + feature.bg_color + ';color:'+ feature.font_color) #{featureName}
-                    br
+                  p.card-text Not Started Yet
+                a.btn.btn-primary(href='/accounts/view/'+account.name) read more

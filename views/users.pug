@@ -1,30 +1,33 @@
 extends manage-header.pug
 
 block main-pane
+    br
     .row
       .col-sm-9
         p.lead Users
-    table.table.table-hover.table-stripped.table-responsive
-      thead
-        tr
-          th User
-          th Is Admin
-          th Delete
+
       for user in users
-        tr
-          td
-            if(user.is_admin)
-              p #{user.username}
-                i.fa.fa-superpowers(aria-hidden='true')
-            else
-              p #{user.username}
-          td
-            if(user.is_admin)
-              a(href='/users/revoke/'+user.username) revoke admin access
+        .col-sm-4
+          .card
+            .card-body
+              if(user.is_admin)
+                h5.card-title #{user.username}
+                  span.i.fa.fa-superpowers(aria-hidden='true')
 
-            else
-              a(href='/users/grant/'+user.username) make admin
+              else
+                h5.card-title #{user.username}
 
-          td
-            a(href='/users/remove/'+user.username)
-              i.fa.fa-trash(aria-hidden='true')
+              if(user.is_admin)
+                p.card-text
+                  a(href='/users/revoke/'+user.username)
+                    button.btn-xs.btn-outline-info(type="button") revoke admin access
+                a(href='/users/remove/'+user.username)
+                  button.btn-xs.btn-outline-danger(type="button") remove user
+
+              else
+                p.card-text
+                  a(href='/users/grant/'+user.username)
+                    button.btn-xs.btn-outline-info(type="button") make admin
+                a(href='/users/remove/'+user.username)
+                  button.btn-xs.btn-outline-danger(type="button") remove
+          br

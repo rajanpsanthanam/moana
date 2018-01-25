@@ -4,37 +4,36 @@ block pane
   br
   .row
     .col-md-6
-      h3 Update Email
+      h5 Update Email
       br
       form(role='form', action="/email-update/",method="post", style='max-width: 300px;')
         .form-group
             input.form-control(type='text', name="email", placeholder='Enter New Email', value=user.email)
-        input.btn.btn.btn-warning.btn-block(type='submit', value='Update')
-    .col-md-6
-      p.lead Note
-      p.alert.alert-info Changing email or password will log you out from the system, You should login with new details again!
+        input.btn.btn-sm.btn-secondary(type='submit', value='Update')
+
+  hr
+
   .row
     .col-md-6
-      h3 Change Password
+      h5 Change Password
       form(role='form', action="/change-password/",method="post", style='max-width: 300px;')
         .form-group
             input.form-control(type='password', name="newPassword", placeholder='Enter New Password')
         .form-group
           input.form-control(type='password', name="confirmPassword", placeholder='Confirm Password')
-        input.btn.btn.btn-warning.btn-block(type='submit', value='Change')
+        input.btn.btn-sm.btn-secondary(type='submit', value='Change')
   hr
+
   .row
     .col-md-6
       if(user.is_admin)
-        h3 API Token
+        h5 API Token
         if(!user.api_token)
-          a.btn.btn-warning(href='/users/'+user.username+'/create-token', role='button') Create Token
+          a.btn.btn-sm.btn-secondary(href='/users/'+user.username+'/create-token', role='button') Create Token
         else
-          h4 #{user.api_token}
-          .row
+          h6.well #{user.api_token}
+          .row.justify-content-between
             .col-md-3
-              a.btn.btn-warning(href='/users/'+user.username+'/create-token', role='button') Recreate Token
-            .col-md-3
-              a.btn.btn-danger(href='/users/'+user.username+'/delete-token', role='button') Delete Token
-    .col-md-6
-      p.alert.alert-info API Token enables access to your accounts via the API, kindly keep it private. Regenerating the token will un-authenticate previously generated token.
+              a.btn.btn-sm.btn-info(href='/users/'+user.username+'/create-token', role='button') Recreate Token
+            .col-offset-md-1.col-md-3
+              a.btn.btn-sm.btn-danger(href='/users/'+user.username+'/delete-token', role='button') Delete Token

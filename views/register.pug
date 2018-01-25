@@ -1,19 +1,30 @@
 extends layout
 
 block content
-  .container
-    .cover-container
-      h1 Register
-      br
-      form(role='form', action="/register",method="post", style='max-width: 300px;')
-        .form-group
-            input.form-control(type='text', name="username", placeholder='Enter Username')
-        .form-group
-            input.form-control(type='text', name="email", placeholder='Enter Email')
-        .form-group
-          input.form-control(type='password', name="password", placeholder='Password')
-        .row
-          .col-xs-6.col-sm-6.col-md-6
-            input.btn.btn.btn-warning.btn-block(type='submit', value='Sign Up')
-          .col-xs-6.col-sm-6.col-md-6
-            a.btn.btn.btn-primary.btn-block(href='/') Cancel
+    .container
+      .cover-container
+        a(href="/")
+          img.img-square(src='/images/simba.png', height='200', width='150')
+        br
+        br
+        p.lead Hey there, I am Simba. Your virtual assistant.
+        br
+        h1 Sign Up..
+        br
+        form(role='form', action="/register",method="post", style='max-width: 300px;')
+          .form-group
+              input.form-control(type='text', name="username", placeholder='username')
+          .form-group
+              input.form-control(type='text', name="email", placeholder='email address')
+          .form-group
+            input.form-control(type='password', name="password", placeholder='password')
+          .row
+            .col-xs-6.col-sm-6.col-md-6
+              input.btn.btn.btn-primary.btn-block(type='submit', value='Sign Up')
+            .col-xs-6.col-sm-6.col-md-6
+              a.btn.btn.btn-secondary.btn-block(href='/') Cancel
+        br
+        br
+        p Already a user?
+          a(href="/")
+            |  Login

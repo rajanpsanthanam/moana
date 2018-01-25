@@ -1,27 +1,20 @@
 extends sub-layout.pug
 
 block main-menu
-  .dropdown
-    btn.btn-sm.btn-primary#dLabel(type='button', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-      | Menu
-      span.caret
-    ul.dropdown-menu(aria-labelledby='dLabel')
-      if(user.is_admin)
-        li
-          a(href='/accounts') Accounts
-        li
-          a(href='/users') Users
-        li
-          a(href='/stages') Stages
-        li
-          a(href='/features') Features
-        li.divider(role='separator')
-      li
-        a(href='/profile') Profile
-      li
-        a(href='/logout') Logout
+
+  ul.list-group
+    a.text-muted.list-group-item.text-center(href="/")
+      img.img-square(src='/images/simba.png', height='60', width='50')
+    a.list-group-item Manage
+    a.text-muted.list-group-item(href='/accounts') Accounts
+    a.text-muted.list-group-item(href='/users') Users
+    a.text-muted.list-group-item(href='/stages') Stages
+    a.text-muted.list-group-item(href='/features') Labels
+    a.list-group-item Settings
+    a.text-muted.list-group-item(href='/profile') Profile
+    a.text-muted.list-group-item(href='/logout') Logout
 
 block pane
   .row
-    .col-md-12
+    .col-md-12.main-pane
       block main-pane

@@ -1,29 +1,29 @@
 extends manage-header.pug
 
 block main-pane
+    br
     .row
-      .col-sm-9
-        p.lead Features
-      .col-sm-2
-        a.btn.btn-warning(href='/features/add', role='button') Add Feature
+      .col-sm-10
+        p.lead Labels
+      .col-sm-1
+        a.btn.btn-sm.btn-secondary(href='/features/add', role='button') Add New
     if(features)
-      table.table.table-hover.table-stripped.table-responsive
-        thead
-          tr
-            th Feature
-            th Background Color
-            th Font Color
-            th Delete
-        for feature in features
-          tr
-            td
-              a(href='/features/edit/'+feature.name) #{feature.name}
-            td
-              button.btn.btn(style="background-color:" + feature.bg_color + ";border-color:" + feature.bg_color + ";padding: 10px 50px;")
-            td
-              button.btn.btn(style="background-color:" + feature.font_color + ";border-color:" + feature.font_color + ";padding: 10px 50px;")
-            td
-              a(href='/features/remove/'+feature.name)
-                i.fa.fa-trash(aria-hidden='true')
+      .row
+        .col-sm-8
+          table.table.table-responsive
+            for feature in features
+              tr
+                td
+                  button.btn-sm.btn(style="background-color:" + feature.bg_color + ";color:" + feature.font_color + ";border-color:" + feature.bg_color) #{feature.name}
+                td
+                  i.fa.fa-pencil(aria-hidden='true')
+                  a.text-muted(href='/features/edit/'+feature.name)
+                    |  Edit
+                td
+                  i.fa.fa-times(aria-hidden='true')
+                  a.text-muted(href='/features/remove/'+feature.name)
+                    |  Delete
     else
-      p.text-center No features created yet. create one
+      .row
+        .col-sm-9
+          p.text-center No features created yet. create one
