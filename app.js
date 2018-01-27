@@ -13,7 +13,7 @@ var helmet = require('helmet')
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var stages = require('./routes/stages');
-var features = require('./routes/features');
+var labels = require('./routes/labels');
 var accounts = require('./routes/accounts');
 var reports = require('./routes/reports');
 
@@ -63,7 +63,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/stages', stages);
-app.use('/features', features);
+app.use('/labels', labels);
 app.use('/accounts', accounts);
 app.use('/reports', reports);
 

@@ -1,0 +1,29 @@
+extends manage-header.pug
+
+block main-pane
+    br
+    .row
+      .col-sm-10
+        p.lead Labels
+      .col-sm-1
+        a.btn.btn-sm.btn-secondary(href='/labels/add', role='button') Add New
+    if(labels)
+      .row
+        .col-sm-8
+          table.table.table-responsive
+            for label in labels
+              tr
+                td
+                  button.btn-sm.btn(style="background-color:" + label.bg_color + ";color:" + label.font_color + ";border-color:" + label.bg_color) #{label.name}
+                td
+                  i.fa.fa-pencil(aria-hidden='true')
+                  a.text-muted(href='/labels/edit/'+label.name)
+                    |  Edit
+                td
+                  i.fa.fa-times(aria-hidden='true')
+                  a.text-muted(href='/labels/remove/'+label.name)
+                    |  Delete
+    else
+      .row
+        .col-sm-9
+          p.text-center No labels created yet. create one

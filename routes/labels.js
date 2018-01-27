@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Feature = require('../models/feature');
+const Label = require('../models/label');
 const constants = require('../common/constants');
 const winston = require('winston');
 
@@ -16,126 +16,126 @@ router.use(function (req, res, next) {
 });
 
 
-// get all featues
+// get all labels
 router.get('/', (req, res, next) => {
-  Feature
+  Label
   .find({"is_deleted": false}, '')
-  .exec(function(err, features){
+  .exec(function(err, labels){
     if(err){
         winston.log('info', err.message);
         return res.render('index', { error : err.message });
     } else{
-        return res.render('features', { user: req.user, features : features, message: req.flash('info'), error: req.flash('error')});
+        return res.render('labels', { user: req.user, labels : labels, message: req.flash('info'), error: req.flash('error')});
     }
   });
 });
 
 
 
-// route to add new feature form
+// route to add new label form
 router.get('/add', (req, res, next) => {
-  return res.render('new-feature');
+  return res.render('new-label');
 });
 
 
-// create feature
+// create label
 router.post('/', (req, res, next) => {
-  Feature
+  Label
   .findOne({"name": req.body.name})
-  .exec(function(err, feature){
+  .exec(function(err, label){
     if(err){
         winston.log('info', err.message);
         req.flash('error', constants.genericError);
-        return res.status(301).redirect('/features');
+        return res.status(301).redirect('/labels');
     }
     else{
-      if(!feature){
+      if(!label){
         if(req.body.name){
           data = {
             'name': req.body.name,
             'bg_color': '#'+req.body.bgColor,
             'font_color': '#'+req.body.fontColor
           };
-          var feature = new Feature(data);
-          feature.save(function (err) {
+          var label = new Label(data);
+          label.save(function (err) {
             if (err) {
               winston.log('info', err.message);
               req.flash('error', constants.createFailed);
-              return res.status(301).redirect('/features');
+              return res.status(301).redirect('/labels');
             } else {
               req.flash('info', constants.createSuccess);
-              return res.status(301).redirect('/features');
+              return res.status(301).redirect('/labels');
             }
           });
         }
         else{
           req.flash('error', constants.nameMandatory);
-          return res.status(301).redirect('/features');
+          return res.status(301).redirect('/labels');
         }
       }
       else{
         req.flash('error', constants.alreadyExists);
-        return res.status(301).redirect('/features');
+        return res.status(301).redirect('/labels');
       }
     }
   });
 });
 
 
-// route to edit feature form
+// route to edit label form
 router.get('/edit/:name', (req, res, next) => {
-  Feature
+  Label
   .findOne({"name": req.params.name}, '')
-  .exec(function(err, feature){
+  .exec(function(err, label){
     if(err){
       winston.log('info', err.message);
       req.flash('error', constants.genericError);
-      return res.status(301).redirect('/features');
+      return res.status(301).redirect('/labels');
     }
     else{
-      return res.render('edit-feature', { feature : feature });
+      return res.render('edit-label', { label : label });
     }
   });
 });
 
 
-// edit feature
+// edit label
 router.post('/:name', (req, res, next) => {
-  Feature
+  Label
   .findOne({"name": req.params.name})
-  .exec(function(err, feature){
+  .exec(function(err, label){
     if(err){
       winston.log('info', err.message);
       req.flash('error', constants.genericError);
-      return res.status(301).redirect('/features');
+      return res.status(301).redirect('/labels');
     }
     else{
-      if(feature){
-        Feature.findOne({"name": req.body.name}, '', function(err, duplicate){
+      if(label){
+        Label.findOne({"name": req.body.name}, '', function(err, duplicate){
           if(err){
             req.flash('error', constants.updateFailed);
-            return res.status(301).redirect('/features')
+            return res.status(301).redirect('/labels')
           }
           else{
             if(!duplicate){
-              feature.name = req.body.name;
-              feature.bg_color = '#'+req.body.bgColor,
-              feature.font_color = '#'+req.body.fontColor
-              feature.save();
+              label.name = req.body.name;
+              label.bg_color = '#'+req.body.bgColor,
+              label.font_color = '#'+req.body.fontColor
+              label.save();
               req.flash('info', constants.updateSuccess);
-              return res.status(301).redirect('/features');
+              return res.status(301).redirect('/labels');
             }
             else if(duplicate.name == req.params.name){
-              feature.bg_color = '#'+req.body.bgColor,
-              feature.font_color = '#'+req.body.fontColor
-              feature.save();
+              label.bg_color = '#'+req.body.bgColor,
+              label.font_color = '#'+req.body.fontColor
+              label.save();
               req.flash('info', constants.updateSuccess);
-              return res.status(301).redirect('/features');
+              return res.status(301).redirect('/labels');
             }
             else{
-              let error = 'Feature already exists with name '+req.body.name;
+              let error = 'Label already exists with name '+req.body.name;
               req.flash('error', error);
-              return res.status(301).redirect('/features');
+              return res.status(301).redirect('/labels');
             }
           }
         });
@@ -143,27 +143,27 @@ router.post('/:name', (req, res, next) => {
       else{
         winston.log('info', err.message);
         req.flash('error', constants.genericError);
-        return res.status(301).redirect('/features');
+        return res.status(301).redirect('/labels');
       }
     }
   });
 });
 
 
-// delete feature
+// delete label
 router.get('/remove/:name', (req, res, next) => {
-  Feature
+  Label
   .findOne({"name": req.params.name}, '')
-  .exec(function(err, feature){
+  .exec(function(err, label){
     if(err){
       req.flash('error', constants.deleteFailed);
-      return res.status(301).redirect('/features');
+      return res.status(301).redirect('/labels');
     }
     else{
-      feature.is_deleted = true
-      feature.save();
+      label.is_deleted = true
+      label.save();
       req.flash('info', constants.deleteSuccess);
-      return res.status(301).redirect('/features');
+      return res.status(301).redirect('/labels');
     }
   });
 });

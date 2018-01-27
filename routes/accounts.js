@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Account = require('../models/account');
 const User = require('../models/user');
-const Feature = require('../models/feature');
+const Label = require('../models/label');
 const Stage = require('../models/stage');
 const winston = require('winston');
 const constants = require('../common/constants');
 
-var accountFields = 'primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by'
+var accountFields = 'primary_manager secondary_manager labels stages.stage stages.last_updated_by comments.by'
 
 
 // get a single account
@@ -243,19 +243,19 @@ router.get('/', (req, res, next) => {
 
 // create new account
 router.post('/', (req, res, next) => {
-  Feature
+  Label
   .find({"is_deleted": false})
-  .exec(function(err, features){
+  .exec(function(err, labels){
     if(err){
         winston.log('info', err.message);
         req.flash('error', constants.genericError);
         return res.status(301).redirect('/accounts');
     }
     else{
-      var opted_features = []
-      for(i=0; i<features.length; i++) {
-        if(features[i].name in req.body){
-          opted_features.push(features[i]._id)
+      var opted_labels = []
+      for(i=0; i<labels.length; i++) {
+        if(labels[i].name in req.body){
+          opted_labels.push(labels[i]._id)
         }
       }
       Account
@@ -284,8 +284,8 @@ router.post('/', (req, res, next) => {
               if (req.body.actual_completion_date){
                 data['actual_completion_date'] = new Date(req.body.actual_completion_date)
               }
-              if(opted_features){
-                data['features'] = opted_features;
+              if(opted_labels){
+                data['labels'] = opted_labels;
               }
               var account = new Account(data);
               account.save(function (err) {
@@ -309,7 +309,7 @@ router.post('/', (req, res, next) => {
 });
 
 
-function updateAccount(account, req, opted_features){
+function updateAccount(account, req, opted_labels){
   account.name = req.body.name;
   account.primary_manager = req.body.primary_manager;
   account.secondary_manager = req.body.secondary_manager;
@@ -325,8 +325,8 @@ function updateAccount(account, req, opted_features){
   if (req.body.actual_completion_date){
     account.actual_completion_date = new Date(req.body.actual_completion_date);
   }
-  if(opted_features){
-    account.features = opted_features;
+  if(opted_labels){
+    account.labels = opted_labels;
   }
   account.save();
   return true;
@@ -335,17 +335,17 @@ function updateAccount(account, req, opted_features){
 
 // update account data
 router.post('/:name', (req, res, next) => {
-  Feature
+  Label
   .find({"is_deleted": false}, '')
-  .exec(function(err, features){
+  .exec(function(err, labels){
     if(err){
         return res.status(301).redirect('/accounts/?error=update failed');
     }
     else{
-      var opted_features = []
-      for(i=0; i<features.length; i++) {
-        if(features[i].name in req.body){
-          opted_features.push(features[i]._id)
+      var opted_labels = []
+      for(i=0; i<labels.length; i++) {
+        if(labels[i].name in req.body){
+          opted_labels.push(labels[i]._id)
         }
       }
       Account
@@ -367,12 +367,12 @@ router.post('/:name', (req, res, next) => {
               }
               else{
                 if(!duplicate){
-                  updateAccount(account, req, opted_features);
+                  updateAccount(account, req, opted_labels);
                   req.flash('info', constants.updateSuccess);
                   return res.status(301).redirect('/accounts');
                 }
                 else if(duplicate.name == req.params.name){
-                  updateAccount(account, req, opted_features);
+                  updateAccount(account, req, opted_labels);
                   req.flash('info', constants.updateSuccess);
                   return res.status(301).redirect('/accounts');
                 }
@@ -406,11 +406,11 @@ router.get('/add', (req, res, next) => {
             return res.status(301).redirect('/accounts');
         } else{
             var users = users;
-            Feature.find({"is_deleted": false}, '_id, name', function(err, features){
+            Label.find({"is_deleted": false}, '_id, name', function(err, labels){
                   if(err){
                       return res.render('new-account', { error : err.message });
                   } else{
-                      return res.render('new-account', { users : users, features: features});
+                      return res.render('new-account', { users : users, labels: labels});
                   }
               });
         }
@@ -437,21 +437,21 @@ router.get('/edit/:name', (req, res, next) => {
             }
             else{
               var users = users;
-              var opted_features = [];
-              for(i=0; i<account.features.length; i++){
-                opted_features.push(account.features[i]._id.toString());
+              var opted_labels = [];
+              for(i=0; i<account.labels.length; i++){
+                opted_labels.push(account.labels[i]._id.toString());
               }
-              Feature.find({"is_deleted": false}, '_id, name', function(err, features){
+              Label.find({"is_deleted": false}, '_id, name', function(err, labels){
                 if(err){
                   return res.render('edit-account', { error : err.message });
                 }
                 else{
-                  for(i=0; i<features.length; i++){
-                    features[i]._id = features[i]._id.toString();
+                  for(i=0; i<labels.length; i++){
+                    labels[i]._id = labels[i]._id.toString();
                   }
                   return res.render(
                     'edit-account', {
-                      account: account, users : users, features: features, opted_features: opted_features
+                      account: account, users : users, labels: labels, opted_labels: opted_labels
                     }
                   );
                 }

@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Account = require('../models/account');
 const User = require('../models/user');
-const Feature = require('../models/feature');
+const Label = require('../models/label');
 const Stage = require('../models/stage');
 const winston = require('winston');
 const constants = require('../common/constants');
 
-var accountFields = 'primary_manager secondary_manager features stages.stage stages.last_updated_by comments.by'
+var accountFields = 'primary_manager secondary_manager labels stages.stage stages.last_updated_by comments.by'
 
 
 // middleware for auth check
@@ -116,8 +116,8 @@ router.get('/accounts/stage', (req, res, next) => {
 });
 
 
-// return account per feature analytics data
-router.get('/accounts/feature', (req, res, next) => {
+// return account per label analytics data
+router.get('/accounts/label', (req, res, next) => {
   Account
   .find({"is_deleted": false})
   .populate(accountFields)
@@ -128,33 +128,33 @@ router.get('/accounts/feature', (req, res, next) => {
         return res.status(301).redirect('/accounts');
     }
     else{
-      var features = {};
+      var labels = {};
       var labels = [];
       var data_points = [];
       var background_color = [];
       var border_color = [];
       for(var i in accounts){
         var account = accounts[i];
-        if(account.features){
-          for(j=0; j<account.features.length; j++){
-            if(!features.hasOwnProperty(account.features[j].name)){
-              features[account.features[j].name] = {
+        if(account.labels){
+          for(j=0; j<account.labels.length; j++){
+            if(!labels.hasOwnProperty(account.labels[j].name)){
+              labels[account.labels[j].name] = {
                 'count': 1,
-                'bg_color': account.features[j].bg_color,
-                'font_color': account.features[j].font_color
+                'bg_color': account.labels[j].bg_color,
+                'font_color': account.labels[j].font_color
               }
             }
             else{
-              features[account.features[j].name]['count'] += 1;
+              labels[account.labels[j].name]['count'] += 1;
             }
           }
         }
       }
-      for(var feature in features){
-        labels.push(feature);
-        data_points.push(features[feature]['count']);
-        background_color.push(features[feature]['bg_color']);
-        border_color.push(features[feature]['font_color']);
+      for(var label in labels){
+        labels.push(label);
+        data_points.push(labels[label]['count']);
+        background_color.push(labels[label]['bg_color']);
+        border_color.push(labels[label]['font_color']);
       }
       res_data = {
         'labels': labels,
