@@ -1,0 +1,32 @@
+extends sub-layout.pug
+
+block pane
+  .container
+    h1 Create Task
+    form(role='form', action="/tasks", method="post", style='max-width: 800px;')
+      .row
+        .col-sm-4
+          .form-group
+            label(for='title') Title
+            input#title.form-control(type='text', name='title', placeholder='title')
+          .form-group
+            label(for='assignee') Assignee
+            select.form-control(name='assignee')
+              for user in users
+                option(value=user._id) #{user.username}
+
+        .col-sm-4
+          h4 Choose Labels
+          if(labels.length > 0)
+            for label in labels
+              .checkbox
+                label
+                  input(name=label.name, type='checkbox', value=label._id)
+                  |     #{label.name}
+          else
+            p Couldn't find any labels in the system
+      .row
+        .col-xs-2.col-sm-2.col-md-2
+          input.btn.btn.btn-warning.btn-block(type='submit', value='Create')
+        .col-xs-2.col-sm-2.col-md-2
+          a.btn.btn.btn-primary.btn-block(href='/tasks') Cancel

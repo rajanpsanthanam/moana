@@ -14,7 +14,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var stages = require('./routes/stages');
 var labels = require('./routes/labels');
-var accounts = require('./routes/accounts');
+var tasks = require('./routes/tasks');
 var reports = require('./routes/reports');
 
 var app = express();
@@ -64,7 +64,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/stages', stages);
 app.use('/labels', labels);
-app.use('/accounts', accounts);
+app.use('/tasks', tasks);
 app.use('/reports', reports);
 
 

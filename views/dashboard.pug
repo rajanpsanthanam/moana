@@ -8,43 +8,35 @@ block main-pane
           p.lead Hello #{user.username}, Good to see you back.
       .row
         .col-md-3
-          button.btn.btn-primary.btn-sm#dashbordChart(onclick='dashbordChart()') account's report
+          button.btn.btn-primary.btn-sm#dashbordChart(onclick='dashbordChart()') task's report
       hr
       .row
         .col-md-6
-          h4.text-center no: of accounts per stage
-          canvas#stageChart(style='width: 150px; height: 100px')
+          h4.text-center no: of tasks per user
+          canvas#assigneeChart(style='width: 150px; height: 100px')
         .col-md-6
-          h4.text-center no: of accounts per feature
-          canvas#featureChart(style='width: 150px; height: 100px')
-      hr
-      .row
-        .col-md-6
-          h4.text-center no: of accounts per state
-          canvas#stateChart(style='width: 150px; height: 100px')
-        .col-md-6
-          h4.text-center no: of accounts per user
-          canvas#userChart(style='width: 150px; height: 100px')
+          h4.text-center no: of tasks per label
+          canvas#labelChart(style='width: 150px; height: 100px')
     else
       .row
         .col-sm-6
           .row
             .col-sm-10.col-sm-offset-2.text-center
-              h3 Primary Accounts
-              if(primary_accounts.length > 0)
-                for primary_account in primary_accounts
-                  a(href='/accounts/view/'+primary_account.name) #{primary_account.name}
+              h3 Assigned Tasks
+              if(assigned_tasks.length > 0)
+                for assigned_task in assigned_tasks
+                  a(href='/tasks/view/'+assigned_task.slug) #{assigned_task.title}
                   br
                   br
               else
-                p you are yet to start managing accounts
+                p you are yet to be assigned task
         .col-sm-6.text-center
           .row
             .col-sm-10.col-sm-offset-1.text-center
-              h3 Secondary Accounts
-              if(secondary_accounts.length > 0)
-                for secondary_account in secondary_accounts
-                  a(href='/accounts/view/'+secondary_account.name) #{secondary_account.name}
+              h3 Owned Tasks
+              if(owned_tasks.length > 0)
+                for owned_task in owned_tasks
+                  a(href='/tasks/view/'+owned_task.slug) #{owned_task.title}
                   br
                   br
               else

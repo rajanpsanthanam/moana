@@ -1,0 +1,69 @@
+extends sub-layout.pug
+
+block pane
+  .row
+    .col-md-8
+      .row
+        .col-md-1
+          a(href='/tasks')
+            i.fa.fa-backward
+      .row
+        .col-md-12
+          .page-header
+            h2
+              | #{task.title}
+              small  managed by #{task.assignee.name}
+                |
+      .row.text-center
+        for label in task.labels
+          if(label.name.length > 20)
+            - var labelText = label.name.substring(0, 15)+'...'
+          else
+            - var labelText = label.name
+          .col-xs-6.col-sm-4.col-md-2
+            button.btn.btn.btn-block.btn-xs(style="background-color:" + label.bg_color + ";border-color:" + label.bg_color + ";color:"+ label.font_color) #{labelText}
+            br
+    .col-md-4
+      if(user.is_admin)
+        .row
+          .col-md-3
+            form(role='form', action='/tasks/edit/'+task.slug, method="get")
+              button.btn.btn-sm(type='submit') Edit
+          .col-md-3
+            form(role='form', action='/tasks/remove/'+task.slug, method="get")
+              button.btn.btn-sm(type='submit') Delete
+  br
+  hr
+  br
+  .row
+    .list-group
+      .row
+        form(role='form', action='/tasks/manage/'+task.slug+'/add-comment', method="post")
+          .row
+            textarea.form-control(rows='3', name='comment')
+          br
+          .row.text-center
+            button.btn.btn-warning(type='submit') add comment
+      hr
+      .row
+        p.lead Timeline
+        if(task.comments.length > 0)
+          for comment in task.comments.reverse().slice(0, 20)
+            if(comment.body.includes('New Stage:'))
+              p.list-group-item-text
+              span.label.label-info Stage Added
+              |  #{comment.body.replace('New Stage:', '')}
+            else if(comment.body.includes('Stage Completed:'))
+              p.list-group-item-text
+              span.label.label-success Stage Completed
+              |  #{comment.body.replace('Stage Completed:', '')}
+            else
+              p.list-group-item-text #{comment.body}
+            br
+            p
+            i  #{comment.by.username}
+            |  @
+            i.commentDate #{comment.date}
+            hr
+        else
+          p No updates on the task yet

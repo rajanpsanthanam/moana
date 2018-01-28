@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const User = require('../models/user');
-const Account = require('../models/account');
+const Task = require('../models/task');
 const router = express.Router();
 const winston = require('winston');
 
@@ -9,26 +9,26 @@ const winston = require('winston');
 // dashboard
 router.get('/', (req, res, next) => {
   if(req.user){
-    Account
-    .find({"primary_manager": req.user._id, "is_deleted": false}, '')
+    Task
+    .find({"assignee": req.user._id, "is_deleted": false}, '')
     .exec(
-      function(err, accounts){
+      function(err, tasks){
         if(err){
             return next(err);
         }
         else
         {
-          var primary_accounts = accounts;
-          Account
-          .find({"secondary_manager": req.user._id, "is_deleted": false}, '')
-          .exec(function(err, accounts){
+          var assigned_tasks = tasks;
+          Task
+          .find({"owner": req.user._id, "is_deleted": false}, '')
+          .exec(function(err, tasks){
             if(err){
                 return next(err);
             }
             else{
-                var secondary_accounts = accounts;
+                var owned_tasks = tasks;
                 return res.render('dashboard', {
-                  user : req.user, primary_accounts : primary_accounts, secondary_accounts: secondary_accounts
+                  user : req.user, assigned_tasks : assigned_tasks, owned_tasks: owned_tasks
                 });
               }
             });
