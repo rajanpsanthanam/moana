@@ -1,6 +1,13 @@
 function taskAssigneePieReport(){
   $.get( "/reports/tasks/assignee", function( analytics ) {
     analytics = JSON.parse(analytics);
+    var backgroundColor = [];
+    var borderColor = [];
+    for(i=0; i<analytics.labels.length; i++){
+      let color = getRandomColor();
+      backgroundColor.push(color);
+      borderColor.push(color);
+    }
     var option = {
         type: 'pie',
         data: {
@@ -8,8 +15,8 @@ function taskAssigneePieReport(){
             datasets: [{
                 label: '# of tasks per assignee',
                 data: analytics.data,
-                backgroundColor: analytics.background_color,
-                borderColor: analytics.border_color,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
                 borderWidth: 1
             }]
         }
