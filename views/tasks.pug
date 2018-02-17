@@ -8,22 +8,31 @@ block main-pane
         .col-sm-4
           input.form-control(type='text', placeholder='Search for...', name='name')
         .col-sm-2
-          select.form-control(name='assignee')
-            option all
-            for user in users
-              option(value=user._id, selected=user.username == filters.assignee) #{user.username}
-        .col-sm-2
-          select.form-control(name='owner', value=filters.owner)
-            option all
-            for user in users
-              option(value=user._id, selected=user.username == filters.owner) #{user.username}
-        .col-sm-2
           a.btn.btn-secondary(href='/tasks/add', role='button') Add Task
   br
   .row
     .col-md-10
-      for task in tasks
-        .ul.list-group.list-group-flush
-          .li.list-group-item
-            h5 #{task.title}
-            - var current_stage = task.current_stage
+      table.table
+        thead
+          tr
+            th(scope="col") Title
+            th(scope="col") Assignee
+            th(scope="col") Owner
+            th(scope="col") Current Stage
+            th(scope="col") Edit
+            th(scope="col") Delete
+        tbody
+          for task in tasks
+            tr
+              th(scope="row") #{task.title}
+              td #{task.assignee.username}
+              td #{task.owner.username}
+              td #{task.current_stage}
+              td
+                i.fa.fa-pencil(aria-hidden='true')
+                a.text-muted(href='/tasks/edit/'+task.slug)
+                  |  Edit
+              td
+                i.fa.fa-times(aria-hidden='true')
+                a.text-muted(href='/tasks/remove/'+task.slug)
+                  |  Delete

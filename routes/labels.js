@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Label = require('../models/label');
-const constants = require('../common/constants');
+const Label = require('../models').label;
+const constants = require('../constants');
 const winston = require('winston');
 
 // admin auth middleware

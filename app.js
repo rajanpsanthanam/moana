@@ -69,7 +69,7 @@ app.use('/reports', reports);
 
 
 // passport config
-var User = require('./models/user');
+var User = require('./models').user;
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());

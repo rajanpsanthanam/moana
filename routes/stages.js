@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const Stage = require('../models/stage');
+const Stage = require('../models').stage;
 const winston = require('winston');
-const constants = require('../common/constants');
+const constants = require('../constants');
 
 // admin auth middleware
 router.use(function (req, res, next) {

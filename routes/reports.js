@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Task = require('../models/task');
-const User = require('../models/user');
-const Label = require('../models/label');
-const Stage = require('../models/stage');
+const Task = require('../models').task;
+const User = require('../models').user;
+const Label = require('../models').label;
+const Stage = require('../models').stage;
 const winston = require('winston');
-const constants = require('../common/constants');
+const constants = require('../constants');
 
 var taskFields = 'assignee owner current_stage labels comments.by'
 
