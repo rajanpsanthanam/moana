@@ -1,28 +1,26 @@
 extends layout
 
 block content
-    .container
-      .cover-container
-        a(href="/")
-          img.img-square(src='/images/simba.png', height='200', width='150')
-        br
-        br
-        p.lead Hey there, I am Simba. Your virtual assistant.
-        br
-        h1 Sign In..
-        br
-        form(role='form', action="/login",method="post", style='max-width: 300px;')
-          .form-group
-              input.form-control(type='text', name="email", placeholder='user email')
-          .form-group
-            input.form-control(type='password', name="password", placeholder='password')
-          .row
-            .col-xs-6.col-sm-6.col-md-6
-              input.btn.btn.btn-primary.btn-block(type='submit', value='Sign In')
-            .col-xs-6.col-sm-6.col-md-6
-              a.btn.btn.btn-secondary.btn-block(href='/') Reset
-        br
-        br
-        p New around here?
-          a(href="/register")
-            |  Signup
+  .container
+    a(href="/")
+      img.img-square(src='/images/illustration.png', height='150', width='150')
+    br
+    br
+    p.lead Hey there, I am Simba. Your virtual assistant.
+    br
+    h1 Sign In..
+    br
+    form(role='form', action="/login", method="post")
+      .form-group
+          input.form-control(type='text', name="email", placeholder='user email')
+      .form-group
+        input.form-control(type='password', name="password", placeholder='password')
+      .col-md-6
+        input.btn.green(type='submit', value='Sign In')
+      .col-md-6
+        a.btn.red(href='/') Reset
+    br
+    br
+    p New around here?
+      a(href="/register")
+        |  Signup

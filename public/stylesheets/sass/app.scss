@@ -1,18 +1,12 @@
-
+@import "grid";
+@import "normalize";
+@import "module";
+@import "buttons";
 
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: #f4f8f9;
-}
-
-.cover-container{
-  text-align: center;
-}
-
-.cover-container form{
-  display:inline-block;
-  margin:auto;
 }
 
 a {
